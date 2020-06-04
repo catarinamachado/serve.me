@@ -1,0 +1,11 @@
+Possivelmente será necessário adicionar o orm.jar ao projetp
+
+Para isso, ir:
+
+File -> Project Structure -> Modules -> Dependencies -> Add jar
+
+
+Em principio funciona sempre!!
+
+Atenção que a BD que dei o nome chama-se teste!
+
