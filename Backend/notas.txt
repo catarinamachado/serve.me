@@ -7,5 +7,5 @@ File -> Project Structure -> Modules -> Dependencies -> Add jar
 
 Em principio funciona sempre!!
 
-Atenção que a BD que dei o nome chama-se teste!
+Atenção que a BD que dei o nome chama-se data!
 
