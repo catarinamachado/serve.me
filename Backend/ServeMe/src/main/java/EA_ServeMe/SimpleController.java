@@ -4,17 +4,18 @@ package EA_ServeMe;
 import class_diagram.pt.uminho.di.aa.User;
 import class_diagram.pt.uminho.di.aa.UserDAO;
 import org.orm.PersistentException;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
 
 @RestController
-public class HelloController {
+public class SimpleController {
 
         @RequestMapping("/")
         public String index() {
+
             try {
                 User u = UserDAO.getUserByORMID(1);
                 return "GANDA MALHA. CHAMA-Se" + u.getName();
@@ -25,9 +26,10 @@ public class HelloController {
 
             return "NAO O PESQUEI";
             //return "Greetings from Spring Boot!";
+
         }
 
-    @RequestMapping("/utili")
+    @GetMapping("/utili")
     public List<User> utili() {
         //List
         try {
@@ -40,5 +42,23 @@ public class HelloController {
         return null;
     }
 
-        
+    @PostMapping("/newuser")
+    User newEmployee(@RequestBody User newuser) {
+        try {
+            /*
+            String name = newuser.getName();
+            String email = newuser.getEmail();
+            String password = newuser.getPassword();
+            User u = new User();
+            u.setName(name);
+            u.setEmail(email);
+            u.setPassword(password);
+             */
+            UserDAO.save(newuser);
+            return newuser;
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
  }
