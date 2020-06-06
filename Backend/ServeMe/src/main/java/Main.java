@@ -1,32 +1,45 @@
-import class_diagram.pt.uminho.di.aa.*;
+
+import categorias.Classe;
+import categorias.ClasseDAO;
+import com.mysql.cj.xdevapi.Client;
 import org.orm.PersistentException;
+import utilizador.Cliente;
+import utilizador.ClienteDAO;
+import utilizador.Informacao_pessoal;
+import utilizador.Informacao_pessoalDAO;
 
 public class Main {
 
     public static void main(String[] args){
-        User user = new User();
+        /*User user = new User();
         user.setEmail("miei@pt.com");
         user.setName("john");
         user.setPassword("pw");
+        */
+        Classe novo = new Classe();
+        novo.setNome("Jardinagem");
+
 
         //Save
         try {
-           UserDAO.save(user);
-            System.out.println("Inseri o gajo!!" + user.getName());
-        } catch (PersistentException e) {
+           //UserDAO.save(user);
+            ClasseDAO.save(novo);
+            System.out.println("Inseri o gajo!!"); //+ user.getName());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        /*
+
 
         //Load
         try {
-           User uti =  UserDAO.getUserByORMID(1);
-            System.out.println("Busquei o gajo!!" + uti.getName());
+           Classe c = ClasseDAO.getClasseByORMID(1);
+           //User uti =  UserDAO.getUserByORMID(1);
+            System.out.println("Busquei o gajo!!" + c.getNome());
         } catch (PersistentException e) {
             e.printStackTrace();
         }
-
+        /*
         //List
         try {
             User[] utis =  UserDAO.listUserByQuery("id > 0 ", "ID");

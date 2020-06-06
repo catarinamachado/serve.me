@@ -16,32 +16,17 @@
     <ServerName></ServerName>
     <SelectedForm>true</SelectedForm>
   </Setting>
-  <Setting type="8">
-    <Driver></Driver>
-    <DriverFiles></DriverFiles>
-    <Dialect></Dialect>
-    <DriverClass></DriverClass>
-    <URL></URL>
-    <UserName></UserName>
-    <EncryptedPassword>32F3ACE632ECEBAFB24DCAF99A8C6CDC</EncryptedPassword>
-    <HostName></HostName>
-    <PortNO></PortNO>
-    <DBName></DBName>
-    <ServiceName></ServiceName>
-    <ServerName></ServerName>
-    <SelectedForm>true</SelectedForm>
-  </Setting>
   <Setting type="2">
     <Driver>MySQL (Connector/J Driver)</Driver>
     <DriverFiles>&lt;&lt;MySQL Connector/J 8.0.18&gt;&gt;</DriverFiles>
     <Dialect>org.hibernate.dialect.MySQLDialect</Dialect>
     <DriverClass>com.mysql.jdbc.Driver</DriverClass>
-    <URL>jdbc:mysql://localhost/data</URL>
+    <URL>jdbc:mysql://localhost:3306/serveme</URL>
     <UserName>root</UserName>
-    <EncryptedPassword>BF2FC1CEF810492DDE72B3901825B954</EncryptedPassword>
+    <EncryptedPassword>6DB69CE84EFC112FD7013464EC9893D5</EncryptedPassword>
     <HostName>localhost</HostName>
-    <PortNO></PortNO>
-    <DBName>data</DBName>
+    <PortNO>3306</PortNO>
+    <DBName>serveme</DBName>
     <ServiceName></ServiceName>
     <ServerName></ServerName>
     <SelectedForm>true</SelectedForm>

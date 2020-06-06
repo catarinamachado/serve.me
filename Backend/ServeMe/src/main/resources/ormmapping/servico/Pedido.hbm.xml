@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Licensee: João Costa(Universidade do Minho)
+License Type: Academic
+-->
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="servico.Pedido" table="Pedido" lazy="false">
+		<id name="ID" column="ID" type="integer" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<many-to-one name="cliente" cascade="lock" column="ClienteID" class="utilizador.Cliente" not-null="true" lazy="proxy" access="field">
+		</many-to-one>
+		<many-to-one name="categoria" cascade="lock" column="CategoriaID" class="categorias.Categoria" not-null="true" lazy="proxy" access="field">
+		</many-to-one>
+		<property name="precoHora" column="PrecoHora" type="double" length="10" not-null="true" lazy="false"/>
+		<property name="data" column="Data" type="date" not-null="false" lazy="false"/>
+		<property name="horaInicioDisp" column="HoraInicioDisp" type="date" not-null="false" lazy="false"/>
+		<property name="horaFimDisp" column="HoraFimDisp" type="date" not-null="false" lazy="false"/>
+		<property name="duracao" column="Duracao" type="double" length="10" not-null="true" lazy="false"/>
+		<property name="estado" column="Estado" type="integer" length="10" not-null="true" lazy="false"/>
+		<property name="descricao" column="Descricao" type="string" length="255" not-null="false" lazy="false"/>
+	</class>
+</hibernate-mapping>

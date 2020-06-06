@@ -1,12 +1,14 @@
 package EA_ServeMe;
 
 
-import class_diagram.pt.uminho.di.aa.User;
-import class_diagram.pt.uminho.di.aa.UserDAO;
+import com.mysql.cj.xdevapi.Client;
 import org.orm.PersistentException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
+import utilizador.Cliente;
+import utilizador.ClienteDAO;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,10 +19,10 @@ public class SimpleController {
         public String index() {
 
             try {
-                User u = UserDAO.getUserByORMID(1);
-                return "GANDA MALHA. CHAMA-Se" + u.getName();
+               // User u = UserDAO.getUserByORMID(1);
+                return "GANDA MALHA. CHAMA-Se"; //+ u.getName();
 
-            } catch (PersistentException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -30,20 +32,20 @@ public class SimpleController {
         }
 
     @GetMapping("/utili")
-    public List<User> utili() {
+    public List<String> utili() {
         //List
         try {
-            List<User> utis = Arrays.asList(UserDAO.listUserByQuery("id > 0 ", "ID"));
-            System.out.println("ELES SAO " + utis.size());
-            return utis;
-        } catch (PersistentException e) {
+            //List<User> utis = Arrays.asList(UserDAO.listUserByQuery("id > 0 ", "ID"));
+            //System.out.println("ELES SAO " + utis.size());
+            return new ArrayList<>();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @PostMapping("/newuser")
-    User newEmployee(@RequestBody User newuser) {
+    Cliente newEmployee(@RequestBody Cliente newuser) {
         try {
             /*
             String name = newuser.getName();
@@ -54,7 +56,7 @@ public class SimpleController {
             u.setEmail(email);
             u.setPassword(password);
              */
-            UserDAO.save(newuser);
+            ClienteDAO.save(newuser);
             return newuser;
         } catch (PersistentException e) {
             e.printStackTrace();
