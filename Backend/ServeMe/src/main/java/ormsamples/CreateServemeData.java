@@ -1,5 +1,5 @@
 /**
- * Licensee: João Costa(Universidade do Minho)
+ * Licensee: Tiago Fontes(Universidade do Minho)
  * License Type: Academic
  */
 package ormsamples;
@@ -9,14 +9,8 @@ public class CreateServemeData {
 	public void createTestData() throws PersistentException {
 		PersistentTransaction t = utilizador.ServemePersistentManager.instance().getSession().beginTransaction();
 		try {
-			utilizador.Informacao_pessoal utilizadorInformacao_pessoal = utilizador.Informacao_pessoalDAO.createInformacao_pessoal();
-			// TODO Initialize the properties of the persistent object here, the following properties must be initialized before saving : avaliacoes, numServicosCancelados, numServicosRealizados, tipo, nif, classificacao
-			utilizador.Informacao_pessoalDAO.save(utilizadorInformacao_pessoal);
-			utilizador.Prestador utilizadorPrestador = utilizador.PrestadorDAO.createPrestador();
-			// TODO Initialize the properties of the persistent object here, the following properties must be initialized before saving : informacao_pessoal
-			utilizador.PrestadorDAO.save(utilizadorPrestador);
 			utilizador.Cliente utilizadorCliente = utilizador.ClienteDAO.createCliente();
-			// TODO Initialize the properties of the persistent object here, the following properties must be initialized before saving : informacao_pessoal
+			// TODO Initialize the properties of the persistent object here, the following properties must be initialized before saving : avaliacoes, numServicosCancelados, numServicosRealizados, nif, classificacao, numTelemovel
 			utilizador.ClienteDAO.save(utilizadorCliente);
 			utilizador.Avaliacao utilizadorAvaliacao = utilizador.AvaliacaoDAO.createAvaliacao();
 			// TODO Initialize the properties of the persistent object here, the following properties must be initialized before saving : classificacao
@@ -36,6 +30,9 @@ public class CreateServemeData {
 			servico.Servico servicoServico = servico.ServicoDAO.createServico();
 			// TODO Initialize the properties of the persistent object here, the following properties must be initialized before saving : estado, proposta, pedido, prestador, cliente
 			servico.ServicoDAO.save(servicoServico);
+			utilizador.Prestador utilizadorPrestador = utilizador.PrestadorDAO.createPrestador();
+			// TODO Initialize the properties of the persistent object here, the following properties must be initialized before saving : avaliacoes, numServicosCancelados, numServicosRealizados, nif, classificacao, numTelemovel
+			utilizador.PrestadorDAO.save(utilizadorPrestador);
 			t.commit();
 		}
 		catch (Exception e) {

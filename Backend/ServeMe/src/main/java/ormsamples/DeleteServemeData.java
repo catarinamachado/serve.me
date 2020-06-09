@@ -1,5 +1,5 @@
 /**
- * Licensee: João Costa(Universidade do Minho)
+ * Licensee: Tiago Fontes(Universidade do Minho)
  * License Type: Academic
  */
 package ormsamples;
@@ -9,12 +9,6 @@ public class DeleteServemeData {
 	public void deleteTestData() throws PersistentException {
 		PersistentTransaction t = utilizador.ServemePersistentManager.instance().getSession().beginTransaction();
 		try {
-			utilizador.Informacao_pessoal utilizadorInformacao_pessoal = utilizador.Informacao_pessoalDAO.loadInformacao_pessoalByQuery(null, null);
-			// Delete the persistent object
-			utilizador.Informacao_pessoalDAO.delete(utilizadorInformacao_pessoal);
-			utilizador.Prestador utilizadorPrestador = utilizador.PrestadorDAO.loadPrestadorByQuery(null, null);
-			// Delete the persistent object
-			utilizador.PrestadorDAO.delete(utilizadorPrestador);
 			utilizador.Cliente utilizadorCliente = utilizador.ClienteDAO.loadClienteByQuery(null, null);
 			// Delete the persistent object
 			utilizador.ClienteDAO.delete(utilizadorCliente);
@@ -36,6 +30,9 @@ public class DeleteServemeData {
 			servico.Servico servicoServico = servico.ServicoDAO.loadServicoByQuery(null, null);
 			// Delete the persistent object
 			servico.ServicoDAO.delete(servicoServico);
+			utilizador.Prestador utilizadorPrestador = utilizador.PrestadorDAO.loadPrestadorByQuery(null, null);
+			// Delete the persistent object
+			utilizador.PrestadorDAO.delete(utilizadorPrestador);
 			t.commit();
 		}
 		catch (Exception e) {
