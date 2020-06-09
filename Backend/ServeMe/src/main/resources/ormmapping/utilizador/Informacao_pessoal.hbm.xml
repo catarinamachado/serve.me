@@ -19,6 +19,7 @@ License Type: Academic
 		<property name="tipo" column="Tipo" type="integer" length="10" not-null="true" lazy="false"/>
 		<property name="numServicosRealizados" column="NumServicosRealizados" type="integer" length="10" not-null="true" lazy="false"/>
 		<property name="numServicosCancelados" column="NumServicosCancelados" type="integer" length="10" not-null="true" lazy="false"/>
+		<property name="password" column="Password" type="string" length="45" not-null="false" lazy="false"/>
 		<set name="ORM_Avaliacoes" lazy="true" cascade="all-delete-orphan" inverse="false">
 			<key column="Informacao_pessoalID" not-null="true"/>
 			<one-to-many class="utilizador.Avaliacao"/>

@@ -38,7 +38,7 @@ public class Informacao_pessoal {
 	
 	private String email;
 	
-	private Long numTelemovel;
+	private long numTelemovel;
 	
 	private String morada;
 	
@@ -51,6 +51,8 @@ public class Informacao_pessoal {
 	private int numServicosRealizados;
 	
 	private int numServicosCancelados;
+
+	private String password;
 	
 	private java.util.Set ORM_avaliacoes = new java.util.HashSet();
 	
@@ -147,14 +149,17 @@ public class Informacao_pessoal {
 	}
 	
 	public final utilizador.AvaliacaoSetCollection avaliacoes = new utilizador.AvaliacaoSetCollection(this, _ormAdapter, utilizador.ORMConstants.KEY_INFORMACAO_PESSOAL_AVALIACOES, utilizador.ORMConstants.KEY_MUL_ONE_TO_MANY);
-	
-	public void setNumTelemovel(Long numTelemovel) {
-		//TODO: Implement Method
-		throw new UnsupportedOperationException();
-	}
-	
+
+
 	public String toString() {
 		return String.valueOf(getID());
 	}
-	
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }
