@@ -1,6 +1,9 @@
 package EA_ServeMe.util;
 
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.security.Key;
 import java.util.Base64;
 import javax.crypto.Cipher;
@@ -75,6 +78,18 @@ public class Crypt {
             // AES Decryption based on above secretKey
             String decrStr = Crypt.decrypt(encrStr, encodedBase64Key);
             System.out.println("Decryption of str = " + decrStr);
-    }
 
+
+            String encoder1 = new BCryptPasswordEncoder(11).encode(toEncrypt);
+            String encoder2 = new BCryptPasswordEncoder(11).encode(toEncrypt);
+
+            System.out.println("ENCODER 1 " + encoder1);
+            System.out.println("ENCODER 2 " + encoder2);
+
+            boolean deuBEm= new BCryptPasswordEncoder(11).matches(toEncrypt,encoder1);
+            boolean deuBEm2= new BCryptPasswordEncoder(11).matches(toEncrypt,encoder2);
+
+            System.out.println("DEU BEm " + deuBEm);
+            System.out.println("DEU BEm 2 " + deuBEm2);
+    }
 }
