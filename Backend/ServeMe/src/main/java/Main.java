@@ -5,8 +5,6 @@ import com.mysql.cj.xdevapi.Client;
 import org.orm.PersistentException;
 import utilizador.Cliente;
 import utilizador.ClienteDAO;
-import utilizador.Informacao_pessoal;
-import utilizador.Informacao_pessoalDAO;
 
 public class Main {
 

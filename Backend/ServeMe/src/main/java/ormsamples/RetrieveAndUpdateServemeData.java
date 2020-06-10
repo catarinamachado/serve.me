@@ -1,5 +1,5 @@
 /**
- * Licensee: João Costa(Universidade do Minho)
+ * Licensee: Tiago Fontes(Universidade do Minho)
  * License Type: Academic
  */
 package ormsamples;
@@ -9,12 +9,6 @@ public class RetrieveAndUpdateServemeData {
 	public void retrieveAndUpdateTestData() throws PersistentException {
 		PersistentTransaction t = utilizador.ServemePersistentManager.instance().getSession().beginTransaction();
 		try {
-			utilizador.Informacao_pessoal utilizadorInformacao_pessoal = utilizador.Informacao_pessoalDAO.loadInformacao_pessoalByQuery(null, null);
-			// Update the properties of the persistent object
-			utilizador.Informacao_pessoalDAO.save(utilizadorInformacao_pessoal);
-			utilizador.Prestador utilizadorPrestador = utilizador.PrestadorDAO.loadPrestadorByQuery(null, null);
-			// Update the properties of the persistent object
-			utilizador.PrestadorDAO.save(utilizadorPrestador);
 			utilizador.Cliente utilizadorCliente = utilizador.ClienteDAO.loadClienteByQuery(null, null);
 			// Update the properties of the persistent object
 			utilizador.ClienteDAO.save(utilizadorCliente);
@@ -36,6 +30,9 @@ public class RetrieveAndUpdateServemeData {
 			servico.Servico servicoServico = servico.ServicoDAO.loadServicoByQuery(null, null);
 			// Update the properties of the persistent object
 			servico.ServicoDAO.save(servicoServico);
+			utilizador.Prestador utilizadorPrestador = utilizador.PrestadorDAO.loadPrestadorByQuery(null, null);
+			// Update the properties of the persistent object
+			utilizador.PrestadorDAO.save(utilizadorPrestador);
 			t.commit();
 		}
 		catch (Exception e) {
@@ -45,18 +42,6 @@ public class RetrieveAndUpdateServemeData {
 	}
 	
 	public void retrieveByCriteria() throws PersistentException {
-		System.out.println("Retrieving Informacao_pessoal by Informacao_pessoalCriteria");
-		utilizador.Informacao_pessoalCriteria utilizadorInformacao_pessoalCriteria = new utilizador.Informacao_pessoalCriteria();
-		// Please uncomment the follow line and fill in parameter(s)
-		//utilizadorInformacao_pessoalCriteria.ID.eq();
-		System.out.println(utilizadorInformacao_pessoalCriteria.uniqueInformacao_pessoal());
-		
-		System.out.println("Retrieving Prestador by PrestadorCriteria");
-		utilizador.PrestadorCriteria utilizadorPrestadorCriteria = new utilizador.PrestadorCriteria();
-		// Please uncomment the follow line and fill in parameter(s)
-		//utilizadorPrestadorCriteria.ID.eq();
-		System.out.println(utilizadorPrestadorCriteria.uniquePrestador());
-		
 		System.out.println("Retrieving Cliente by ClienteCriteria");
 		utilizador.ClienteCriteria utilizadorClienteCriteria = new utilizador.ClienteCriteria();
 		// Please uncomment the follow line and fill in parameter(s)
@@ -98,6 +83,12 @@ public class RetrieveAndUpdateServemeData {
 		// Please uncomment the follow line and fill in parameter(s)
 		//servicoServicoCriteria.ID.eq();
 		System.out.println(servicoServicoCriteria.uniqueServico());
+		
+		System.out.println("Retrieving Prestador by PrestadorCriteria");
+		utilizador.PrestadorCriteria utilizadorPrestadorCriteria = new utilizador.PrestadorCriteria();
+		// Please uncomment the follow line and fill in parameter(s)
+		//utilizadorPrestadorCriteria.ID.eq();
+		System.out.println(utilizadorPrestadorCriteria.uniquePrestador());
 		
 	}
 	

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-Licensee: João Costa(Universidade do Minho)
+Licensee: Tiago Fontes(Universidade do Minho)
 License Type: Academic
 -->
 <!DOCTYPE hibernate-configuration PUBLIC
@@ -9,11 +9,11 @@ License Type: Academic
 <hibernate-configuration>
 	<session-factory>
    	<!-- properties -->
-		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="dialect">org.hibernate.dialect.MySQL5Dialect</property>
 		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="connection.url">jdbc:mysql://localhost:3306/serveme</property>
 		<property name="connection.username">root</property>
-		<property name="connection.password">sqlserver</property>
+		<property name="connection.password">tiagofontes</property>
 		<property name="show_sql">false</property>
 		<property name="query.substitutions">true 1, false 0, yes 'Y', no 'N'</property>
 		<!-- mapping files -->
@@ -24,7 +24,6 @@ License Type: Academic
 		<mapping resource="ormmapping/servico/Servico.hbm.xml" />
 		<mapping resource="ormmapping/utilizador/Avaliacao.hbm.xml" />
 		<mapping resource="ormmapping/utilizador/Cliente.hbm.xml" />
-		<mapping resource="ormmapping/utilizador/Informacao_pessoal.hbm.xml" />
 		<mapping resource="ormmapping/utilizador/Prestador.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

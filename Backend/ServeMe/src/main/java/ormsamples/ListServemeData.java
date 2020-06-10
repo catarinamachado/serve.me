@@ -1,5 +1,5 @@
 /**
- * Licensee: João Costa(Universidade do Minho)
+ * Licensee: Tiago Fontes(Universidade do Minho)
  * License Type: Academic
  */
 package ormsamples;
@@ -9,25 +9,9 @@ public class ListServemeData {
 	private static final int ROW_COUNT = 100;
 	
 	public void listTestData() throws PersistentException {
-		System.out.println("Listing Informacao_pessoal...");
-		utilizador.Informacao_pessoal[] utilizadorInformacao_pessoals = utilizador.Informacao_pessoalDAO.listInformacao_pessoalByQuery(null, null);
-		int length = Math.min(utilizadorInformacao_pessoals.length, ROW_COUNT);
-		for (int i = 0; i < length; i++) {
-			System.out.println(utilizadorInformacao_pessoals[i]);
-		}
-		System.out.println(length + " record(s) retrieved.");
-		
-		System.out.println("Listing Prestador...");
-		utilizador.Prestador[] utilizadorPrestadors = utilizador.PrestadorDAO.listPrestadorByQuery(null, null);
-		length = Math.min(utilizadorPrestadors.length, ROW_COUNT);
-		for (int i = 0; i < length; i++) {
-			System.out.println(utilizadorPrestadors[i]);
-		}
-		System.out.println(length + " record(s) retrieved.");
-		
 		System.out.println("Listing Cliente...");
 		utilizador.Cliente[] utilizadorClientes = utilizador.ClienteDAO.listClienteByQuery(null, null);
-		length = Math.min(utilizadorClientes.length, ROW_COUNT);
+		int length = Math.min(utilizadorClientes.length, ROW_COUNT);
 		for (int i = 0; i < length; i++) {
 			System.out.println(utilizadorClientes[i]);
 		}
@@ -81,40 +65,24 @@ public class ListServemeData {
 		}
 		System.out.println(length + " record(s) retrieved.");
 		
+		System.out.println("Listing Prestador...");
+		utilizador.Prestador[] utilizadorPrestadors = utilizador.PrestadorDAO.listPrestadorByQuery(null, null);
+		length = Math.min(utilizadorPrestadors.length, ROW_COUNT);
+		for (int i = 0; i < length; i++) {
+			System.out.println(utilizadorPrestadors[i]);
+		}
+		System.out.println(length + " record(s) retrieved.");
+		
 	}
 	
 	public void listByCriteria() throws PersistentException {
-		System.out.println("Listing Informacao_pessoal by Criteria...");
-		utilizador.Informacao_pessoalCriteria utilizadorInformacao_pessoalCriteria = new utilizador.Informacao_pessoalCriteria();
-		// Please uncomment the follow line and fill in parameter(s) 
-		//utilizadorInformacao_pessoalCriteria.ID.eq();
-		utilizadorInformacao_pessoalCriteria.setMaxResults(ROW_COUNT);
-		utilizador.Informacao_pessoal[] utilizadorInformacao_pessoals = utilizadorInformacao_pessoalCriteria.listInformacao_pessoal();
-		int length =utilizadorInformacao_pessoals== null ? 0 : Math.min(utilizadorInformacao_pessoals.length, ROW_COUNT); 
-		for (int i = 0; i < length; i++) {
-			 System.out.println(utilizadorInformacao_pessoals[i]);
-		}
-		System.out.println(length + " Informacao_pessoal record(s) retrieved."); 
-		
-		System.out.println("Listing Prestador by Criteria...");
-		utilizador.PrestadorCriteria utilizadorPrestadorCriteria = new utilizador.PrestadorCriteria();
-		// Please uncomment the follow line and fill in parameter(s) 
-		//utilizadorPrestadorCriteria.ID.eq();
-		utilizadorPrestadorCriteria.setMaxResults(ROW_COUNT);
-		utilizador.Prestador[] utilizadorPrestadors = utilizadorPrestadorCriteria.listPrestador();
-		length =utilizadorPrestadors== null ? 0 : Math.min(utilizadorPrestadors.length, ROW_COUNT); 
-		for (int i = 0; i < length; i++) {
-			 System.out.println(utilizadorPrestadors[i]);
-		}
-		System.out.println(length + " Prestador record(s) retrieved."); 
-		
 		System.out.println("Listing Cliente by Criteria...");
 		utilizador.ClienteCriteria utilizadorClienteCriteria = new utilizador.ClienteCriteria();
 		// Please uncomment the follow line and fill in parameter(s) 
 		//utilizadorClienteCriteria.ID.eq();
 		utilizadorClienteCriteria.setMaxResults(ROW_COUNT);
 		utilizador.Cliente[] utilizadorClientes = utilizadorClienteCriteria.listCliente();
-		length =utilizadorClientes== null ? 0 : Math.min(utilizadorClientes.length, ROW_COUNT); 
+		int length =utilizadorClientes== null ? 0 : Math.min(utilizadorClientes.length, ROW_COUNT); 
 		for (int i = 0; i < length; i++) {
 			 System.out.println(utilizadorClientes[i]);
 		}
@@ -191,6 +159,18 @@ public class ListServemeData {
 			 System.out.println(servicoServicos[i]);
 		}
 		System.out.println(length + " Servico record(s) retrieved."); 
+		
+		System.out.println("Listing Prestador by Criteria...");
+		utilizador.PrestadorCriteria utilizadorPrestadorCriteria = new utilizador.PrestadorCriteria();
+		// Please uncomment the follow line and fill in parameter(s) 
+		//utilizadorPrestadorCriteria.ID.eq();
+		utilizadorPrestadorCriteria.setMaxResults(ROW_COUNT);
+		utilizador.Prestador[] utilizadorPrestadors = utilizadorPrestadorCriteria.listPrestador();
+		length =utilizadorPrestadors== null ? 0 : Math.min(utilizadorPrestadors.length, ROW_COUNT); 
+		for (int i = 0; i < length; i++) {
+			 System.out.println(utilizadorPrestadors[i]);
+		}
+		System.out.println(length + " Prestador record(s) retrieved."); 
 		
 	}
 	

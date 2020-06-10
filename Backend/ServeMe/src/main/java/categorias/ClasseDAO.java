@@ -8,7 +8,7 @@
  */
 
 /**
- * Licensee: João Costa(Universidade do Minho)
+ * Licensee: Tiago Fontes(Universidade do Minho)
  * License Type: Academic
  */
 package categorias;

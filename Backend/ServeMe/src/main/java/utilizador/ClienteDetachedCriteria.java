@@ -8,7 +8,7 @@
  */
 
 /**
- * Licensee: João Costa(Universidade do Minho)
+ * Licensee: Tiago Fontes(Universidade do Minho)
  * License Type: Academic
  */
 package utilizador;
@@ -20,25 +20,49 @@ import org.orm.criteria.*;
 
 public class ClienteDetachedCriteria extends AbstractORMDetachedCriteria {
 	public final IntegerExpression ID;
-	public final IntegerExpression informacao_pessoalId;
-	public final AssociationExpression informacao_pessoal;
+	public final StringExpression nome;
+	public final StringExpression email;
+	public final StringExpression password;
+	public final LongExpression numTelemovel;
+	public final StringExpression morada;
+	public final DoubleExpression classificacao;
+	public final LongExpression nif;
+	public final IntegerExpression numServicosRealizados;
+	public final IntegerExpression numServicosCancelados;
+	public final CollectionExpression avaliacoes;
 	
 	public ClienteDetachedCriteria() {
 		super(utilizador.Cliente.class, utilizador.ClienteCriteria.class);
 		ID = new IntegerExpression("ID", this.getDetachedCriteria());
-		informacao_pessoalId = new IntegerExpression("informacao_pessoal.ID", this.getDetachedCriteria());
-		informacao_pessoal = new AssociationExpression("informacao_pessoal", this.getDetachedCriteria());
+		nome = new StringExpression("nome", this.getDetachedCriteria());
+		email = new StringExpression("email", this.getDetachedCriteria());
+		password = new StringExpression("password", this.getDetachedCriteria());
+		numTelemovel = new LongExpression("numTelemovel", this.getDetachedCriteria());
+		morada = new StringExpression("morada", this.getDetachedCriteria());
+		classificacao = new DoubleExpression("classificacao", this.getDetachedCriteria());
+		nif = new LongExpression("nif", this.getDetachedCriteria());
+		numServicosRealizados = new IntegerExpression("numServicosRealizados", this.getDetachedCriteria());
+		numServicosCancelados = new IntegerExpression("numServicosCancelados", this.getDetachedCriteria());
+		avaliacoes = new CollectionExpression("ORM_Avaliacoes", this.getDetachedCriteria());
 	}
 	
 	public ClienteDetachedCriteria(DetachedCriteria aDetachedCriteria) {
 		super(aDetachedCriteria, utilizador.ClienteCriteria.class);
 		ID = new IntegerExpression("ID", this.getDetachedCriteria());
-		informacao_pessoalId = new IntegerExpression("informacao_pessoal.ID", this.getDetachedCriteria());
-		informacao_pessoal = new AssociationExpression("informacao_pessoal", this.getDetachedCriteria());
+		nome = new StringExpression("nome", this.getDetachedCriteria());
+		email = new StringExpression("email", this.getDetachedCriteria());
+		password = new StringExpression("password", this.getDetachedCriteria());
+		numTelemovel = new LongExpression("numTelemovel", this.getDetachedCriteria());
+		morada = new StringExpression("morada", this.getDetachedCriteria());
+		classificacao = new DoubleExpression("classificacao", this.getDetachedCriteria());
+		nif = new LongExpression("nif", this.getDetachedCriteria());
+		numServicosRealizados = new IntegerExpression("numServicosRealizados", this.getDetachedCriteria());
+		numServicosCancelados = new IntegerExpression("numServicosCancelados", this.getDetachedCriteria());
+		avaliacoes = new CollectionExpression("ORM_Avaliacoes", this.getDetachedCriteria());
 	}
 	
-	public Informacao_pessoalDetachedCriteria createInformacao_pessoalCriteria() {
-		return new Informacao_pessoalDetachedCriteria(createCriteria("informacao_pessoal"));
+	public utilizador.AvaliacaoDetachedCriteria createAvaliacoesCriteria() {
+		return new utilizador.AvaliacaoDetachedCriteria(createCriteria("ORM_Avaliacoes"));
 	}
 	
 	public Cliente uniqueCliente(PersistentSession session) {
