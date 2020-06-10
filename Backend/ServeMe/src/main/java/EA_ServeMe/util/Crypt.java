@@ -89,7 +89,12 @@ public class Crypt {
             boolean deuBEm= new BCryptPasswordEncoder(11).matches(toEncrypt,encoder1);
             boolean deuBEm2= new BCryptPasswordEncoder(11).matches(toEncrypt,encoder2);
 
+            String passwordDaBicha = "$2a$11$vWeWGRccZ0yQ5hZhe0VtW.NyXsvylgNsXDtfzqY9FTGJU9Ccz2CuW";
+
+            boolean deuBemAPWdaFrancisca = new BCryptPasswordEncoder(11).matches("franciscamachado",passwordDaBicha);
+
             System.out.println("DEU BEm " + deuBEm);
             System.out.println("DEU BEm 2 " + deuBEm2);
+            System.out.println("PW DA FRANCISCA DEU BEM " + deuBemAPWdaFrancisca);
     }
 }
