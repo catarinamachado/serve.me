@@ -2,18 +2,21 @@
   <div id="app">
     <TheNavbar/>
     <HelloWorld msg="cenas"/>
+    <TheFooter/>
   </div>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
 import TheNavbar from './components/TheNavbar.vue'
+import TheFooter from './components/TheFooter.vue'
 
 export default {
   name: 'App',
   components: {
     TheNavbar,
-    HelloWorld
+    HelloWorld,
+    TheFooter
   }
 }
 </script>
