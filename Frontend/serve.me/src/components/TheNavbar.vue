@@ -16,8 +16,8 @@
               Registo
             </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
-              <a class="dropdown-item">Cliente</a>
-              <a class="dropdown-item">Prestador de Serviços</a>
+              <a href="#" class="dropdown-item">Cliente</a>
+              <a href="#" class="dropdown-item">Prestador de Serviços</a>
             </div>
           </li>
           <li class="nav-item dropdown">
@@ -25,8 +25,8 @@
               Login
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
-              <a class="dropdown-item">Cliente</a>
-              <a class="dropdown-item">Prestador de Serviços</a>
+              <a href="#" class="dropdown-item">Cliente</a>
+              <a href="#" class="dropdown-item">Prestador de Serviços</a>
             </div>
           </li>
         </ul>
