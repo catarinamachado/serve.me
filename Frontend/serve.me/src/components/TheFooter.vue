@@ -15,7 +15,7 @@
 
 <style scoped>
 .page-footer {
-  background-color: #f0f2f4;
+  background-color: var(--light-grey);;
   color: #54575A;
   font-size: smaller;
 }
