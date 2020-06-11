@@ -1,0 +1,22 @@
+:root {
+    --light-grey: #f0f2f4;
+    --my-yellow: #f0dd5d;
+    --my-red: #df6756;
+    --my-blue: #4fa9d2;
+    --my-green: #81bf97;
+    --my-darker-yellow: #D2C151;
+    --my-darker-red: #C35A4B;
+    --my-darker-blue: #4594B8;
+    --my-darker-green: #71A784;
+  }
+
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+  overflow-x: hidden;
+}
