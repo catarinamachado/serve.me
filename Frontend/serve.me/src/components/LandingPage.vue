@@ -27,7 +27,9 @@
         </a>
     </div>
 
-    <div class="space-bottom-3">.
+    <div class="container space-top-3 space-bottom-3">
+        A <strong>serve.me</strong> é um marketplace online de procura e contratação de serviços,<br />
+        ideal para quem procura uma mãozinha extra e também<br />para quem tem uma para oferecer.
     </div>
     </section>
 </template>
@@ -47,6 +49,10 @@
 
 #carouselIndicators {
   padding-top: 30px;
+}
+
+.space-top-3 {
+  padding-top: 3%;
 }
 
 .space-bottom-3 {
