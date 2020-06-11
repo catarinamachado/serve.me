@@ -83,3 +83,18 @@ nav .navbar-nav li a:hover {
     }
 }
 </style>
+
+<script>
+import $ from 'jquery'
+
+export default {
+    mounted() {
+        $(function () {
+            $(document).scroll(function () {
+                var $nav = $(".fixed-top");
+                $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
+            });
+        });
+    }
+};
+</script>
