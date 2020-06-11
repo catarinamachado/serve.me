@@ -84,7 +84,7 @@ nav .navbar-nav li a:hover {
 }
 </style>
 
-<script>
+<script scoped>
 import $ from 'jquery'
 
 export default {
