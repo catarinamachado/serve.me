@@ -1,6 +1,7 @@
 package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Cliente_Perfil;
+import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.util.AuthRequest;
 import EA_ServeMe.util.AuthResponse;
 import EA_ServeMe.util.JwtUtil;
@@ -16,7 +17,7 @@ import utilizador.Prestador;
 import utilizador.PrestadorDAO;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api/login")
 public class LoginController {
 
     @Autowired
@@ -28,7 +29,8 @@ public class LoginController {
     public ResponseEntity<AuthResponse> generateTokenCliente(@RequestBody AuthRequest authRequest) throws Exception {
         String email = authRequest.getEmail();
         String email_auth = 'C'+email;
-        System.out.println("PASSWORDD " + authRequest.getPassword());
+        //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword());
+
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword())
@@ -48,6 +50,7 @@ public class LoginController {
     public ResponseEntity<AuthResponse> generateTokenPrestador(@RequestBody AuthRequest authRequest) throws Exception {
         String email = authRequest.getEmail();
         String email_auth = 'P'+email;
+        //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword());
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword())
@@ -57,7 +60,7 @@ public class LoginController {
         }
 
         String token =  jwtUtil.generateToken(email,'P');
-        AuthResponse ar = Cliente_Perfil.loginTokenPrestador(email,token);
+        AuthResponse ar = Prestador_Perfil.loginTokenPrestador(email,token);
         return ResponseEntity.ok().body(ar);
     }
 }

@@ -11,7 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Crypt {
 
-
+    private static final String SECRET =  "servemencriptkey";
     private static final String ALGO = "AES"; // Default uses ECB PKCS5Padding
 
 
@@ -70,6 +70,7 @@ public class Crypt {
             // System.out.println(“toDecodeBase64Key = “+toDecodeBase64Key);
 
             String toEncrypt = "PASSWORD DO ZE FErnaNDO!";
+            toEncrypt = "franciscamachado";
             System.out.println("Plain text = " + toEncrypt);
 
             // AES Encryption based on above secretKey

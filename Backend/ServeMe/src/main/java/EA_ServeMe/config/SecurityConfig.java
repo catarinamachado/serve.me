@@ -50,8 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/login/*").permitAll()
-                .and().authorizeRequests().antMatchers("/register/*").permitAll()
+                .authorizeRequests().antMatchers("/api/login/*").permitAll()
+                .and().authorizeRequests().antMatchers("/api/register/*").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

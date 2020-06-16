@@ -1,6 +1,7 @@
 package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Cliente_Perfil;
+import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.util.AuthResponse;
 import EA_ServeMe.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,11 @@ import utilizador.Cliente;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONObject;
+import utilizador.Prestador;
 
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/api/register")
 public class RegisterController {
 
     @Autowired
@@ -27,19 +30,22 @@ public class RegisterController {
 
     @PostMapping("/cliente")
     public ResponseEntity<AuthResponse> registerCliente (@RequestBody String info){
-        // TODO: - Tratar de Receber as informações do Cliente pelo body
-        // TODO: - Corrigir a autenticação
-        // TODO: -Verificar encriptação
+        Cliente c = new Cliente();
+        try {
+            c = Cliente_Perfil.parseUtilizadorJSON(info);
+        } catch (Exception e) {
+            System.out.println("Missing Values to insert Client");
+            return ResponseEntity.unprocessableEntity().body(new AuthResponse().error("Missing Values"));
+        }
 
-        List<String> ci  = new ArrayList<>();
-        //ci = Cliente_Perfil.registerCliente()
-        System.out.println("Info: " + info);
-        int r=1;
-        if (ci.size() == 0 ) r = 0;
-        Cliente c = null;
+        int r;
+        r = Cliente_Perfil.registerCliente(c);
+        System.out.println("-Email-> " + c.getEmail() + "\n-Pass-> " + c.getPassword());
+        r = 0; // DELETE THIS
         if(r == 1 ) {
             String email = c.getEmail();
             String email_auth = 'C' + email;
+            String password = Cliente_Perfil.decodePassword(c.getPassword());
             try {
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(email_auth, c.getPassword())
@@ -57,5 +63,38 @@ public class RegisterController {
 
     }
 
-    //TODO: - Realizar operação de Registo para Prestadores
+    @PostMapping("/prestador")
+    public ResponseEntity<AuthResponse> registerPrestador (@RequestBody String info){
+        Prestador p = new Prestador();
+        try {
+            p = Prestador_Perfil.parseUtilizadorJSON(info);
+        } catch (Exception e) {
+            System.out.println("Missing Values to insert Prestador");
+            return ResponseEntity.unprocessableEntity().body(new AuthResponse().error("Missing Values"));
+        }
+
+        int r;
+        r = Prestador_Perfil.registerPrestador(p);
+        System.out.println("-Email-> " + p.getEmail() + "\n-Pass-> " + p.getPassword());
+        r = 0; // DELETE THIS
+        if(r == 1 ) {
+            String email = p.getEmail();
+            String email_auth = 'C' + email;
+            String password = Prestador_Perfil.decodePassword(p.getPassword());
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(email_auth, p.getPassword())
+                );
+
+            } catch (Exception e) {
+
+            }
+            String token =  jwtUtil.generateToken(email,'P');
+            AuthResponse ar = Prestador_Perfil.loginTokenPrestador(email,token);
+
+            return ResponseEntity.ok().body(ar);
+        }
+        return ResponseEntity.ok().body(new AuthResponse("Consegui",info));
+
+    }
 }
