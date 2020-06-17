@@ -1,5 +1,5 @@
 <template>
-    <div class="home-page">
+    <section>
         <div id="carouselIndicators" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
             <li data-target="#carouselIndicators" data-slide-to="0" class="active"></li>
@@ -107,9 +107,7 @@
 </style>
 
 <script>
-import './assets/styles/serve-me.css';
-
 export default {
-  name: "home",
+  name: "home"
 };
 </script>
