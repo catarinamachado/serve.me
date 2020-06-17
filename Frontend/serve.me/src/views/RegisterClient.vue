@@ -104,7 +104,6 @@
 export default {
   name: "register-client",
   created() {
-    //Scrolls to top when view is displayed
     window.scrollTo(0, 0);
   }
 };

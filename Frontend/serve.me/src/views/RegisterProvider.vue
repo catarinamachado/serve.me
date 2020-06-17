@@ -106,6 +106,6 @@ export default {
   created() {
     //Scrolls to top when view is displayed
     window.scrollTo(0, 0);
-  }  
+  }
 };
 </script>

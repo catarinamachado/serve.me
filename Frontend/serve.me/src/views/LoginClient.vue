@@ -26,7 +26,7 @@
             </fieldset>
             <div class="space-top-3 text-right">
                 <button class="btn btn-blue">
-                OK
+                Entrar
                 </button>
             </div>
           </form>

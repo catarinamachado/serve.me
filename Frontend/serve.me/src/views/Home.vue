@@ -29,7 +29,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 space-top-6">
-                    A <strong>serve.me</strong> é um marketplace online de procura e contratação de serviços,<br />
+                    A <strong>Serve.Me</strong> é um marketplace online de procura e contratação de serviços,<br />
                     ideal para quem procura uma mãozinha extra e <br />para quem tem uma para oferecer!
                 </div>
             </div>

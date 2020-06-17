@@ -4,7 +4,7 @@
     <div class="row align-items-center">
       <div class="col-md-12">
         <div class="footer-copyright text-center py-3">
-          &copy; 2020 serve.me<sup>&reg;</sup><br />
+          &copy; 2020 Serve.Me<sup>&reg;</sup><br />
           Todos os direitos reservados
         </div>    
       </div>
