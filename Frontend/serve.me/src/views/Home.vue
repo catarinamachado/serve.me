@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <div class="home">
         <div id="carouselIndicators" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
             <li data-target="#carouselIndicators" data-slide-to="0" class="active"></li>
@@ -8,13 +8,13 @@
             </ol>
             <div class="carousel-inner">
             <div class="carousel-item carousel-item-max active">
-                <img class="d-block w-100" src="../assets/imgs/landing_page/1.jpg" alt="serve.me">
+                <img class="d-block w-100" src="../assets/imgs/home/1.jpg" alt="serve.me">
             </div>
             <div class="carousel-item carousel-item-max">
-                <img class="d-block w-100" src="../assets/imgs/landing_page/2.jpg" alt="serve.me">
+                <img class="d-block w-100" src="../assets/imgs/home/2.jpg" alt="serve.me">
             </div>
             <div class="carousel-item carousel-item-max">
-                <img class="d-block w-100" src="../assets/imgs/landing_page/3.jpg" alt="serve.me">
+                <img class="d-block w-100" src="../assets/imgs/home/3.jpg" alt="serve.me">
             </div>
             </div>
             <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
@@ -58,7 +58,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 </template>
 
 <style scoped>
