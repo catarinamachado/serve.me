@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-Licensee: Tiago Fontes(Universidade do Minho)
+Licensee: João Costa(Universidade do Minho)
 License Type: Academic
 -->
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
@@ -14,6 +14,9 @@ License Type: Academic
 		<property name="email" column="Email" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="password" column="Password" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="numTelemovel" column="NumTelemovel" type="long" length="19" not-null="true" lazy="false"/>
+		<property name="distrito" column="Distrito" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="concelho" column="Concelho" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="freguesia" column="Freguesia" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="morada" column="Morada" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="classificacao" column="Classificacao" type="double" length="10" not-null="true" lazy="false"/>
 		<property name="nif" column="Nif" type="long" length="19" not-null="true" lazy="false"/>
@@ -21,7 +24,7 @@ License Type: Academic
 		<property name="numServicosCancelados" column="NumServicosCancelados" type="integer" length="10" not-null="true" lazy="false"/>
 		<set name="ORM_Avaliacoes" lazy="true" cascade="all-delete-orphan" inverse="false">
 			<key column="ClienteID" not-null="true"/>
-			<one-to-many class="utilizador.Avaliacao"/>
+			<one-to-many class="utilizador.Avaliacao_Cliente"/>
 		</set>
 	</class>
 </hibernate-mapping>

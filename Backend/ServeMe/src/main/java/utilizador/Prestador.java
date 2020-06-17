@@ -8,7 +8,7 @@
  */
 
 /**
- * Licensee: Tiago Fontes(Universidade do Minho)
+ * Licensee: João Costa(Universidade do Minho)
  * License Type: Academic
  */
 package utilizador;
@@ -41,6 +41,12 @@ public class Prestador {
 	private String password;
 	
 	private long numTelemovel;
+	
+	private String distrito;
+	
+	private String concelho;
+	
+	private String freguesia;
 	
 	private String morada;
 	
@@ -98,6 +104,30 @@ public class Prestador {
 		return numTelemovel;
 	}
 	
+	public void setDistrito(String value) {
+		this.distrito = value;
+	}
+	
+	public String getDistrito() {
+		return distrito;
+	}
+	
+	public void setConcelho(String value) {
+		this.concelho = value;
+	}
+	
+	public String getConcelho() {
+		return concelho;
+	}
+	
+	public void setFreguesia(String value) {
+		this.freguesia = value;
+	}
+	
+	public String getFreguesia() {
+		return freguesia;
+	}
+	
 	public void setMorada(String value) {
 		this.morada = value;
 	}
@@ -146,7 +176,7 @@ public class Prestador {
 		return ORM_avaliacoes;
 	}
 	
-	public final utilizador.AvaliacaoSetCollection avaliacoes = new utilizador.AvaliacaoSetCollection(this, _ormAdapter, utilizador.ORMConstants.KEY_PRESTADOR_AVALIACOES, utilizador.ORMConstants.KEY_MUL_ONE_TO_MANY);
+	public final utilizador.Avaliacao_PrestadorSetCollection avaliacoes = new utilizador.Avaliacao_PrestadorSetCollection(this, _ormAdapter, utilizador.ORMConstants.KEY_PRESTADOR_AVALIACOES, utilizador.ORMConstants.KEY_MUL_ONE_TO_MANY);
 	
 	public String toString() {
 		return String.valueOf(getID());

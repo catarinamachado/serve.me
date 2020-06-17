@@ -43,8 +43,8 @@ public class RegisterController {
 
         List<String >res = Cliente_Perfil.registerCliente(c);
         int ok = (res.size()>1) ? 0 : 1;
-        String d1 = "-Email-> " + c.getEmail() + "\n-Pass-> " + c.getPassword(); Log.d(TAG,d1); // PROD: DELETE THIS
-       // ok = 0; // DELETE THIS
+        String d1 = "-Email-> " + c.getEmail() + " -Pass-> " + c.getPassword(); Log.d(TAG,d1); // PROD: DELETE THIS
+        ok = 0; // DELETE THIS
         if(ok == 1 ) {
             String email = c.getEmail();
             String email_auth = 'C' + email;
@@ -120,7 +120,7 @@ public class RegisterController {
                 er.addMsg(s);
                 msg+= s + " ";
             }
-            Log.e(TAG,"Error:" + msg);
+            Log.e(TAG,"Error: " + msg);
             return ResponseEntity.badRequest().body(er);
         }
     }

@@ -8,12 +8,16 @@
  */
 
 /**
- * Licensee: Tiago Fontes(Universidade do Minho)
+ * Licensee: João Costa(Universidade do Minho)
  * License Type: Academic
  */
 package utilizador;
 
 public interface ORMConstants extends org.orm.util.ORMBaseConstants {
+	final int KEY_AVALIACAO_CLIENTE_PRESTADOR = 1574280479;
+	
+	final int KEY_AVALIACAO_PRESTADOR_CLIENTE = 1671745503;
+	
 	final int KEY_CATEGORIA_CLASSE = 1958459033;
 	
 	final int KEY_CLIENTE_AVALIACOES = 711025111;
