@@ -26,41 +26,45 @@ public class LoginController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/cliente")
-    public ResponseEntity<AuthResponse> generateTokenCliente(@RequestBody AuthRequest authRequest) throws Exception {
+    public ResponseEntity generateTokenCliente(@RequestBody AuthRequest authRequest) throws Exception {
         String email = authRequest.getEmail();
         String email_auth = 'C'+email;
-        //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword());
+        //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword()); // PROD: ADD THIS
 
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword()) // PROD: CHANGE TO 'password_auth'
             );
         } catch (Exception ex) {
+            System.out.println("[ERROR]: Cliente Not Logged");
             throw new Exception("invalid username/password");
         }
 
         String token =  jwtUtil.generateToken(email,'C');
         AuthResponse ar = Cliente_Perfil.loginTokenCliente(email,token);
+        System.out.println("[SUCCESS]: Cliente Logged");
         return ResponseEntity.ok().body(ar);
 
 
     }
 
     @PostMapping("/prestador")
-    public ResponseEntity<AuthResponse> generateTokenPrestador(@RequestBody AuthRequest authRequest) throws Exception {
+    public ResponseEntity generateTokenPrestador(@RequestBody AuthRequest authRequest) throws Exception {
         String email = authRequest.getEmail();
         String email_auth = 'P'+email;
-        //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword());
+        //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword()); // PROD: ADD THIS
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword()) // PROD: CHANGE TO 'password_auth'
             );
         } catch (Exception ex) {
+            System.out.println("[ERROR]: Prestador Not Logged");
             throw new Exception("invalid username/password");
         }
 
         String token =  jwtUtil.generateToken(email,'P');
         AuthResponse ar = Prestador_Perfil.loginTokenPrestador(email,token);
+        System.out.println("[SUCCESS]: Prestador Logged");
         return ResponseEntity.ok().body(ar);
     }
 }

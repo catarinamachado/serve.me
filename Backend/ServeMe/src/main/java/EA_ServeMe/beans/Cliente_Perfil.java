@@ -46,24 +46,67 @@ public class Cliente_Perfil {
     }
 
     @Bean
-    public static int registerCliente(Cliente c){ //(String nome, String email, String password, long numT , String morada, long nif){
+    public static List<String> registerCliente(Cliente c){ //(String nome, String email, String password, long numT , String morada, long nif){
+        List<String> error = new ArrayList<>();
+        error.add("Error");
+
+        // Verificação de inserção na bd
+
+        String query_e = "Email = '" + c.getEmail() + "'"; // Query que verifica o email
+        Cliente[] bd_e = null;
+
+        String query_n = "Nif = " + c.getNif(); // Query verificação NIF
+        Cliente[] bd_n = null;
+
+        String query_t = "NumTelemovel = " + c.getNumTelemovel(); // Query verificação do numTelemovel
+        Cliente[] bd_t = null;
+        try {
+            bd_e = ClienteDAO.listClienteByQuery(query_e,"Email");
+            bd_n = ClienteDAO.listClienteByQuery(query_n,"Nif");
+            bd_t = ClienteDAO.listClienteByQuery(query_t,"NumTelemovel");
+        } catch (PersistentException e) {
+            System.out.println("Impossível aceder à BD");
+        }
+
+        if (bd_e == null || bd_n == null || bd_t == null ) {
+            error.add("BD");
+            return error;
+        }
+        if (bd_e.length != 0)
+            error.add("Email");
+        if (bd_n.length != 0)
+            error.add("Nif");
+        if (bd_t.length != 0)
+            error.add("Telemovel");
+
+        if (error.size() > 1) return error;
+
+        List<String> success = new ArrayList<>();
+        success.add("OK");
+
+        //Decode from frontend and Encode to DB
 
 
         String client_password = c.getPassword();
-        //client_password = decodePassword(client_password);
+        //client_password = decodePassword(client_password); // PROD : ADD THIS Decode encrypted password from frontend
 
         String new_Password = new BCryptPasswordEncoder(11).encode( client_password);
         c.setPassword(new_Password);
-        /*
+
+        /* PROD : ADD THIS
         try {
             ClienteDAO.save(c);
-            return 1;
+            System.out.println("[SUCCESS]: Cliente Added");
+            return success;
         } catch (PersistentException e) {
             e.printStackTrace();
+            System.out.println("[ERROR]: Cliente Not Saved");
         }
+
+        //error.add("BD");
+        //return  error;
          */
-        //return 0;
-        return 1; // DELETE THIS
+        return success; // PROD: DELETE THIS
 
     }
 
@@ -76,9 +119,9 @@ public class Cliente_Perfil {
             email = obj.getString("email");
             String password = "";
             password = obj.getString("password");
-            long numT = 0; // numT = obj.getLong("numT");
-            String morada = ""; //morada =  obj.getString("morada");
-            long nif = 0; //nif =  obj.getLong("nif");
+            long numT = 0;  numT = obj.getLong("telemovel");
+            String morada = ""; morada =  obj.getString("morada");
+            long nif = 0; nif =  obj.getLong("nif");
             return buildCliente(nome,email,password,numT,morada,nif);
         }
         catch (Exception e){
