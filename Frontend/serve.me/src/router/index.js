@@ -6,19 +6,21 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
+      name: "home",
       path: "/",
-      component: () => import("@/views/Home"),
+      component: () => import("@/views/Home")
     }
-    /*,
+    ,
     {
-      name: "login",
-      path: "/login",
-      component: () => import("@/views/Login")
-    },
+      name: "login-client",
+      path: "/login-client",
+      component: () => import("@/views/LoginClient")
+    }
+    ,
     {
-      name: "register",
-      path: "/register",
-      component: () => import("@/views/Register")
-    } */
+      name: "login-provider",
+      path: "/login-provider",
+      component: () => import("@/views/LoginProvider")
+    }
   ]
 });

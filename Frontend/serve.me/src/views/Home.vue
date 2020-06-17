@@ -38,10 +38,10 @@
                     <div class="card-body">
                         <p><strong>PRESTADOR DE SERVIÇOS</strong></p>
                         <div class="space-bottom-3">
-                            <button type="button" class="btn btn-serv btn-block">Login</button>
+                            <button type="button" class="btn btn-green btn-block">Login</button>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-serv btn-block">Registo</button>
+                            <button type="button" class="btn btn-green btn-block">Registo</button>
                         </div>
                     </div>
                 </div>
@@ -49,10 +49,10 @@
                     <div class="card-body">
                         <p><strong>CLIENTE</strong></p>
                         <div class="space-bottom-3">
-                            <button type="button" class="btn btn-serv btn-block">Login</button>
+                            <button type="button" class="btn btn-green btn-block">Login</button>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-serv btn-block">Registo</button>
+                            <button type="button" class="btn btn-green btn-block">Registo</button>
                         </div>
                     </div>
                 </div>
@@ -76,33 +76,6 @@
 
 #carouselIndicators {
   padding-top: 20px;
-}
-
-.btn-serv {
-  color: white;
-  background-color: var(--my-green);
-  border-color: var(--my-green);
-}
-
-.btn-serv:hover,
-.btn-serv:active,
-.btn-serv:visited,
-.btn-serv:focus {
-  color: white;
-  background-color: var(--my-darker-green);
-  border-color: var(--my-darker-green);
-}
-
-.space-top-6 {
-  padding-top: 6%;
-}
-
-.space-bottom-6 {
-  padding-bottom: 6%;
-}
-
-.space-bottom-3 {
-  padding-bottom: 3%;
 }
 </style>
 

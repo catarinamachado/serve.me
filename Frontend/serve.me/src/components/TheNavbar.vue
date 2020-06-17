@@ -1,10 +1,12 @@
 <template>
   <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
     <div class="container">
-      <a href="#" class="navbar-brand">
-        <!-- Logo Image -->
+      <router-link 
+        routerLinkActive="active"
+        :to="{ name: 'home' }"
+      >
         <img src="../assets/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
-      </a>
+      </router-link>
       <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -16,7 +18,12 @@
               Registo
             </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
-              <a href="#" class="dropdown-item">Cliente</a>
+                <router-link
+                  class="dropdown-item"
+                  :to="{ name: 'register-client' }"
+                >
+                  Cliente
+                </router-link>
               <a href="#" class="dropdown-item">Prestador de Serviços</a>
             </div>
           </li>
@@ -25,8 +32,18 @@
               Login
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
-              <a href="#" class="dropdown-item">Cliente</a>
-              <a href="#" class="dropdown-item">Prestador de Serviços</a>
+              <router-link
+                class="dropdown-item"
+                :to="{ name: 'login-client' }"
+              >
+                Cliente
+              </router-link>
+              <router-link
+                class="dropdown-item"
+                :to="{ name: 'login-provider' }"
+              >
+                Prestador de Serviços
+              </router-link>
             </div>
           </li>
         </ul>
