@@ -24,7 +24,12 @@
                 >
                   Cliente
                 </router-link>
-              <a href="#" class="dropdown-item">Prestador de Serviços</a>
+                <router-link
+                  class="dropdown-item"
+                  :to="{ name: 'register-provider' }"
+                >
+                  Prestador de Serviços
+                </router-link>
             </div>
           </li>
           <li class="nav-item dropdown">

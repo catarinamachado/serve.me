@@ -38,10 +38,22 @@
                     <div class="card-body">
                         <p><strong>PRESTADOR DE SERVIÇOS</strong></p>
                         <div class="space-bottom-3">
-                            <button type="button" class="btn btn-green btn-block">Login</button>
+                            <router-link
+                                :to="{ name: 'login-provider' }"
+                                tag="button"
+                                class="btn btn-green btn-block"
+                            >
+                                Login
+                            </router-link>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-green btn-block">Registo</button>
+                            <router-link
+                                :to="{ name: 'register-provider' }"
+                                tag="button"
+                                class="btn btn-green btn-block"
+                            >
+                                Registo
+                            </router-link>
                         </div>
                     </div>
                 </div>
@@ -49,10 +61,22 @@
                     <div class="card-body">
                         <p><strong>CLIENTE</strong></p>
                         <div class="space-bottom-3">
-                            <button type="button" class="btn btn-green btn-block">Login</button>
+                            <router-link
+                                :to="{ name: 'login-client' }"
+                                tag="button"
+                                class="btn btn-green btn-block"
+                            >
+                                Login
+                            </router-link>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-green btn-block">Registo</button>
+                            <router-link
+                                :to="{ name: 'register-client' }"
+                                tag="button"
+                                class="btn btn-green btn-block"
+                            >
+                                Registo
+                            </router-link>
                         </div>
                     </div>
                 </div>

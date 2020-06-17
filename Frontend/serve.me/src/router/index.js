@@ -12,6 +12,18 @@ export default new Router({
     }
     ,
     {
+      name: "register-client",
+      path: "/register-client",
+      component: () => import("@/views/RegisterClient")
+    }
+    ,
+    {
+        name: "register-provider",
+        path: "/register-provider",
+        component: () => import("@/views/RegisterProvider")
+      }
+      ,
+    {
       name: "login-client",
       path: "/login-client",
       component: () => import("@/views/LoginClient")
