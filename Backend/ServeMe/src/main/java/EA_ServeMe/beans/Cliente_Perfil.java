@@ -3,6 +3,7 @@ package EA_ServeMe.beans;
 import EA_ServeMe.util.AuthResponse;
 import EA_ServeMe.util.Crypt;
 import EA_ServeMe.util.JwtUtil;
+import EA_ServeMe.util.Log;
 import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class Cliente_Perfil {
             bd_n = ClienteDAO.listClienteByQuery(query_n,"Nif");
             bd_t = ClienteDAO.listClienteByQuery(query_t,"NumTelemovel");
         } catch (PersistentException e) {
-            System.out.println("Impossível aceder à BD");
+            Log.e("[DB]", "Impossível aceder à BD");
         }
 
         if (bd_e == null || bd_n == null || bd_t == null ) {

@@ -5,6 +5,7 @@ import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.util.AuthRequest;
 import EA_ServeMe.util.AuthResponse;
 import EA_ServeMe.util.JwtUtil;
+import EA_ServeMe.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import utilizador.PrestadorDAO;
 @RequestMapping("/api/login")
 public class LoginController {
 
+    private static final String TAG = "[LOGIN]";
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
@@ -36,13 +38,13 @@ public class LoginController {
                     new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword()) // PROD: CHANGE TO 'password_auth'
             );
         } catch (Exception ex) {
-            System.out.println("[ERROR]: Cliente Not Logged");
-            throw new Exception("invalid username/password");
+            Log.e(TAG,"Invalid Email/Password");
+            throw new Exception("invalid Email/Password");
         }
 
         String token =  jwtUtil.generateToken(email,'C');
         AuthResponse ar = Cliente_Perfil.loginTokenCliente(email,token);
-        System.out.println("[SUCCESS]: Cliente Logged");
+        Log.i(TAG,"Cliente Logged");
         return ResponseEntity.ok().body(ar);
 
 
@@ -58,13 +60,13 @@ public class LoginController {
                     new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword()) // PROD: CHANGE TO 'password_auth'
             );
         } catch (Exception ex) {
-            System.out.println("[ERROR]: Prestador Not Logged");
+            Log.e(TAG,"Invalid Email/Password");
             throw new Exception("invalid username/password");
         }
 
         String token =  jwtUtil.generateToken(email,'P');
         AuthResponse ar = Prestador_Perfil.loginTokenPrestador(email,token);
-        System.out.println("[SUCCESS]: Prestador Logged");
+        Log.i(TAG,"Cliente Logged");
         return ResponseEntity.ok().body(ar);
     }
 }

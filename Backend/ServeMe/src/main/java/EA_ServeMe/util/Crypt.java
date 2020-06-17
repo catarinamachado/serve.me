@@ -97,5 +97,11 @@ public class Crypt {
             System.out.println("DEU BEm " + deuBEm);
             System.out.println("DEU BEm 2 " + deuBEm2);
             System.out.println("PW DA FRANCISCA DEU BEM " + deuBemAPWdaFrancisca);
+
+
+            Log.d("DEBUG:", "log");
+            Log.e("ERROR:", "log");
+            Log.i("INFO:","log");
+            Log.w("WARNING:" , "log");
     }
 }

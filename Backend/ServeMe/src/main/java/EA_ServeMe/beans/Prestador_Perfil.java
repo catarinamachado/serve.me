@@ -2,6 +2,7 @@ package EA_ServeMe.beans;
 
 import EA_ServeMe.util.AuthResponse;
 import EA_ServeMe.util.Crypt;
+import EA_ServeMe.util.Log;
 import net.bytebuddy.asm.Advice;
 import org.json.JSONObject;
 import org.orm.PersistentException;
@@ -55,7 +56,7 @@ public class Prestador_Perfil {
             bd_n = PrestadorDAO.listPrestadorByQuery(query_n,"Nif");
             bd_t = PrestadorDAO.listPrestadorByQuery(query_t,"NumTelemovel");
         } catch (PersistentException e) {
-            System.out.println("Impossível aceder à BD");
+            Log.e("[BD]","Impossível aceder à BD" );
         }
 
 
