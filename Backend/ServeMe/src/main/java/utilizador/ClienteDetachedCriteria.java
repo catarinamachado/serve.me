@@ -8,7 +8,7 @@
  */
 
 /**
- * Licensee: Tiago Fontes(Universidade do Minho)
+ * Licensee: João Costa(Universidade do Minho)
  * License Type: Academic
  */
 package utilizador;
@@ -24,6 +24,9 @@ public class ClienteDetachedCriteria extends AbstractORMDetachedCriteria {
 	public final StringExpression email;
 	public final StringExpression password;
 	public final LongExpression numTelemovel;
+	public final StringExpression distrito;
+	public final StringExpression concelho;
+	public final StringExpression freguesia;
 	public final StringExpression morada;
 	public final DoubleExpression classificacao;
 	public final LongExpression nif;
@@ -38,6 +41,9 @@ public class ClienteDetachedCriteria extends AbstractORMDetachedCriteria {
 		email = new StringExpression("email", this.getDetachedCriteria());
 		password = new StringExpression("password", this.getDetachedCriteria());
 		numTelemovel = new LongExpression("numTelemovel", this.getDetachedCriteria());
+		distrito = new StringExpression("distrito", this.getDetachedCriteria());
+		concelho = new StringExpression("concelho", this.getDetachedCriteria());
+		freguesia = new StringExpression("freguesia", this.getDetachedCriteria());
 		morada = new StringExpression("morada", this.getDetachedCriteria());
 		classificacao = new DoubleExpression("classificacao", this.getDetachedCriteria());
 		nif = new LongExpression("nif", this.getDetachedCriteria());
@@ -53,6 +59,9 @@ public class ClienteDetachedCriteria extends AbstractORMDetachedCriteria {
 		email = new StringExpression("email", this.getDetachedCriteria());
 		password = new StringExpression("password", this.getDetachedCriteria());
 		numTelemovel = new LongExpression("numTelemovel", this.getDetachedCriteria());
+		distrito = new StringExpression("distrito", this.getDetachedCriteria());
+		concelho = new StringExpression("concelho", this.getDetachedCriteria());
+		freguesia = new StringExpression("freguesia", this.getDetachedCriteria());
 		morada = new StringExpression("morada", this.getDetachedCriteria());
 		classificacao = new DoubleExpression("classificacao", this.getDetachedCriteria());
 		nif = new LongExpression("nif", this.getDetachedCriteria());
@@ -61,8 +70,8 @@ public class ClienteDetachedCriteria extends AbstractORMDetachedCriteria {
 		avaliacoes = new CollectionExpression("ORM_Avaliacoes", this.getDetachedCriteria());
 	}
 	
-	public utilizador.AvaliacaoDetachedCriteria createAvaliacoesCriteria() {
-		return new utilizador.AvaliacaoDetachedCriteria(createCriteria("ORM_Avaliacoes"));
+	public utilizador.Avaliacao_ClienteDetachedCriteria createAvaliacoesCriteria() {
+		return new utilizador.Avaliacao_ClienteDetachedCriteria(createCriteria("ORM_Avaliacoes"));
 	}
 	
 	public Cliente uniqueCliente(PersistentSession session) {

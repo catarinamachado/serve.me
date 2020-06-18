@@ -8,7 +8,7 @@
  */
 
 /**
- * Licensee: Tiago Fontes(Universidade do Minho)
+ * Licensee: João Costa(Universidade do Minho)
  * License Type: Academic
  */
 package utilizador;
@@ -24,6 +24,9 @@ public class ClienteCriteria extends AbstractORMCriteria {
 	public final StringExpression email;
 	public final StringExpression password;
 	public final LongExpression numTelemovel;
+	public final StringExpression distrito;
+	public final StringExpression concelho;
+	public final StringExpression freguesia;
 	public final StringExpression morada;
 	public final DoubleExpression classificacao;
 	public final LongExpression nif;
@@ -38,6 +41,9 @@ public class ClienteCriteria extends AbstractORMCriteria {
 		email = new StringExpression("email", this);
 		password = new StringExpression("password", this);
 		numTelemovel = new LongExpression("numTelemovel", this);
+		distrito = new StringExpression("distrito", this);
+		concelho = new StringExpression("concelho", this);
+		freguesia = new StringExpression("freguesia", this);
 		morada = new StringExpression("morada", this);
 		classificacao = new DoubleExpression("classificacao", this);
 		nif = new LongExpression("nif", this);
@@ -54,8 +60,8 @@ public class ClienteCriteria extends AbstractORMCriteria {
 		this(utilizador.ServemePersistentManager.instance().getSession());
 	}
 	
-	public utilizador.AvaliacaoCriteria createAvaliacoesCriteria() {
-		return new utilizador.AvaliacaoCriteria(createCriteria("ORM_Avaliacoes"));
+	public utilizador.Avaliacao_ClienteCriteria createAvaliacoesCriteria() {
+		return new utilizador.Avaliacao_ClienteCriteria(createCriteria("ORM_Avaliacoes"));
 	}
 	
 	public Cliente uniqueCliente() {

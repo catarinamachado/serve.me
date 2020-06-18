@@ -22,7 +22,8 @@ License Type: Academic
 		<mapping resource="ormmapping/servico/Pedido.hbm.xml" />
 		<mapping resource="ormmapping/servico/Proposta.hbm.xml" />
 		<mapping resource="ormmapping/servico/Servico.hbm.xml" />
-		<mapping resource="ormmapping/utilizador/Avaliacao.hbm.xml" />
+		<mapping resource="ormmapping/utilizador/Avaliacao_Cliente.hbm.xml" />
+		<mapping resource="ormmapping/utilizador/Avaliacao_Prestador.hbm.xml" />
 		<mapping resource="ormmapping/utilizador/Cliente.hbm.xml" />
 		<mapping resource="ormmapping/utilizador/Prestador.hbm.xml" />
 	</session-factory>

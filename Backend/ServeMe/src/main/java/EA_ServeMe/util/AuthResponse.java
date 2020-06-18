@@ -17,6 +17,11 @@ public class AuthResponse implements Serializable {
         this.nome = nome;
     }
 
+    public AuthResponse() {
+        nome = "";
+        token="";
+    }
+
     public String getToken() {
         return token;
     }
@@ -31,5 +36,11 @@ public class AuthResponse implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public AuthResponse error(String err){
+        this.nome = "error";
+        this.token = err;
+        return this;
     }
 }
