@@ -40,7 +40,7 @@ public class RegisterController {
             Log.e(TAG,"Missing Values to Insert Client");
             return ResponseEntity.unprocessableEntity().body(new AuthResponse().error("Missing Values"));
         }
-
+        String password = c.getPassword();
         List<String >res = Cliente_Perfil.registerCliente(c);
 
 
@@ -50,14 +50,17 @@ public class RegisterController {
         if(ok == 1 ) {
             String email = c.getEmail();
             String email_auth = 'C' + email;
-            //String password = Cliente_Perfil.decodePassword(c.getPassword()); // PROD: ADD THIS
+            //String password_auth = Cliente_Perfil.decodePassword(password); // PROD: ADD THIS
             try {
                 authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(email_auth, c.getPassword()) // PROD: CHANGE TO 'password'
+                        new UsernamePasswordAuthenticationToken(email_auth, password) // PROD: CHANGE TO 'password_auth'
                 );
 
             } catch (Exception e) {
+                ErrorResponse er = new ErrorResponse();
+                er.setLocalError("Registo Cliente");
                 Log.e(TAG,"Error Logging in");
+                return ResponseEntity.badRequest().body(er);
             }
             String token =  jwtUtil.generateToken(email,'C');
             AuthResponse ar = Cliente_Perfil.loginTokenCliente(email,token);
@@ -91,6 +94,7 @@ public class RegisterController {
         }
 
         List<String> res;
+        String password = p.getPassword();
         res= Prestador_Perfil.registerPrestador(p);
         int ok = (res.size() > 1) ? 0 : 1;
         String d1 = "-Email-> " + p.getEmail() + "\n-Pass-> " + p.getPassword(); Log.d(TAG,d1);  //PROD: DELETE THIS
@@ -98,14 +102,17 @@ public class RegisterController {
         if(ok == 1 ) {
             String email = p.getEmail();
             String email_auth = 'C' + email;
-            //String password = Prestador_Perfil.decodePassword(p.getPassword()); // PROD: ADD THIS
+            //String password_auth = Prestador_Perfil.decodePassword(password); // PROD: ADD THIS
             try {
                 authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(email_auth, p.getPassword()) // PROD: CHANGE TO 'password'
+                        new UsernamePasswordAuthenticationToken(email_auth, password) // PROD: CHANGE TO 'password'
                 );
 
             } catch (Exception e) {
-
+                ErrorResponse er = new ErrorResponse();
+                er.setLocalError("Registo Prestador");
+                Log.e(TAG,"Error Logging in");
+                return ResponseEntity.badRequest().body(er);
             }
             String token =  jwtUtil.generateToken(email,'P');
             AuthResponse ar = Prestador_Perfil.loginTokenPrestador(email,token);

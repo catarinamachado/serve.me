@@ -95,13 +95,15 @@ public class Cliente_Perfil {
         c.setPassword(new_Password);
 
         /* PROD : ADD THIS
+
+
         try {
             ClienteDAO.save(c);
-            Log.i(TAG,"Cliente Saved Succesfully")
+            Log.i(TAG,"Cliente Saved Succesfully");
             return success;
         } catch (PersistentException e) {
             e.printStackTrace();
-            Log.e(TAG,"Error Saving Cliente")
+            Log.e(TAG,"Error Saving Cliente");
         }
 
         //error.add("BD");
