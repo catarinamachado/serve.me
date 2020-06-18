@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <vue-headful title="Serve.Me"/>
     <TheNavbar/>
     <router-view></router-view>
     <TheFooter/>
