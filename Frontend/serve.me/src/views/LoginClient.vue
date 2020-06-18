@@ -1,7 +1,7 @@
 <template>
-  <div class="login-client">
+  <div class="login-client content">
     <div class="container">
-      <div class="row space-top-15 space-bottom-17">
+      <div class="row space-top-15 space-bottom-10">
         <div class="col-md-6 offset-md-3 col-xs-12">
           <h3 class="text-left space-bottom-6">Login como Cliente</h3>
           <ul v-if="errors" class="error-messages">
@@ -38,6 +38,9 @@
 
 <script>
 export default {
-  name: "login-client"
+  name: "login-client",
+  created() {
+    window.scrollTo(0, 0);
+  }
 };
 </script>

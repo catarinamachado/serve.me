@@ -117,3 +117,14 @@
   background-color: var(--my-darker-yellow) !important;
   border-color: var(--my-darker-yellow) !important;
 }
+
+/* FIXED FOOTER */
+#app {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+}

@@ -1,5 +1,5 @@
 <template>
-  <div class="register-provider">
+  <div class="register-provider content">
     <div class="container">
       <div class="row space-top-8 space-bottom-6">
         <div class="col-md-6 offset-md-3 col-xs-12">
@@ -104,7 +104,6 @@
 export default {
   name: "register-provider",
   created() {
-    //Scrolls to top when view is displayed
     window.scrollTo(0, 0);
   }
 };

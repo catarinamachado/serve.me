@@ -1,5 +1,5 @@
 <template>
-  <div class="register-client">
+  <div class="register-client content">
     <div class="container">
       <div class="row space-top-8 space-bottom-6">
         <div class="col-md-6 offset-md-3 col-xs-12">
