@@ -14,25 +14,25 @@ export default new Router({
     {
       name: "register-client",
       path: "/register-client",
-      component: () => import("@/views/RegisterClient")
+      component: () => import("@/views/Client/Register")
     }
     ,
     {
         name: "register-provider",
         path: "/register-provider",
-        component: () => import("@/views/RegisterProvider")
+        component: () => import("@/views/Provider/Register")
       }
       ,
     {
       name: "login-client",
       path: "/login-client",
-      component: () => import("@/views/LoginClient")
+      component: () => import("@/views/Client/Login")
     }
     ,
     {
       name: "login-provider",
       path: "/login-provider",
-      component: () => import("@/views/LoginProvider")
+      component: () => import("@/views/Provider/Login")
     }
   ]
 });
