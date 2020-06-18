@@ -37,11 +37,13 @@ public class RegisterController {
         try {
             c = Cliente_Perfil.parseUtilizadorJSON(info);
         } catch (Exception e) {
-            Log.e(TAG,"Missing Values to insert Client");
+            Log.e(TAG,"Missing Values to Insert Client");
             return ResponseEntity.unprocessableEntity().body(new AuthResponse().error("Missing Values"));
         }
 
         List<String >res = Cliente_Perfil.registerCliente(c);
+
+
         int ok = (res.size()>1) ? 0 : 1;
         String d1 = "-Email-> " + c.getEmail() + " -Pass-> " + c.getPassword(); Log.d(TAG,d1); // PROD: DELETE THIS
         ok = 0; // DELETE THIS
@@ -55,7 +57,7 @@ public class RegisterController {
                 );
 
             } catch (Exception e) {
-
+                Log.e(TAG,"Error Logging in");
             }
             String token =  jwtUtil.generateToken(email,'C');
             AuthResponse ar = Cliente_Perfil.loginTokenCliente(email,token);
@@ -72,7 +74,7 @@ public class RegisterController {
                 er.addMsg(s);
                 msg+= s + " ";
             }
-            Log.e(TAG,"Error:" + msg);
+            Log.e(TAG,"Error: " + msg);
             return ResponseEntity.badRequest().body(er);
         }
 

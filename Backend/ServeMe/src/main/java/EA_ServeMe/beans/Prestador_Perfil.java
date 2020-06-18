@@ -17,8 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Prestador_Perfil {
-    private static final String SECRETKEY =  "servemencriptkey";
 
+    private static final String SECRETKEY =  "servemencriptkey";
+    private static final String TAG =  "[PRESTADORPERFIL]";
     @Bean
     public static AuthResponse loginTokenPrestador(String email, String toke){
         String token =  toke;
@@ -87,11 +88,11 @@ public class Prestador_Perfil {
         /* PROD : ADD THIS
         try {
             PrestadorDAO.save(p);
-            System.out.println("[SUCCESS]: Prestador Added");
+            Log.i(TAG,"Prestador Saved Succesfully")
             return sucess;
         } catch (PersistentException e) {
             e.printStackTrace();
-            System.out.println("[ERROR]: Prestador Not Saved");
+            Log.e(TAG,"Error Saving Prestador")
         }
          */
         //error.add("BD");
@@ -110,23 +111,33 @@ public class Prestador_Perfil {
             String password = "";
             password = obj.getString("password");
             long numT = 0;
-            // numT = obj.getLong("numT"); // PROD : ADD THIS
+            String distrito = "";
+            String concelho = "";
+            String freguesia = "";
             String morada = "";
-            //morada =  obj.getString("morada"); // PROD : ADD THIS
             long nif = 0;
-            //nif =  obj.getLong("nif"); // PROD : ADD THIS
-            return buildPrestador(nome,email,password,numT,morada,nif);
+            /* PROD : ADD THIS
+            numT = obj.getLong("telemovel");
+            distrito = obj.getString("distrito");
+            concelho = obj.getString("concelho");
+            freguesia = obj.getString("freguesia");
+            morada =  obj.getString("morada");
+            nif =  obj.getLong("nif");
+             */
+            return buildPrestador(nome,email,password,numT,distrito,concelho,freguesia,morada,nif);
         }
         catch (Exception e){
+            Log.e(TAG,"Missing Fields on JSON");
             throw new Exception("Missing Fields");
 
         }
     }
 
-    private static Prestador buildPrestador(String nome, String email, String password, long numT , String morada, long nif){
+    private static Prestador buildPrestador(String nome, String email, String password, long numT , String distrito, String concelho, String freguesia ,String morada, long nif){
         Prestador p = new Prestador();
         p.setNome(nome);p.setEmail(email);p.setPassword(password);p.setNumTelemovel(numT);p.setClassificacao(5.0);
-        p.setMorada(morada);p.setNif(nif);p.setNumServicosCancelados(0);p.setNumServicosRealizados(0);
+        p.setDistrito(distrito);p.setConcelho(concelho);p.setFreguesia(freguesia);p.setMorada(morada);
+        p.setNif(nif);p.setNumServicosCancelados(0);p.setNumServicosRealizados(0);
         return p;
     }
 

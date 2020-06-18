@@ -2,10 +2,7 @@ package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Prestador_Perfil;
-import EA_ServeMe.util.AuthRequest;
-import EA_ServeMe.util.AuthResponse;
-import EA_ServeMe.util.JwtUtil;
-import EA_ServeMe.util.Log;
+import EA_ServeMe.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +25,7 @@ public class LoginController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/cliente")
-    public ResponseEntity generateTokenCliente(@RequestBody AuthRequest authRequest) throws Exception {
+    public ResponseEntity generateTokenCliente(@RequestBody AuthRequest authRequest) {
         String email = authRequest.getEmail();
         String email_auth = 'C'+email;
         //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword()); // PROD: ADD THIS
@@ -39,7 +36,10 @@ public class LoginController {
             );
         } catch (Exception ex) {
             Log.e(TAG,"Invalid Email/Password");
-            throw new Exception("invalid Email/Password");
+            ErrorResponse er = new ErrorResponse();
+            er.setLocalError("Login Cliente");
+            return ResponseEntity.badRequest().body(er);
+
         }
 
         String token =  jwtUtil.generateToken(email,'C');
@@ -51,7 +51,7 @@ public class LoginController {
     }
 
     @PostMapping("/prestador")
-    public ResponseEntity generateTokenPrestador(@RequestBody AuthRequest authRequest) throws Exception {
+    public ResponseEntity generateTokenPrestador(@RequestBody AuthRequest authRequest) {
         String email = authRequest.getEmail();
         String email_auth = 'P'+email;
         //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword()); // PROD: ADD THIS
@@ -61,12 +61,14 @@ public class LoginController {
             );
         } catch (Exception ex) {
             Log.e(TAG,"Invalid Email/Password");
-            throw new Exception("invalid username/password");
+            ErrorResponse er = new ErrorResponse();
+            er.setLocalError("Login Cliente");
+            return ResponseEntity.badRequest().body(er);
         }
 
         String token =  jwtUtil.generateToken(email,'P');
         AuthResponse ar = Prestador_Perfil.loginTokenPrestador(email,token);
-        Log.i(TAG,"Cliente Logged");
+        Log.i(TAG,"Prestador Logged");
         return ResponseEntity.ok().body(ar);
     }
 }

@@ -12,8 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import utilizador.Cliente;
 import utilizador.ClienteDAO;
-import utilizador.Prestador;
-import utilizador.PrestadorDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +19,7 @@ import java.util.List;
 public class Cliente_Perfil {
 
     private static final String SECRETKEY =  "servemencriptkey";
+    private static final String TAG =  "[CLIENTEPERFIL]";
 
     @Bean
     public static  AuthResponse loginTokenCliente(String email,String toke){
@@ -39,10 +38,11 @@ public class Cliente_Perfil {
         return null;
     }
 
-    private static Cliente buildCliente(String nome, String email, String password, long numT , String morada, long nif){
+    private static Cliente buildCliente(String nome, String email, String password, long numT , String distrito, String concelho, String freguesia ,String morada, long nif){
         Cliente c = new Cliente();
         c.setNome(nome);c.setEmail(email);c.setPassword(password);c.setNumTelemovel(numT);c.setClassificacao(5.0);
-        c.setMorada(morada);c.setNif(nif);c.setNumServicosCancelados(0);c.setNumServicosRealizados(0);
+        c.setDistrito(distrito); c.setConcelho(concelho);c.setFreguesia(freguesia);c.setMorada(morada);
+        c.setNif(nif);c.setNumServicosCancelados(0);c.setNumServicosRealizados(0);
         return c;
     }
 
@@ -97,11 +97,11 @@ public class Cliente_Perfil {
         /* PROD : ADD THIS
         try {
             ClienteDAO.save(c);
-            System.out.println("[SUCCESS]: Cliente Added");
+            Log.i(TAG,"Cliente Saved Succesfully")
             return success;
         } catch (PersistentException e) {
             e.printStackTrace();
-            System.out.println("[ERROR]: Cliente Not Saved");
+            Log.e(TAG,"Error Saving Cliente")
         }
 
         //error.add("BD");
@@ -120,12 +120,24 @@ public class Cliente_Perfil {
             email = obj.getString("email");
             String password = "";
             password = obj.getString("password");
-            long numT = 0;  numT = obj.getLong("telemovel");
-            String morada = ""; morada =  obj.getString("morada");
-            long nif = 0; nif =  obj.getLong("nif");
-            return buildCliente(nome,email,password,numT,morada,nif);
+            long numT = 0;
+            String distrito = "";
+            String concelho = "";
+            String freguesia = "";
+            String morada = "";
+            long nif = 0;
+            /* PROD: ADD THIS
+            numT = obj.getLong("telemovel");
+            distrito = obj.getString("distrito");
+            concelho = obj.getString("concelho");
+            freguesia = obj.getString("freguesia");
+            morada =  obj.getString("morada");
+            nif =  obj.getLong("nif");
+             */
+            return buildCliente(nome,email,password,numT,distrito,concelho,freguesia,morada,nif);
         }
         catch (Exception e){
+            Log.e(TAG,"Missing Fields on JSON");
             throw new Exception("Missing Fields");
 
         }
