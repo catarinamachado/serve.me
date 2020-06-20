@@ -129,7 +129,11 @@
   flex: 1;
 }
 
-/* NAVBAR */
-.dropdown-item:active {
+/* NAVBARS */
+.simple:active {
   background-color: var(--my-green) !important;
+}
+
+.client:active {
+  background-color: var(--my-blue) !important;
 }

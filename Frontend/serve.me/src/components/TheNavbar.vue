@@ -11,7 +11,8 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div id="navbarSupportedContent" class="collapse navbar-collapse">
+      <!-- SIMPLE NAVBAR -->
+      <div v-if="typeOf == 'simple'" id="navbarSupportedContent" class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -19,13 +20,13 @@
             </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
                 <router-link
-                  class="dropdown-item"
+                  class="dropdown-item simple"
                   :to="{ name: 'register-client' }"
                 >
                   Cliente
                 </router-link>
                 <router-link
-                  class="dropdown-item"
+                  class="dropdown-item simple"
                   :to="{ name: 'register-provider' }"
                 >
                   Prestador de Serviços
@@ -38,18 +39,73 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
               <router-link
-                class="dropdown-item"
+                class="dropdown-item simple"
                 :to="{ name: 'login-client' }"
               >
                 Cliente
               </router-link>
               <router-link
-                class="dropdown-item"
+                class="dropdown-item simple"
                 :to="{ name: 'login-provider' }"
               >
                 Prestador de Serviços
               </router-link>
             </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CLIENT NAVBAR -->
+      <div v-if="typeOf == 'client'" id="navbarSupportedContent" class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Os meus serviços
+            </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Agendados
+                </router-link>
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Publicados
+                </router-link>
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Histórico
+                </router-link>
+            </div>
+          </li>
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :to="{ name: 'home' }"
+            >
+              Inbox
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :to="{ name: 'home' }"
+            >
+              Publicar serviço
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :to="{ name: 'home' }"
+            >
+              {{name}}
+            </router-link>
           </li>
         </ul>
       </div>
@@ -110,13 +166,17 @@ nav .navbar-nav li a:hover {
 import $ from 'jquery'
 
 export default {
-    mounted() {
-        $(function () {
-            $(document).scroll(function () {
-                var $nav = $(".fixed-top");
-                $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
-            });
-        });
-    }
+  props: {
+    typeOf: String,
+    name: String
+  },
+  mounted() {
+    $(function () {
+      $(document).scroll(function () {
+        var $nav = $(".fixed-top");
+        $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
+      });
+    });
+  }
 };
 </script>
