@@ -30,6 +30,18 @@ export default new Router({
     }
     ,
     {
+      name: "my-profile",
+      path: "/my-profile",
+      component: () => import("@/views/Client/MyProfile")
+    }
+    ,
+    {
+      name: "edit-password",
+      path: "/edit-password",
+      component: () => import("@/views/Client/EditPassword")
+    }
+    ,
+    {
         name: "register-provider",
         path: "/register-provider",
         component: () => import("@/views/Provider/Register")
