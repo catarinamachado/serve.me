@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <vue-headful title="Serve.Me"/>
-    <TheNavbar typeOf="client" name="Maria"/>
+    <TheNavbar typeOf="client" name="Nome"/>
     <router-view></router-view>
     <TheFooter/>
   </div>

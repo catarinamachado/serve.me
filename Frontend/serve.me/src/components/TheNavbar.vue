@@ -94,7 +94,7 @@
           <li class="nav-item">
             <router-link
               class="nav-link"
-              :to="{ name: 'home' }"
+              :to="{ name: 'publish-service' }"
             >
               Publicar serviço
             </router-link>
