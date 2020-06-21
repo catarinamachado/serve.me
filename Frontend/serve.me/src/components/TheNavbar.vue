@@ -5,13 +5,14 @@
         routerLinkActive="active"
         :to="{ name: 'home' }"
       >
-        <img src="../assets/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
+        <img src="../assets/imgs/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
       </router-link>
       <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div id="navbarSupportedContent" class="collapse navbar-collapse">
+      <!-- SIMPLE NAVBAR -->
+      <div v-if="typeOf == 'simple'" id="navbarSupportedContent" class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -19,13 +20,13 @@
             </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
                 <router-link
-                  class="dropdown-item"
+                  class="dropdown-item simple"
                   :to="{ name: 'register-client' }"
                 >
                   Cliente
                 </router-link>
                 <router-link
-                  class="dropdown-item"
+                  class="dropdown-item simple"
                   :to="{ name: 'register-provider' }"
                 >
                   Prestador de Serviços
@@ -38,17 +39,84 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
               <router-link
-                class="dropdown-item"
+                class="dropdown-item simple"
                 :to="{ name: 'login-client' }"
               >
                 Cliente
               </router-link>
               <router-link
-                class="dropdown-item"
+                class="dropdown-item simple"
                 :to="{ name: 'login-provider' }"
               >
                 Prestador de Serviços
               </router-link>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CLIENT NAVBAR -->
+      <div v-if="typeOf == 'client'" id="navbarSupportedContent" class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Os meus serviços
+            </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Agendados
+                </router-link>
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Publicados
+                </router-link>
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Histórico
+                </router-link>
+            </div>
+          </li>
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :to="{ name: 'home' }"
+            >
+              Inbox
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :to="{ name: 'publish-service' }"
+            >
+              Publicar serviço
+            </router-link>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img src="../assets/imgs/client/avatar_azul.png" width="20" alt="SERVE.ME" class="d-inline-block mr-1">
+              {{name}}
+            </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Perfil
+                </router-link>
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Terminar sessão
+                </router-link>
             </div>
           </li>
         </ul>
@@ -110,13 +178,17 @@ nav .navbar-nav li a:hover {
 import $ from 'jquery'
 
 export default {
-    mounted() {
-        $(function () {
-            $(document).scroll(function () {
-                var $nav = $(".fixed-top");
-                $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
-            });
-        });
-    }
+  props: {
+    typeOf: String,
+    name: String
+  },
+  mounted() {
+    $(function () {
+      $(document).scroll(function () {
+        var $nav = $(".fixed-top");
+        $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
+      });
+    });
+  }
 };
 </script>

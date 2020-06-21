@@ -18,15 +18,21 @@ export default new Router({
     }
     ,
     {
-        name: "register-provider",
-        path: "/register-provider",
-        component: () => import("@/views/Provider/Register")
-      }
-      ,
-    {
       name: "login-client",
       path: "/login-client",
       component: () => import("@/views/Client/Login")
+    }
+    ,
+    {
+      name: "publish-service",
+      path: "/publish-service",
+      component: () => import("@/views/Client/PublishService")
+    }
+    ,
+    {
+        name: "register-provider",
+        path: "/register-provider",
+        component: () => import("@/views/Provider/Register")
     }
     ,
     {
