@@ -5,7 +5,7 @@
         routerLinkActive="active"
         :to="{ name: 'home' }"
       >
-        <img src="../assets/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
+        <img src="../assets/imgs/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
       </router-link>
       <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler">
         <span class="navbar-toggler-icon"></span>
@@ -104,6 +104,7 @@
               class="nav-link"
               :to="{ name: 'home' }"
             >
+              <img src="../assets/imgs/client/avatar_azul.png" width="20" alt="SERVE.ME" class="d-inline-block mr-1">
               {{name}}
             </router-link>
           </li>
