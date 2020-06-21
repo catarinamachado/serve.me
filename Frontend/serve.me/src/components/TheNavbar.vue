@@ -99,14 +99,25 @@
               Publicar serviço
             </router-link>
           </li>
-          <li class="nav-item">
-            <router-link
-              class="nav-link"
-              :to="{ name: 'home' }"
-            >
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img src="../assets/imgs/client/avatar_azul.png" width="20" alt="SERVE.ME" class="d-inline-block mr-1">
               {{name}}
-            </router-link>
+            </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Perfil
+                </router-link>
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'home' }"
+                >
+                  Terminar sessão
+                </router-link>
+            </div>
           </li>
         </ul>
       </div>
