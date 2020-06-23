@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import utilizador.Cliente;
 import utilizador.ClienteDAO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,11 @@ public class Cliente_Perfil {
 
     private static final String SECRETKEY =  "servemencriptkey";
     private static final String TAG =  "[CLIENTEPERFIL]";
+
+    @Autowired
+    static JwtUtil jwtUtil;
+
+
 
     @Bean
     public static  AuthResponse loginTokenCliente(String email,String toke){
@@ -144,6 +150,24 @@ public class Cliente_Perfil {
 
         }
     }
+
+    public static String parseEmailJSON(String body) throws Exception{
+
+        JSONObject obj = new JSONObject(body);
+        try{
+            String email = "";
+            email = obj.getString("email");
+            return email;
+        }
+        catch (Exception e){
+            Log.e(TAG,"Missing Fields on JSON");
+        }
+        return null;
+
+    }
+
+
+
 
     public static String decodePassword(String password) {
         String encodedBase64Key = Crypt.encodeKey(SECRETKEY);
