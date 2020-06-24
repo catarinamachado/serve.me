@@ -13,6 +13,8 @@
  */
 package utilizador;
 
+import EA_ServeMe.util.Log;
+import org.hibernate.Session;
 import org.orm.*;
 import org.hibernate.Query;
 import org.hibernate.LockMode;
@@ -353,5 +355,45 @@ public class ClienteDAO {
 	
 	public static Cliente[] listClienteByCriteria(ClienteCriteria clienteCriteria) {
 		return clienteCriteria.listCliente();
+	}
+
+	public static int updateClienteProf(String email, String nome, String nrTelm, String morada, String freg, String conc, String distrito){
+		try{
+			PersistentSession s = utilizador.ServemePersistentManager.instance().getSession();
+			String q = "Update Cliente Set " + "Nome = '" + nome + "', " + "Morada = '" + morada + "', "+ " NumTelemovel = ' " + nrTelm + "'," + "Freguesia = '" + freg + "', " + "Concelho = '" + conc + "'," + "Distrito = '" + distrito + "' where " + "email = '" + email + "'";
+			Query query = s.createQuery(q);
+			int r = query.executeUpdate();
+			if(r == 1){
+				Log.i("[Cliente PROFILE]","Profile successfully updated");
+				return 1;
+			}
+			else{
+				Log.e("[Cliente PROFILE]","Profile update went wrong!");
+				return 0;
+			}
+		} catch (PersistentException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	public static int updateClientePW(String email, String new_password){
+		try{
+			PersistentSession s = utilizador.ServemePersistentManager.instance().getSession();
+			String q = "Update Cliente Set " + "Password = '" + new_password + "' where " + "email = '" + email + "'";
+			Query query = s.createQuery(q);
+			int r = query.executeUpdate();
+			if(r == 1){
+				Log.i("[Cliente PROFILE]","Password successfully changed");
+				return 1;
+			}
+			else{
+				Log.e("[Cliente PROFILE]","Password update went wrong!");
+				return 0;
+			}
+		} catch (PersistentException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }

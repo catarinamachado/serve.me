@@ -7,15 +7,25 @@ public class ProfileResponse implements Serializable {
     String nome;
     String email;
     long nrTelm;
+    String morada;
     String Freguesia;
     String Concelho;
     String Distrito;
 
 
-    public ProfileResponse(String nome, String email, long nrTelm, String freguesia,String concelho, String distrito) {
+    public String getMorada() {
+        return morada;
+    }
+
+    public void setMorada(String morada) {
+        this.morada = morada;
+    }
+
+    public ProfileResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito) {
         this.nome = nome;
         this.email = email;
         this.nrTelm = nrTelm;
+        this.morada=morada;
         Freguesia = freguesia;
         Distrito = distrito;
         Concelho = concelho;

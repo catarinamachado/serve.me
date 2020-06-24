@@ -38,20 +38,19 @@ public class ProfileController {
 
         Log.i(TAG,"Profile Check Try");
 
+        //Parsing head of request in order to determine who is requesting
         String authorizationHeader = request.getHeader("Authorization");
-
         String token = null;
         char tipo=' ';
         String email = null;
-
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
             tipo = token.charAt(0);
             email = jwtUtil.extractEmail(token);
         }
 
+        //identify User -> Client or Provider
         String q = "Email = '" + email + "'";
-
         if(tipo != ' '){
             if(tipo == 'C'){
                 Cliente[] clientes;
@@ -59,7 +58,7 @@ public class ProfileController {
                     clientes = ClienteDAO.listClienteByQuery(q, "Email");
                     if (clientes.length > 0) {
                         Cliente c = (Cliente) clientes[0];
-                        ProfileResponse pr = new ProfileResponse(c.getNome(),c.getEmail(),c.getNumTelemovel(),c.getFreguesia(),c.getConcelho(),c.getDistrito());
+                        ProfileResponse pr = new ProfileResponse(c.getNome(),c.getEmail(),c.getNumTelemovel(),c.getMorada(),c.getFreguesia(),c.getConcelho(),c.getDistrito());
                         Log.i(TAG,"Cliente profile sent");
                         return ResponseEntity.ok().body(pr);
                     }
@@ -73,7 +72,7 @@ public class ProfileController {
                     prestadors = PrestadorDAO.listPrestadorByQuery(q, "Email");
                     if (prestadors.length > 0) {
                         Prestador p = (Prestador) prestadors[0];
-                        ProfileResponse pr = new ProfileResponse(p.getNome(),p.getEmail(),p.getNumTelemovel(),p.getFreguesia(),p.getConcelho(),p.getDistrito());
+                        ProfileResponse pr = new ProfileResponse(p.getNome(),p.getEmail(),p.getNumTelemovel(),p.getMorada(),p.getFreguesia(),p.getConcelho(),p.getDistrito());
                         Log.i(TAG,"Prestador profile sent");
                         return ResponseEntity.ok().body(pr);
                     }
@@ -87,11 +86,12 @@ public class ProfileController {
     }
 
 
-
     @PutMapping
     @RequestMapping("/updateprofile")
     public ResponseEntity updateprofile(HttpServletRequest request, @RequestBody String body){
 
+
+        System.out.println("Request bateu no sitio certo");
 
         //Identificar a pessoa em questão
         String authorizationHeader = request.getHeader("Authorization");
@@ -107,13 +107,24 @@ public class ProfileController {
         JSONObject jsonObject = new JSONObject(body);
         String name = jsonObject.getString("nome");
         String nrTelm = jsonObject.getString("nrTelm");
+        String morada = jsonObject.getString("morada");
         String freg = jsonObject.getString("freguesia");
         String conc = jsonObject.getString("concelho");
         String distrito = jsonObject.getString("distrito");
 
 
-        //TODO: executar o update
-
+        if(tipo != ' '){
+            if(tipo == 'C'){
+                int res = ClienteDAO.updateClienteProf(email,name,nrTelm,morada,freg,conc,distrito);
+                if(res == 1)
+                    return ResponseEntity.ok("Perfil alterado com sucesso!");
+            }
+            if(tipo == 'P'){
+                int res = PrestadorDAO.updatePrestadorProf(email,name,nrTelm,morada,freg,conc,distrito);
+                if(res == 1)
+                    return ResponseEntity.ok("Perfil alterado com sucesso!");
+            }
+        }
         return (ResponseEntity) ResponseEntity.badRequest();
     }
 

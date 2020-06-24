@@ -13,6 +13,7 @@
  */
 package utilizador;
 
+import EA_ServeMe.util.Log;
 import org.orm.*;
 import org.hibernate.Query;
 import org.hibernate.LockMode;
@@ -353,5 +354,45 @@ public class PrestadorDAO {
 	
 	public static Prestador[] listPrestadorByCriteria(PrestadorCriteria prestadorCriteria) {
 		return prestadorCriteria.listPrestador();
+	}
+
+	public static int updatePrestadorProf(String email, String nome, String nrTelm, String morada, String freg, String conc, String distrito){
+		try{
+			PersistentSession s = utilizador.ServemePersistentManager.instance().getSession();
+			String q = "Update Prestador Set " + "Nome = '" + nome + "', " + "Morada = '" + morada + "', "+ " NumTelemovel = ' " + nrTelm + "'," + "Freguesia = '" + freg + "', " + "Concelho = '" + conc + "'," + "Distrito = '" + distrito + "' where " + "email = '" + email + "'";
+			Query query = s.createQuery(q);
+			int r = query.executeUpdate();
+			if(r == 1){
+				Log.i("[Prestador PROFILE]","Profile successfully updated");
+				return 1;
+			}
+			else{
+				Log.e("[Prestador PROFILE]","Profile update went wrong!");
+				return 0;
+			}
+		} catch (PersistentException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	public static int updatePrestadorPW(String email, String new_password){
+		try{
+			PersistentSession s = utilizador.ServemePersistentManager.instance().getSession();
+			String q = "Update Prestador Set " + "Password = '" + new_password + "' where " + "email = '" + email + "'";
+			Query query = s.createQuery(q);
+			int r = query.executeUpdate();
+			if(r == 1){
+				Log.i("[Prestador PROFILE]","Password successfully changed");
+				return 1;
+			}
+			else{
+				Log.e("[Prestador PROFILE]","Password update went wrong!");
+				return 0;
+			}
+		} catch (PersistentException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }
