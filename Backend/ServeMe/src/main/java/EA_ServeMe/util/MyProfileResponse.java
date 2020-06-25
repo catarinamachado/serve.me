@@ -2,7 +2,7 @@ package EA_ServeMe.util;
 
 import java.io.Serializable;
 
-public class ProfileResponse implements Serializable {
+public class MyProfileResponse implements Serializable {
 
     String nome;
     String email;
@@ -21,7 +21,7 @@ public class ProfileResponse implements Serializable {
         this.morada = morada;
     }
 
-    public ProfileResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito) {
+    public MyProfileResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito) {
         this.nome = nome;
         this.email = email;
         this.nrTelm = nrTelm;

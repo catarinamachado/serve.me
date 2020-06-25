@@ -58,7 +58,7 @@ public class ProfileController {
                     clientes = ClienteDAO.listClienteByQuery(q, "Email");
                     if (clientes.length > 0) {
                         Cliente c = (Cliente) clientes[0];
-                        ProfileResponse pr = new ProfileResponse(c.getNome(),c.getEmail(),c.getNumTelemovel(),c.getMorada(),c.getFreguesia(),c.getConcelho(),c.getDistrito());
+                        MyProfileResponse pr = new MyProfileResponse(c.getNome(),c.getEmail(),c.getNumTelemovel(),c.getMorada(),c.getFreguesia(),c.getConcelho(),c.getDistrito());
                         Log.i(TAG,"Cliente profile sent");
                         return ResponseEntity.ok().body(pr);
                     }
@@ -72,7 +72,7 @@ public class ProfileController {
                     prestadors = PrestadorDAO.listPrestadorByQuery(q, "Email");
                     if (prestadors.length > 0) {
                         Prestador p = (Prestador) prestadors[0];
-                        ProfileResponse pr = new ProfileResponse(p.getNome(),p.getEmail(),p.getNumTelemovel(),p.getMorada(),p.getFreguesia(),p.getConcelho(),p.getDistrito());
+                        MyProfileResponse pr = new MyProfileResponse(p.getNome(),p.getEmail(),p.getNumTelemovel(),p.getMorada(),p.getFreguesia(),p.getConcelho(),p.getDistrito());
                         Log.i(TAG,"Prestador profile sent");
                         return ResponseEntity.ok().body(pr);
                     }
@@ -81,7 +81,6 @@ public class ProfileController {
                 }
             }
         }
-
         return (ResponseEntity) ResponseEntity.notFound();
     }
 
@@ -89,9 +88,6 @@ public class ProfileController {
     @PutMapping
     @RequestMapping("/updateprofile")
     public ResponseEntity updateprofile(HttpServletRequest request, @RequestBody String body){
-
-
-        System.out.println("Request bateu no sitio certo");
 
         //Identificar a pessoa em questão
         String authorizationHeader = request.getHeader("Authorization");
@@ -116,13 +112,26 @@ public class ProfileController {
         if(tipo != ' '){
             if(tipo == 'C'){
                 int res = ClienteDAO.updateClienteProf(email,name,nrTelm,morada,freg,conc,distrito);
-                if(res == 1)
+                if(res == 1){
                     return ResponseEntity.ok("Perfil alterado com sucesso!");
+                }
+                else{
+                    ErrorResponse er = new ErrorResponse();
+                    er.setLocalError("Couldn't update your profile.");
+                    return ResponseEntity.badRequest().body(er);
+                }
+
             }
             if(tipo == 'P'){
                 int res = PrestadorDAO.updatePrestadorProf(email,name,nrTelm,morada,freg,conc,distrito);
-                if(res == 1)
+                if(res == 1){
                     return ResponseEntity.ok("Perfil alterado com sucesso!");
+                }
+                else{
+                    ErrorResponse er = new ErrorResponse();
+                    er.setLocalError("Couldn't update your profile.");
+                    return ResponseEntity.badRequest().body(er);
+                }
             }
         }
         return (ResponseEntity) ResponseEntity.badRequest();
@@ -132,7 +141,6 @@ public class ProfileController {
     @PutMapping
     @RequestMapping("/updatepw")
     public ResponseEntity updatepassword(HttpServletRequest request, @RequestBody String body){
-
 
         //Identificar a pessoa em questão
         String authorizationHeader = request.getHeader("Authorization");
@@ -147,12 +155,89 @@ public class ProfileController {
 
         JSONObject jsonObject = new JSONObject(body);
 
-        //TODO:verificar que password atual é esta
-        String pw_atual = jsonObject.getString("passoword_atual");
+        //verificar que password atual é esta e atualizar para a nova
+        String pw_atual = jsonObject.getString("pw_atual");
+        String pw_nova = jsonObject.getString("pw_nova");
 
-        //TODO: Tratar aqui de desincriptar as pw e verificar que são igual
-        String pw_nova = jsonObject.getString("passowrd_nova");
-        String pw_nova2 = jsonObject.getString("password_nova2");
+        //identify User -> Client or Provider
+        String q = "Email = '" + email + "'";
+        if(tipo != ' '){
+            if(tipo == 'C'){
+                Cliente[] clientes;
+                try {
+                    clientes = ClienteDAO.listClienteByQuery(q, "Email");
+                    if (clientes.length > 0) {
+                        Cliente c = (Cliente) clientes[0];
+                        String password_old = c.getPassword();
+                        //If current password not matches
+                        if(!password_old.equals(pw_atual)){
+                            Log.e(TAG,"Cliente current password doesn't match!");
+                            ErrorResponse er = new ErrorResponse();
+                            er.setLocalError("Current passoword doesn't match");
+                            return (ResponseEntity) ResponseEntity.badRequest().body(er);
+                        }
+                        else{
+                            Log.i(TAG,"Cliente current password matches");
+                            //If matches, lets update
+                            int res = ClienteDAO.updateClientePW(email,pw_nova);
+                            if(res == 1){
+                                Log.i(TAG,"Cliente password succssefully updated");
+                                return ResponseEntity.ok().body("Passoword update with success");
+                            }
+                            else{
+                                Log.e(TAG,"Cliente password update went wrong");
+                                ErrorResponse er = new ErrorResponse();
+                                er.setLocalError("Cliente password update went wrong");
+                                return (ResponseEntity) ResponseEntity.badRequest().body(er);
+                            }
+                        }
+                    }
+                } catch (PersistentException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(tipo == 'P'){
+                Prestador[] prestadors;
+                try {
+                    prestadors = PrestadorDAO.listPrestadorByQuery(q, "Email");
+                    if (prestadors.length > 0) {
+                        Prestador p = (Prestador) prestadors[0];
+                        String password_old = p.getPassword();
+                        //If current password doesnt match
+                        if(!password_old.equals(pw_atual)){
+                            Log.e(TAG,"Prestador current password doesn't match!");
+                            ErrorResponse er = new ErrorResponse();
+                            er.setLocalError("Current passoword doesn't match");
+                            return (ResponseEntity) ResponseEntity.badRequest().body(er);
+                        }
+                        //If matches, lets update
+                        else{
+                            Log.i(TAG,"Prestador current password matches");
+                            int res = PrestadorDAO.updatePrestadorPW(email,pw_nova);
+                            if(res == 1){
+                                Log.i(TAG,"Prestador password succssefully updated");
+                                return ResponseEntity.ok().body("Passoword update with success");
+                            }
+                            else{
+                                Log.e(TAG,"Prestador password update went wrong");
+                                ErrorResponse er = new ErrorResponse();
+                                er.setLocalError("Prestador password update went wrong");
+                                return (ResponseEntity) ResponseEntity.badRequest().body(er);
+                            }
+                        }
+                    }
+                } catch (PersistentException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return (ResponseEntity) ResponseEntity.badRequest();
+    }
+
+
+    @GetMapping
+    @RequestMapping("/clienteprof")
+    public ResponseEntity checkCProfileFromP(){
 
 
         return (ResponseEntity) ResponseEntity.badRequest();
