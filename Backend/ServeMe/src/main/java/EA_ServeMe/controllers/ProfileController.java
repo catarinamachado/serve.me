@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import utilizador.Cliente;
-import utilizador.ClienteDAO;
-import utilizador.Prestador;
+import servico.Servico;
+import servico.ServicoDAO;
+import utilizador.*;
 import org.springframework.web.bind.annotation.*;
-import utilizador.PrestadorDAO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -235,12 +234,68 @@ public class ProfileController {
     }
 
 
-    @GetMapping
+    @PutMapping
     @RequestMapping("/clienteprof")
-    public ResponseEntity checkCProfileFromP(){
+    public ResponseEntity checkCProfileFromP(HttpServletRequest request, @RequestBody String body) {
 
+        //Identificar a pessoa em questão
+        String authorizationHeader = request.getHeader("Authorization");
+        String token = null;
+        char tipo = ' ';
+        String email = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);
+            tipo = token.charAt(0);
+            email = jwtUtil.extractEmail(token);
+        }
 
-        return (ResponseEntity) ResponseEntity.badRequest();
+        JSONObject jsonObject = new JSONObject(body);
+
+        //Obter email do prestador que quer ver o perfil e do Cliente em causa
+        String email_client = jsonObject.getString("email_cli");
+
+        String q = "Email = '" + email_client + "'";
+
+        if (tipo == 'P') {
+            try {
+                Cliente[] cli = ClienteDAO.listClienteByQuery(q, "Email");
+                if (cli.length <= 0) {
+                    ErrorResponse er = new ErrorResponse();
+                    er.setLocalError("Cliente not found");
+                    Log.e(TAG,"Cliente profile not found");
+                    return ResponseEntity.badRequest().body(er);
+                } else {
+                    Cliente c = cli[0];
+                    int id = c.getID();
+                    String query = "ClienteID = ' " + id + "'";
+                    // PROD: ADD THIS
+                    // Servico[] serv = ServicoDAO.listServicoByQuery(query,"ID");
+                    //if(serv.length > 0 ) {
+                    //Bottom lines HERE
+                    // }
+                    //else{
+                        //Log.e(TAG,"Cant acess this profile from external ways");
+                        //ErrorResponse er = new ErrorResponse();
+                        //er.setLocalError("Cant acess this profile from external ways);
+                        //return ResponseEntity.badrequest().body(er);
+                    // }
+                    Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
+                    TheOtherProfileResponse cli_prof = new TheOtherProfileResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacao_clientes);
+                    Log.i(TAG,"Cliente profile sent with success");
+                    return ResponseEntity.ok().body(cli_prof);
+                }
+            } catch (PersistentException e) {
+                e.printStackTrace();
+            }
+            return (ResponseEntity) ResponseEntity.badRequest();
+        }
+        else{
+            Log.e(TAG,"Clients cant access each other profiles");
+            ErrorResponse er = new ErrorResponse();
+            er.setLocalError("Cliente cant check other client's profiles");
+            return ResponseEntity.badRequest().body(er);
+
+        }
     }
 
 }
