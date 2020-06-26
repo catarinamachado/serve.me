@@ -111,7 +111,7 @@ public class Crypt {
         Log.w("WARNING:" , n.toString());
 
 
-        System.out.println(Cliente_Services.toDate(""));
+        //System.out.println(Cliente_Services.toDate(""));
 
 
     }

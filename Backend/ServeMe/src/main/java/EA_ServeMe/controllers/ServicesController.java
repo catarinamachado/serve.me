@@ -2,9 +2,12 @@ package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Cliente_Services;
+import EA_ServeMe.beans.Prestador_Perfil;
+import EA_ServeMe.beans.Prestador_Services;
 import EA_ServeMe.util.ErrorResponse;
 import EA_ServeMe.util.JwtUtil;
 import EA_ServeMe.util.Log;
+import EA_ServeMe.util.RequestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,16 +19,30 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/client-services")
-public class ClientServicesController {
+@RequestMapping("/api/services")
+public class ServicesController {
 
-    private static final String TAG = "[CLIENTESERVICES]";
+    private static final String TAG = "[SERVICES]";
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("/add-request")
+    @GetMapping("/")
+    public ResponseEntity getRequests(){
+        List<RequestResponse> reqs = Prestador_Services.getRequests();
+        int ok = (reqs.size() == 0)? 0 : 1;
+        if(ok == 0){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(reqs);
+
+
+    }
+
+
+
+    @PostMapping("/add-request") // Para Clientes
     public ResponseEntity AddRequest(@RequestBody String request, @RequestHeader String Authorization) {
 
         /* extract Token and email (Verification is already done by filter)*/
@@ -49,6 +66,8 @@ public class ClientServicesController {
         }
 
     }
+
+
 
 
 }

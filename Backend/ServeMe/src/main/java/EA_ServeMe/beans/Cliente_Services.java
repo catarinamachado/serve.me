@@ -98,10 +98,10 @@ public class Cliente_Services {
             preco = obj.getDouble("preco");
 
             String s_dataInicio = obj.getString("dataInicio");
-            dataInicio = toDate(s_dataInicio);
+            dataInicio = DateUtils.toDate(s_dataInicio);
 
             String s_dataFim = obj.getString("dataFim");
-            dataFim = toDate(s_dataFim);
+            dataFim = DateUtils.toDate(s_dataFim);
 
             dur = obj.getDouble("duracao");
 
@@ -129,29 +129,6 @@ public class Cliente_Services {
             throw new Exception(err);
         }
         return buildPedido(c, cat, preco, dataInicio, dataFim, dur, desc);
-    }
-
-    public static Date toDate(String str) {
-//      DD/MM/YY-hh:mm to Date
-//        str = "27/06/2020-18:07";
-         String[] split = str.split("-");
-         String data = split[0];
-         String time = split[1];
-
-//      Take care of date
-        split = data.split("/");
-        int day = Integer.valueOf(split[0]);
-        int month = Integer.valueOf(split[1]);
-        int year = Integer.valueOf(split[2]);
-
-//      Take care of hour and minutes
-        split = time.split(":");
-        int hour = Integer.valueOf(split[0]);
-        int minute = Integer.valueOf(split[1]);
-
-//       Create the date
-        LocalDateTime ldt = LocalDateTime.of(year,month,day,hour,minute);
-        return DateUtils.asDate(ldt);
     }
 
     private static Pedido buildPedido(Cliente c, Categoria cat, double preco, Date dataInicio, Date dataFim, double dur, String desc) {
