@@ -6,8 +6,8 @@
           <h5 class="text-left space-bottom-5">Alterar password</h5>
             <form id="edit-password">
                <p>
-                    <label for="antiga-password">Antiga password</label>
-                    <input class="w-75" type="password" name="antiga-password" id="antiga-password">
+                    <label for="password-atual">Password atual</label>
+                    <input class="w-75" type="password" name="password-atual" id="password-atual">
                 </p>
                <p>
                     <label for="nova-password">Nova password</label>
