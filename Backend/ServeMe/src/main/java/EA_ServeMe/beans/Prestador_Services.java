@@ -19,7 +19,7 @@ public class Prestador_Services {
     public static List<RequestResponse> getRequests() {
         List<RequestResponse> res = new ArrayList<>();
         Date now = new Date();
-        String query = "Estado = 0 ";
+        String query = "Estado < 1 ";
         List<Pedido> pedidos = new ArrayList<>();
         try {
             pedidos = Arrays.asList(PedidoDAO.listPedidoByQuery(query,"HoraInicioDisp"));

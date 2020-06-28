@@ -27,18 +27,11 @@ public class Cliente_Services {
     public static List<String> addRequest(String request,String email) {
         List<String> resp = new ArrayList<>();
         resp.add("Error");
-        String q = "Email = '" + email + "'";
 
-        /* Ensure Cliente exists */
+        /* Get Cliente */
 
         Cliente c;
-        try {
-            c = (Cliente) ClienteDAO.listClienteByQuery(q, "Email")[0];
-        } catch (PersistentException e) {
-            resp.add("Cliente");
-            Log.e(TAG,"Problem Getting Client");
-            return resp;
-        }
+        c = Cliente_Perfil.getClientebyEmail(email);
 
         /* Process and Save 'Pedido' */
 
@@ -113,6 +106,7 @@ public class Cliente_Services {
             throw new Exception(err);
         }
 //          Verificacao de Datas e Categoria
+
         Date now = new Date();
         LocalDateTime inicio = DateUtils.asLocalDateTime(dataInicio);
         LocalDateTime fim = DateUtils.asLocalDateTime(dataFim);
@@ -186,7 +180,7 @@ public class Cliente_Services {
         int id = obj.getInt("id");
 
 
-        /* Ensure Cliente exists */
+        /* Get Cliente  */
 
         Cliente c;
         c = Cliente_Perfil.getClientebyEmail(email);
