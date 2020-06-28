@@ -1,26 +1,20 @@
 package EA_ServeMe.controllers;
 
 
-import EA_ServeMe.beans.Cliente_Perfil;
-import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.util.*;
 import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import servico.Servico;
-import servico.ServicoDAO;
+import servico.Proposta;
+import servico.PropostaDAO;
 import utilizador.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @RestController
@@ -256,6 +250,7 @@ public class ProfileController {
 
         String q = "Email = '" + email_client + "'";
 
+        //garantir que quem acede é Prestador
         if (tipo == 'P') {
             try {
                 Cliente[] cli = ClienteDAO.listClienteByQuery(q, "Email");
@@ -280,7 +275,7 @@ public class ProfileController {
                         //return ResponseEntity.badrequest().body(er);
                     // }
                     Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
-                    TheOtherProfileResponse cli_prof = new TheOtherProfileResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacao_clientes);
+                    ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacao_clientes);
                     Log.i(TAG,"Cliente profile sent with success");
                     return ResponseEntity.ok().body(cli_prof);
                 }
@@ -297,5 +292,80 @@ public class ProfileController {
 
         }
     }
+
+    @PutMapping
+    @RequestMapping("/prestadorprof")
+    public ResponseEntity checkPProfileFromC(HttpServletRequest request, @RequestBody String body) {
+
+        //Identificar a pessoa em questão
+        String authorizationHeader = request.getHeader("Authorization");
+        String token = null;
+        char tipo = ' ';
+        String email = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);
+            tipo = token.charAt(0);
+            email = jwtUtil.extractEmail(token);
+        }
+
+        JSONObject jsonObject = new JSONObject(body);
+
+        //Obter email do prestador que quer ver o perfil e do Cliente em causa
+        String email_prest = jsonObject.getString("email_pres");
+
+        String q = "Email = '" + email_prest + "'";
+
+        //garantir que tem acede é um cliente
+        if (tipo == 'C') {
+            try {
+                Prestador[] pres = PrestadorDAO.listPrestadorByQuery(q, "Email");
+                if (pres.length <= 0) {
+                    ErrorResponse er = new ErrorResponse();
+                    er.setLocalError("Prestador not found");
+                    Log.e(TAG,"Prestador profile not found");
+                    return ResponseEntity.badRequest().body(er);
+                } else {
+                    Prestador p = pres[0];
+                    int id = p.getID();
+                    String query = "PrestadorID = ' " + id + "'";
+                    // PROD: ADD THIS
+                    // Proposta[] props = PropostaDAO.listPropostaByQuery(query,"ID");
+                    //if(props.length > 0 ) {
+                        //boolean can = false;
+                        //for (Proposta pro : props){
+                            //if(pro.getPedido().getEstado() <= 0)
+                          //      can = true;
+                        //}
+                    //if(can){
+                    //Bottom lines HERE
+                    // }
+                    // }
+                    //else{
+                    //Log.e(TAG,"Cant acess this profile from external ways");
+                    //ErrorResponse er = new ErrorResponse();
+                    //er.setLocalError("Cant acess this profile from external ways);
+                    //return ResponseEntity.badrequest().body(er);
+                    // }
+                    Avaliacao_Prestador[] avaliacao_prest = Avaliacao_PrestadorDAO.listAvaliacao_PrestadorByQuery(query, "ID");
+                    PrestadorProfResponse pres_prof = new PrestadorProfResponse(p.getNome(), p.getEmail(), p.getNumTelemovel(), p.getMorada(), p.getFreguesia(), p.getConcelho(), p.getDistrito(),p.getClassificacao(),p.getNumServicosRealizados(),p.getNumServicosCancelados(), avaliacao_prest);
+                    Log.i(TAG,"Prestador profile sent with success");
+                    return ResponseEntity.ok().body(pres_prof);
+                }
+            } catch (PersistentException e) {
+                e.printStackTrace();
+            }
+            return (ResponseEntity) ResponseEntity.badRequest();
+        }
+        else{
+            Log.e(TAG,"Prestador cant access each other profiles");
+            ErrorResponse er = new ErrorResponse();
+            er.setLocalError("Prestador cant check other client's profiles");
+            return ResponseEntity.badRequest().body(er);
+
+        }
+    }
+
+
+
 
 }

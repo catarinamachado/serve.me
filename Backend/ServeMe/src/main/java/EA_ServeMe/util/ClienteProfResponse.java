@@ -5,7 +5,7 @@ import utilizador.Avaliacao_Cliente;
 import java.io.Serializable;
 import java.util.List;
 
-public class TheOtherProfileResponse implements Serializable {
+public class ClienteProfResponse implements Serializable {
 
     String nome;
     String email;
@@ -15,6 +15,10 @@ public class TheOtherProfileResponse implements Serializable {
     String concelho;
     String distrito;
     double classificacao;
+    int numServicosRealizados;
+    int numServicosCancelados;
+    Avaliacao_Cliente[] avaliacoes;
+
 
     public double getClassificacao() {
         return classificacao;
@@ -40,17 +44,15 @@ public class TheOtherProfileResponse implements Serializable {
         this.numServicosCancelados = numServicosCancelados;
     }
 
-    int numServicosRealizados;
-    int numServicosCancelados;
-    Avaliacao_Cliente[] avaliacoes;
 
 
 
 
-    public TheOtherProfileResponse() {
+
+    public ClienteProfResponse() {
     }
 
-    public TheOtherProfileResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito, double classificacao, int numServicosRealizados, int numServicosCancelados, Avaliacao_Cliente[] avaliacoes) {
+    public ClienteProfResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito, double classificacao, int numServicosRealizados, int numServicosCancelados, Avaliacao_Cliente[] avaliacoes) {
         this.nome = nome;
         this.email = email;
         this.nrTelm = nrTelm;
