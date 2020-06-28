@@ -8,7 +8,9 @@ import EA_ServeMe.util.ErrorResponse;
 import EA_ServeMe.util.JwtUtil;
 import EA_ServeMe.util.Log;
 import EA_ServeMe.util.RequestResponse;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.header.Header;
@@ -36,9 +38,28 @@ public class ServicesController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(reqs);
-
-
     }
+
+    @GetMapping("/my-requests") // Para Clientes
+    public ResponseEntity getMyRequests(@RequestHeader String Authorization){
+
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Cliente Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<RequestResponse> reqs = Cliente_Services.getRequests(email);
+        int ok = (reqs.size() == 0)? 0 : 1;
+        if(ok == 0){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(reqs);
+    }
+
+
+
+
+
 
 
 
@@ -47,7 +68,7 @@ public class ServicesController {
 
         /* extract Token and email (Verification is already done by filter)*/
         String token = Authorization.substring(7);
-        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Cliente AcCess Only");
+        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Cliente Access Only");
         String email = jwtUtil.extractEmail(token);
 
         List<String> res = Cliente_Services.addRequest(request,email);
@@ -67,7 +88,51 @@ public class ServicesController {
 
     }
 
+    @PostMapping("/edit-request")
+    public ResponseEntity editRequest(@RequestBody String request, @RequestHeader String Authorization){
 
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Cliente Access Only");
+        String email = jwtUtil.extractEmail(token);
 
+        List<String> res = Cliente_Services.editRequest(request,email);
+        int ok = (res.size()>1) ? 0 : 1;
+        if(ok == 1){
+            return ResponseEntity.ok("SUCCESS");
+        }
+        else {
+            ErrorResponse er = new ErrorResponse();
+            res.remove(0);
+            er.setLocalError("add-request");
+            for (String e: res) {
+                er.addMsg(e);
+            }
+            return ResponseEntity.badRequest().body(er);
+        }
+    }
 
+    @DeleteMapping("/delete-request")
+    public ResponseEntity removeRequest(@RequestBody String request, @RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Cliente Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<String> res = Cliente_Services.deleteRequest(request,email);
+        int ok = (res.size()>1) ? 0 : 1;
+        if(ok == 1){
+            return ResponseEntity.ok("SUCCESS");
+        }
+        else {
+            ErrorResponse er = new ErrorResponse();
+            res.remove(0);
+            er.setLocalError("add-request");
+            for (String e: res) {
+                er.addMsg(e);
+            }
+            return ResponseEntity.badRequest().body(er);
+        }
+
+    }
 }

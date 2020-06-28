@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import utilizador.Cliente;
 import utilizador.ClienteDAO;
 
+import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,6 +144,17 @@ public class Cliente_Perfil {
             throw new Exception("Missing Fields");
 
         }
+    }
+
+    public static Cliente getClientebyEmail(String email){
+        String q = "Email = '" + email + "'";
+        try {
+            Cliente c = ClienteDAO.listClienteByQuery(q,"Email")[0];
+            return c;
+        }catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static String decodePassword(String password) {

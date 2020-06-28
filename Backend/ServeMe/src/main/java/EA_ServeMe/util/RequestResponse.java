@@ -3,17 +3,42 @@ package EA_ServeMe.util;
 import servico.Pedido;
 
 public class RequestResponse {
-     private String cliente_nome;
-     private String cliente_email;
+    private int ID;
+    private String cliente_nome;
+    private String cliente_email;
     private String categoria;
     private double preco;
     private String data;
-     private String horaInicioDisp;
+    private String horaInicioDisp;
     private String horaFimDisp;
     private double duracao;
     private String classe;
     private String descricao;
+    private int estado;
 
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public String getClasse() {
+        return classe;
+    }
+
+    public void setClasse(String classe) {
+        this.classe = classe;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
 
     public String getCliente_nome() {
         return cliente_nome;
@@ -88,6 +113,7 @@ public class RequestResponse {
     }
 
     public RequestResponse asResponse(Pedido p) {
+        this.ID = p.getID();
         this.cliente_email = p.getCliente().getEmail();
         this.cliente_nome = p.getCliente().getNome();
         this.classe = p.getCategoria().getClasse().getNome();
@@ -98,6 +124,7 @@ public class RequestResponse {
         this.horaFimDisp = DateUtils.asString(p.getHoraFimDisp(),1);
         this.duracao = p.getDuracao();
         this.descricao = p.getDescricao();
+        this.estado = p.getEstado();
         return this;
     }
 }

@@ -2,6 +2,7 @@ package EA_ServeMe.beans;
 
 import EA_ServeMe.util.DateUtils;
 import EA_ServeMe.util.Log;
+import EA_ServeMe.util.RequestResponse;
 import categorias.Categoria;
 import categorias.CategoriaDAO;
 import org.json.JSONObject;
@@ -148,5 +149,149 @@ public class Cliente_Services {
         } catch (PersistentException e) {
         }
         return null;
+    }
+
+    @Bean
+    public static List<RequestResponse> getRequests(String email) {
+        List<RequestResponse> res = new ArrayList<>();
+        Date now = new Date();
+        int ID = Cliente_Perfil.getClientebyEmail(email).getID();
+        String query = "ClienteID = " + ID;
+        List<Pedido> pedidos = new ArrayList<>();
+        try {
+            pedidos = Arrays.asList(PedidoDAO.listPedidoByQuery(query,"HoraInicioDisp"));
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        if(pedidos.size()  == 0 ){
+            Log.w(TAG,"Requests - Nothing to Show");
+            return res;
+        }
+        for (Pedido p: pedidos) {
+                RequestResponse tmp = new RequestResponse();
+                tmp.asResponse(p);
+                res.add(tmp);
+        }
+        Log.i(TAG,"Cliente Services Loaded Sucessfully");
+        return res;
+
+    }
+
+    @Bean
+    public static List<String> editRequest(String request, String email) {
+        List<String> resp = new ArrayList<>();
+        resp.add("Error");
+        /* Verify request to edit */
+        JSONObject obj = new JSONObject(request);
+        int id = obj.getInt("id");
+
+
+        /* Ensure Cliente exists */
+
+        Cliente c;
+        c = Cliente_Perfil.getClientebyEmail(email);
+
+        /* Process and Update 'Pedido' */
+
+        List<String> success = new ArrayList<>();
+        success.add("OK");
+        try { // PROD: ADD THIS
+            Pedido p = parsePedido(request, c);
+            if(p!=null){
+                Pedido op = PedidoDAO.getPedidoByORMID(id);
+                if(op.getEstado() <= 0 && op.getCliente().getEmail().equals(email)) {
+                    op.setPrecoHora(p.getPrecoHora());
+                    op.setData(p.getData());
+                    op.setHoraInicioDisp(p.getHoraInicioDisp());
+                    op.setHoraFimDisp(p.getHoraFimDisp());
+                    op.setDuracao(p.getDuracao());
+                    op.setDescricao(p.getDescricao());
+                    PedidoDAO.save(op);
+                    Log.i(TAG,"Request Edited Succesfully");
+                    return success;
+                }
+                else{
+
+                    if(op.getEstado() > 0) {
+                        resp.add("Estado");
+                        Log.e(TAG,"Impossible Edit Request - Invalid State");
+                    }
+                    if(!op.getCliente().getEmail().equals(c.getEmail())){
+                        resp.add("Cliente");
+                        Log.e(TAG,"Impossible Edit Request - Invalid Cliente");
+                    }
+                }
+            }
+        }catch (PersistentException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            String type = e.getMessage();
+            String[] split = type.split("-");
+            for (String err: split
+            ) {
+                int tipo = Integer.valueOf(err);
+                switch (tipo) {
+                    case 1:
+                        Log.e(TAG,"DataFim not Valid" + " - Request not Added");
+                        resp.add("DataFim");
+                        break;
+                    case 2:
+                        Log.e(TAG,"duracao is lower than needed" + " - Request not Added");
+                        resp.add("Duracao");
+                        break;
+                    case 3:
+                        resp.add("JSON");
+                        Log.e(TAG,"Missing Fields on JSON" + " - Request not Added");
+                        break;
+                    case 4:
+                        Log.e(TAG,"Categoria does not Exist" + " - Request not Added");
+                        resp.add("Categoria");
+                        break;
+                }
+            }
+        }
+        return resp;
+    }
+
+    @Bean
+    public static List<String> deleteRequest(String request, String email) {
+        List<String> resp = new ArrayList<>();
+        resp.add("Error");
+        /* Verify request to edit */
+        JSONObject obj = new JSONObject(request);
+        int id = obj.getInt("id");
+
+        /* Ensure Cliente exists */
+
+        Cliente c;
+        c = Cliente_Perfil.getClientebyEmail(email);
+
+        /* Process and Save 'Pedido' */
+
+        List<String> success = new ArrayList<>();
+        success.add("OK");
+
+        try {
+            Pedido p = PedidoDAO.getPedidoByORMID(id);
+            if(p.getEstado() <= 0  && p.getCliente().getEmail().equals(c.getEmail())){
+                PedidoDAO.delete(p);
+                Log.i(TAG,"Request Deleted Succesfully");
+                return success;
+            }
+            else {
+                if (p.getEstado() > 0){
+                    resp.add("Estado");
+                    Log.e(TAG,"Impossible Edit Request - Invalid State");
+                }
+                else {
+                    resp.add("Cliente");
+                    Log.e(TAG,"Impossible Edit Request - Invalid Cliente");
+                }
+            }
+
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return resp;
     }
 }
