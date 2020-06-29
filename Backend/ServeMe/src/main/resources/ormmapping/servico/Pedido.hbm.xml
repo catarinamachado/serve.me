@@ -16,8 +16,8 @@ License Type: Academic
 		</many-to-one>
 		<property name="precoHora" column="PrecoHora" type="double" length="10" not-null="true" lazy="false"/>
 		<property name="data" column="Data" type="date" not-null="false" lazy="false"/>
-		<property name="horaInicioDisp" column="HoraInicioDisp" type="date" not-null="false" lazy="false"/>
-		<property name="horaFimDisp" column="HoraFimDisp" type="date" not-null="false" lazy="false"/>
+		<property name="horaInicioDisp" column="HoraInicioDisp" type="timestamp" not-null="false" lazy="false"/>
+		<property name="horaFimDisp" column="HoraFimDisp" type="timestamp" not-null="false" lazy="false"/>
 		<property name="duracao" column="Duracao" type="double" length="10" not-null="true" lazy="false"/>
 		<property name="estado" column="Estado" type="integer" length="10" not-null="true" lazy="false"/>
 		<property name="descricao" column="Descricao" type="string" length="255" not-null="false" lazy="false"/>
