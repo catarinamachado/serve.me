@@ -1,11 +1,14 @@
 package EA_ServeMe.controllers;
 
 
+import EA_ServeMe.beans.Cliente_Perfil;
+import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.util.*;
 import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import utilizador.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 @RestController
@@ -27,345 +31,187 @@ public class ProfileController {
     JwtUtil jwtUtil;
 
     @GetMapping("/myprofile")
-    public ResponseEntity profile(HttpServletRequest request) {
+    public ResponseEntity profile(@RequestHeader String Authorization) {
 
-        Log.i(TAG,"Profile Check Try");
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        String email = jwtUtil.extractEmail(token);
 
-        //Parsing head of request in order to determine who is requesting
-        String authorizationHeader = request.getHeader("Authorization");
-        String token = null;
-        char tipo=' ';
-        String email = null;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-            tipo = token.charAt(0);
-            email = jwtUtil.extractEmail(token);
-        }
-
-        //identify User -> Client or Provider
-        String q = "Email = '" + email + "'";
-        if(tipo != ' '){
-            if(tipo == 'C'){
-                Cliente[] clientes;
-                try {
-                    clientes = ClienteDAO.listClienteByQuery(q, "Email");
-                    if (clientes.length > 0) {
-                        Cliente c = (Cliente) clientes[0];
-                        MyProfileResponse pr = new MyProfileResponse(c.getNome(),c.getEmail(),c.getNumTelemovel(),c.getMorada(),c.getFreguesia(),c.getConcelho(),c.getDistrito());
-                        Log.i(TAG,"Cliente profile sent");
-                        return ResponseEntity.ok().body(pr);
-                    }
-                } catch (PersistentException e) {
-                    e.printStackTrace();
-                }
-        }
-            if(tipo == 'P'){
-                Prestador[] prestadors;
-                try {
-                    prestadors = PrestadorDAO.listPrestadorByQuery(q, "Email");
-                    if (prestadors.length > 0) {
-                        Prestador p = (Prestador) prestadors[0];
-                        MyProfileResponse pr = new MyProfileResponse(p.getNome(),p.getEmail(),p.getNumTelemovel(),p.getMorada(),p.getFreguesia(),p.getConcelho(),p.getDistrito());
-                        Log.i(TAG,"Prestador profile sent");
-                        return ResponseEntity.ok().body(pr);
-                    }
-                } catch (PersistentException e) {
-                    e.printStackTrace();
-                }
+        if(token.startsWith("C")){
+            MyProfileResponse resp = Cliente_Perfil.checkprofile(email);
+            if(resp == null){
+                Log.e(TAG,"Cliente Profile not found!");
+                return ResponseEntity.notFound().build();
             }
+            return ResponseEntity.ok(resp);
         }
-        return (ResponseEntity) ResponseEntity.notFound();
+        if(token.startsWith("P")){
+            MyProfileResponse resp = Prestador_Perfil.checkprofile(email);
+            if(resp == null){
+                Log.e(TAG,"Prestador Profile not found!");
+                return (ResponseEntity) ResponseEntity.notFound();
+            }
+            return ResponseEntity.ok(resp);
+        }
+        return  ResponseEntity.notFound().build();
     }
 
 
     @PutMapping
     @RequestMapping("/updateprofile")
-    public ResponseEntity updateprofile(HttpServletRequest request, @RequestBody String body){
+    public ResponseEntity updateprofile(@RequestHeader String Authorization, @RequestBody String body){
 
-        //Identificar a pessoa em questão
-        String authorizationHeader = request.getHeader("Authorization");
-        String token = null;
-        char tipo=' ';
-        String email = null;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-            tipo = token.charAt(0);
-            email = jwtUtil.extractEmail(token);
-        }
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        String email = jwtUtil.extractEmail(token);
 
-        JSONObject jsonObject = new JSONObject(body);
-        String name = jsonObject.getString("nome");
-        String nrTelm = jsonObject.getString("nrTelm");
-        String morada = jsonObject.getString("morada");
-        String freg = jsonObject.getString("freguesia");
-        String conc = jsonObject.getString("concelho");
-        String distrito = jsonObject.getString("distrito");
-
-
-        if(tipo != ' '){
-            if(tipo == 'C'){
-                int res = ClienteDAO.updateClienteProf(email,name,nrTelm,morada,freg,conc,distrito);
-                if(res == 1){
-                    return ResponseEntity.ok("Perfil alterado com sucesso!");
-                }
-                else{
+        if(token.startsWith("C")){
+                MyProfileResponse pr = Cliente_Perfil.parseUpdateProfile(body);
+                if(pr == null){
                     ErrorResponse er = new ErrorResponse();
-                    er.setLocalError("Couldn't update your profile.");
+                    er.setLocalError("UpdateProfile");
+                    er.addMsg("JSON");
+                    Log.e(TAG,"JSON");
                     return ResponseEntity.badRequest().body(er);
                 }
-
+                else {
+                    int res = ClienteDAO.updateClienteProf(email, pr.getNome(), pr.getNrTelm(), pr.getMorada(), pr.getFreguesia(), pr.getConcelho(), pr.getDistrito());
+                    if (res == 1) {
+                        return ResponseEntity.ok("OK");
+                    } else {
+                        ErrorResponse er = new ErrorResponse();
+                        er.setLocalError("UpdateProfile");
+                        er.addMsg("DataBase");
+                        return ResponseEntity.badRequest().body(er);
+                    }
+                }
+        }
+        if(token.startsWith("P")){
+            MyProfileResponse pr = Prestador_Perfil.parseUpdateProfile(body);
+            if(pr == null){
+                ErrorResponse er = new ErrorResponse();
+                er.setLocalError("UpdateProfile");er.addMsg("JSON");
+                return ResponseEntity.badRequest().body(er);
             }
-            if(tipo == 'P'){
-                int res = PrestadorDAO.updatePrestadorProf(email,name,nrTelm,morada,freg,conc,distrito);
-                if(res == 1){
-                    return ResponseEntity.ok("Perfil alterado com sucesso!");
-                }
-                else{
-                    ErrorResponse er = new ErrorResponse();
-                    er.setLocalError("Couldn't update your profile.");
-                    return ResponseEntity.badRequest().body(er);
-                }
+            int res = PrestadorDAO.updatePrestadorProf(email,pr.getNome(),pr.getNrTelm(),pr.getMorada(),pr.getFreguesia(),pr.getConcelho(),pr.getDistrito());
+            if(res == 1){
+                return ResponseEntity.ok("OK");
+            }
+            else{
+                ErrorResponse er = new ErrorResponse();
+                er.setLocalError("UpdateProfile");
+                er.addMsg("DataBase");
+                return ResponseEntity.badRequest().body(er);
             }
         }
-        return (ResponseEntity) ResponseEntity.badRequest();
+        return ResponseEntity.badRequest().build();
     }
 
 
     @PutMapping
     @RequestMapping("/updatepw")
-    public ResponseEntity updatepassword(HttpServletRequest request, @RequestBody String body){
+    public ResponseEntity updatepassword(@RequestHeader String Authorization, @RequestBody String body){
 
-        //Identificar a pessoa em questão
-        String authorizationHeader = request.getHeader("Authorization");
-        String token = null;
-        char tipo=' ';
-        String email = null;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-            tipo = token.charAt(0);
-            email = jwtUtil.extractEmail(token);
-        }
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        String email = jwtUtil.extractEmail(token);
 
-        JSONObject jsonObject = new JSONObject(body);
+        List<String> passwords = Cliente_Perfil.parsePasswordUpdate(body);
+        if(passwords.size() == 2){
+            String pw_atual = passwords.get(0);
+            String pw_nova = passwords.get(1);
+            //String internal_pw_atual = decodePassword(pw_atual);  //PROD: ADD THIS -- Função que faz decode da password vinda do frontend
 
-        //verificar que password atual é esta e atualizar para a nova
-        String pw_atual = jsonObject.getString("pw_atual");
-        String pw_nova = jsonObject.getString("pw_nova");
-
-        //identify User -> Client or Provider
-        String q = "Email = '" + email + "'";
-        if(tipo != ' '){
-            if(tipo == 'C'){
-                Cliente[] clientes;
-                try {
-                    clientes = ClienteDAO.listClienteByQuery(q, "Email");
-                    if (clientes.length > 0) {
-                        Cliente c = (Cliente) clientes[0];
-                        String password_old = c.getPassword();
-                        //If current password not matches
-                        if(!password_old.equals(pw_atual)){
-                            Log.e(TAG,"Cliente current password doesn't match!");
-                            ErrorResponse er = new ErrorResponse();
-                            er.setLocalError("Current passoword doesn't match");
-                            return (ResponseEntity) ResponseEntity.badRequest().body(er);
-                        }
-                        else{
-                            Log.i(TAG,"Cliente current password matches");
-                            //If matches, lets update
-                            int res = ClienteDAO.updateClientePW(email,pw_nova);
-                            if(res == 1){
-                                Log.i(TAG,"Cliente password succssefully updated");
-                                return ResponseEntity.ok().body("Passoword update with success");
-                            }
-                            else{
-                                Log.e(TAG,"Cliente password update went wrong");
-                                ErrorResponse er = new ErrorResponse();
-                                er.setLocalError("Cliente password update went wrong");
-                                return (ResponseEntity) ResponseEntity.badRequest().body(er);
-                            }
-                        }
-                    }
-                } catch (PersistentException e) {
-                    e.printStackTrace();
-                }
+            //PROD: ADD THIS LINE
+            String new_Password = new BCryptPasswordEncoder(11).encode(pw_nova);
+            //identify User -> Cliente ou Prestador
+            if(token.startsWith("C")){
+                ResponseEntity r = Cliente_Perfil.updatePassoword(email,pw_atual,new_Password);
+                return r;
             }
-            if(tipo == 'P'){
-                Prestador[] prestadors;
-                try {
-                    prestadors = PrestadorDAO.listPrestadorByQuery(q, "Email");
-                    if (prestadors.length > 0) {
-                        Prestador p = (Prestador) prestadors[0];
-                        String password_old = p.getPassword();
-                        //If current password doesnt match
-                        if(!password_old.equals(pw_atual)){
-                            Log.e(TAG,"Prestador current password doesn't match!");
-                            ErrorResponse er = new ErrorResponse();
-                            er.setLocalError("Current passoword doesn't match");
-                            return (ResponseEntity) ResponseEntity.badRequest().body(er);
-                        }
-                        //If matches, lets update
-                        else{
-                            Log.i(TAG,"Prestador current password matches");
-                            int res = PrestadorDAO.updatePrestadorPW(email,pw_nova);
-                            if(res == 1){
-                                Log.i(TAG,"Prestador password succssefully updated");
-                                return ResponseEntity.ok().body("Passoword update with success");
-                            }
-                            else{
-                                Log.e(TAG,"Prestador password update went wrong");
-                                ErrorResponse er = new ErrorResponse();
-                                er.setLocalError("Prestador password update went wrong");
-                                return (ResponseEntity) ResponseEntity.badRequest().body(er);
-                            }
-                        }
-                    }
-                } catch (PersistentException e) {
-                    e.printStackTrace();
-                }
+            if(token.startsWith("P")){
+                ResponseEntity re = Prestador_Perfil.updatePassoword(email,pw_atual,new_Password);
+                return re;
             }
         }
-        return (ResponseEntity) ResponseEntity.badRequest();
+        else{
+            ErrorResponse er = new ErrorResponse();
+            er.setLocalError("UpdatePassword");
+            er.addMsg("JSON");
+            return ResponseEntity.badRequest().body(er);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
 
     @PutMapping
     @RequestMapping("/clienteprof")
-    public ResponseEntity checkCProfileFromP(HttpServletRequest request, @RequestBody String body) {
+    public ResponseEntity checkCProfileFromP(@RequestHeader String Authorization, @RequestBody String body) {
 
-        //Identificar a pessoa em questão
-        String authorizationHeader = request.getHeader("Authorization");
-        String token = null;
-        char tipo = ' ';
-        String email = null;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-            tipo = token.charAt(0);
-            email = jwtUtil.extractEmail(token);
-        }
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        String email = jwtUtil.extractEmail(token);
 
-        JSONObject jsonObject = new JSONObject(body);
-
-        //Obter email do prestador que quer ver o perfil e do Cliente em causa
-        String email_client = jsonObject.getString("email_cli");
-
-        String q = "Email = '" + email_client + "'";
-
-        //garantir que quem acede é Prestador
-        if (tipo == 'P') {
-            try {
-                Cliente[] cli = ClienteDAO.listClienteByQuery(q, "Email");
-                if (cli.length <= 0) {
-                    ErrorResponse er = new ErrorResponse();
-                    er.setLocalError("Cliente not found");
-                    Log.e(TAG,"Cliente profile not found");
-                    return ResponseEntity.badRequest().body(er);
+        try {
+            //Obter email do prestador que quer ver o perfil e do Cliente em causa
+            String email_client = Cliente_Perfil.parseEmailCliJSON(body);
+            if (email_client.equals("ERROR")) {
+                ErrorResponse er = new ErrorResponse();
+                er.setLocalError("ClienteProfile");
+                er.addMsg("JSON");
+                return ResponseEntity.badRequest().body(er);
+            } else {
+                //garantir que quem acede é Prestador
+                if (token.startsWith("P")) {
+                    ResponseEntity response = Prestador_Perfil.checkClienteProfile(email_client);
                 } else {
-                    Cliente c = cli[0];
-                    int id = c.getID();
-                    String query = "ClienteID = ' " + id + "'";
-                    // PROD: ADD THIS
-                    // Servico[] serv = ServicoDAO.listServicoByQuery(query,"ID");
-                    //if(serv.length > 0 ) {
-                    //Bottom lines HERE
-                    // }
-                    //else{
-                        //Log.e(TAG,"Cant acess this profile from external ways");
-                        //ErrorResponse er = new ErrorResponse();
-                        //er.setLocalError("Cant acess this profile from external ways);
-                        //return ResponseEntity.badrequest().body(er);
-                    // }
-                    Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
-                    ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacao_clientes);
-                    Log.i(TAG,"Cliente profile sent with success");
-                    return ResponseEntity.ok().body(cli_prof);
+                    Log.e(TAG, "Clients cant access each other profiles");
+                    ErrorResponse er = new ErrorResponse();
+                    er.setLocalError("ClienteProfile");
+                    er.addMsg("ExternalAccess");
+                    return ResponseEntity.badRequest().body(er);
                 }
-            } catch (PersistentException e) {
+            }
+        }
+        catch(Exception e){
                 e.printStackTrace();
             }
-            return (ResponseEntity) ResponseEntity.badRequest();
-        }
-        else{
-            Log.e(TAG,"Clients cant access each other profiles");
-            ErrorResponse er = new ErrorResponse();
-            er.setLocalError("Cliente cant check other client's profiles");
-            return ResponseEntity.badRequest().body(er);
-
-        }
+        return  ResponseEntity.badRequest().build();
     }
 
     @PutMapping
     @RequestMapping("/prestadorprof")
-    public ResponseEntity checkPProfileFromC(HttpServletRequest request, @RequestBody String body) {
+    public ResponseEntity checkPProfileFromC(@RequestHeader String Authorization, @RequestBody String body) {
 
-        //Identificar a pessoa em questão
-        String authorizationHeader = request.getHeader("Authorization");
-        String token = null;
-        char tipo = ' ';
-        String email = null;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-            tipo = token.charAt(0);
-            email = jwtUtil.extractEmail(token);
-        }
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        String email = jwtUtil.extractEmail(token);
 
-        JSONObject jsonObject = new JSONObject(body);
-
-        //Obter email do prestador que quer ver o perfil e do Cliente em causa
-        String email_prest = jsonObject.getString("email_pres");
-
-        String q = "Email = '" + email_prest + "'";
-
-        //garantir que tem acede é um cliente
-        if (tipo == 'C') {
-            try {
-                Prestador[] pres = PrestadorDAO.listPrestadorByQuery(q, "Email");
-                if (pres.length <= 0) {
-                    ErrorResponse er = new ErrorResponse();
-                    er.setLocalError("Prestador not found");
-                    Log.e(TAG,"Prestador profile not found");
-                    return ResponseEntity.badRequest().body(er);
+        try {
+            //Obter email do prestador que quer ver o perfil e do Cliente em causa
+            String email_prest = Prestador_Perfil.parseEmailPresJSON(body);
+            if (email_prest.equals("ERROR")) {
+                ErrorResponse er = new ErrorResponse();
+                er.setLocalError("PrestadorProfile");
+                er.addMsg("JSON");
+                return ResponseEntity.badRequest().body(er);
+            } else {
+                if (token.startsWith("C")) {
+                    ResponseEntity resp = Cliente_Perfil.checkPrestadorProfile(email_prest);
+                    return resp;
                 } else {
-                    Prestador p = pres[0];
-                    int id = p.getID();
-                    String query = "PrestadorID = ' " + id + "'";
-                    // PROD: ADD THIS
-                    // Proposta[] props = PropostaDAO.listPropostaByQuery(query,"ID");
-                    //if(props.length > 0 ) {
-                        //boolean can = false;
-                        //for (Proposta pro : props){
-                            //if(pro.getPedido().getEstado() <= 0)
-                          //      can = true;
-                        //}
-                    //if(can){
-                    //Bottom lines HERE
-                    // }
-                    // }
-                    //else{
-                    //Log.e(TAG,"Cant acess this profile from external ways");
-                    //ErrorResponse er = new ErrorResponse();
-                    //er.setLocalError("Cant acess this profile from external ways);
-                    //return ResponseEntity.badrequest().body(er);
-                    // }
-                    Avaliacao_Prestador[] avaliacao_prest = Avaliacao_PrestadorDAO.listAvaliacao_PrestadorByQuery(query, "ID");
-                    PrestadorProfResponse pres_prof = new PrestadorProfResponse(p.getNome(), p.getEmail(), p.getNumTelemovel(), p.getMorada(), p.getFreguesia(), p.getConcelho(), p.getDistrito(),p.getClassificacao(),p.getNumServicosRealizados(),p.getNumServicosCancelados(), avaliacao_prest);
-                    Log.i(TAG,"Prestador profile sent with success");
-                    return ResponseEntity.ok().body(pres_prof);
+                    Log.e(TAG, "Prestador cant access each other profiles");
+                    ErrorResponse er = new ErrorResponse();
+                    er.setLocalError("PrestadorProfile");
+                    er.addMsg("ExternalAcess");
+                    return ResponseEntity.badRequest().body(er);
                 }
-            } catch (PersistentException e) {
-                e.printStackTrace();
             }
-            return (ResponseEntity) ResponseEntity.badRequest();
         }
-        else{
-            Log.e(TAG,"Prestador cant access each other profiles");
-            ErrorResponse er = new ErrorResponse();
-            er.setLocalError("Prestador cant check other client's profiles");
-            return ResponseEntity.badRequest().body(er);
-
+        catch(Exception e){
+            e.printStackTrace();
         }
+        return ResponseEntity.badRequest().build();
     }
-
-
-
 
 }

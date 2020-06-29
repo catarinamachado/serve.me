@@ -357,7 +357,7 @@ public class ClienteDAO {
 		return clienteCriteria.listCliente();
 	}
 
-	public static int updateClienteProf(String email, String nome, String nrTelm, String morada, String freg, String conc, String distrito){
+	public static int updateClienteProf(String email, String nome, long nrTelm, String morada, String freg, String conc, String distrito){
 		try{
 			PersistentSession s = utilizador.ServemePersistentManager.instance().getSession();
 			String q = "Update Cliente Set " + "Nome = '" + nome + "', " + "Morada = '" + morada + "', "+ " NumTelemovel = ' " + nrTelm + "'," + "Freguesia = '" + freg + "', " + "Concelho = '" + conc + "'," + "Distrito = '" + distrito + "' where " + "email = '" + email + "'";

@@ -4,6 +4,7 @@ import utilizador.Avaliacao_Cliente;
 import utilizador.Avaliacao_Prestador;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class PrestadorProfResponse implements Serializable {
 
@@ -17,7 +18,7 @@ public class PrestadorProfResponse implements Serializable {
     double classificacao;
     int numServicosRealizados;
     int numServicosCancelados;
-    Avaliacao_Prestador[] avaliacoes;
+    List<Avaliacao_Prestador> avaliacoes;
 
 
     public double getClassificacao() {
@@ -49,7 +50,7 @@ public class PrestadorProfResponse implements Serializable {
     public PrestadorProfResponse() {
     }
 
-    public PrestadorProfResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito, double classificacao, int numServicosRealizados, int numServicosCancelados, Avaliacao_Prestador[] avaliacoes) {
+    public PrestadorProfResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito, double classificacao, int numServicosRealizados, int numServicosCancelados, List<Avaliacao_Prestador> avaliacoes) {
         this.nome = nome;
         this.email = email;
         this.nrTelm = nrTelm;
@@ -119,11 +120,11 @@ public class PrestadorProfResponse implements Serializable {
         this.distrito = distrito;
     }
 
-    public Avaliacao_Prestador[] getAvaliacoes() {
+    public List<Avaliacao_Prestador> getAvaliacoes() {
         return avaliacoes;
     }
 
-    public void setAvaliacoes(Avaliacao_Prestador[] avaliacoes) {
+    public void setAvaliacoes(List<Avaliacao_Prestador> avaliacoes) {
         this.avaliacoes = avaliacoes;
     }
 }

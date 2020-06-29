@@ -7,6 +7,7 @@ public class MyProfileResponse implements Serializable {
     String nome;
     String email;
     long nrTelm;
+    long nif;
     String morada;
     String Freguesia;
     String Concelho;
@@ -21,10 +22,12 @@ public class MyProfileResponse implements Serializable {
         this.morada = morada;
     }
 
-    public MyProfileResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito) {
+
+    public MyProfileResponse(String nome, String email, long nrTelm, long nif, String morada, String freguesia, String concelho, String distrito) {
         this.nome = nome;
         this.email = email;
         this.nrTelm = nrTelm;
+        this.nif = nif;
         this.morada=morada;
         Freguesia = freguesia;
         Distrito = distrito;
@@ -77,5 +80,13 @@ public class MyProfileResponse implements Serializable {
 
     public void setConcelho(String concelho) {
         Concelho = concelho;
+    }
+
+    public long getNif() {
+        return nif;
+    }
+
+    public void setNif(long nif) {
+        this.nif = nif;
     }
 }
