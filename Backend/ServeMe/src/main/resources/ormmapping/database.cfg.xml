@@ -20,7 +20,7 @@
     <Driver>MySQL5 (Connector/J Driver)</Driver>
     <DriverFiles>&lt;&lt;MySQL Connector/J 8.0.20&gt;&gt;</DriverFiles>
     <Dialect>org.hibernate.dialect.MySQL5Dialect</Dialect>
-    <DriverClass>com.mysql.jdbc.Driver</DriverClass>
+    <DriverClass>com.mysql.cj.jdbc.Driver</DriverClass>
     <URL>jdbc:mysql://localhost:3306/serveme</URL>
     <UserName>root</UserName>
     <EncryptedPassword>BF2FC1CEF810492DDE72B3901825B954</EncryptedPassword>
