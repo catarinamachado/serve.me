@@ -10,7 +10,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import utilizador.*;
 
+
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,16 +31,10 @@ public class Cliente_Perfil {
         String token = toke;
         String q = "Email = '" + email + "'";
         Cliente[] clientes;
-        try {
-            clientes = ClienteDAO.listClienteByQuery(q, "Email");
-            Cliente c = (Cliente) clientes[0];
-            String nome = c.getNome();
-            AuthResponse ar = new AuthResponse(token, nome);
-            return ar;
-        } catch (PersistentException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Cliente c = getClientebyEmail(email);
+        String nome = c.getNome();
+        AuthResponse ar = new AuthResponse(token,nome);
+        return  ar;
     }
 
     private static Cliente buildCliente(String nome, String email, String password, long numT, String distrito, String concelho, String freguesia, String morada, long nif) {
@@ -156,6 +152,7 @@ public class Cliente_Perfil {
         }
     }
 
+
     public static String parseEmailCliJSON(String body) throws Exception {
 
         JSONObject obj = new JSONObject(body);
@@ -170,6 +167,18 @@ public class Cliente_Perfil {
 
     }
 
+
+
+    public static Cliente getClientebyEmail(String email){
+        String q = "Email = '" + email + "'";
+        try {
+            Cliente c = ClienteDAO.listClienteByQuery(q,"Email")[0];
+            return c;
+        }catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public static String decodePassword(String password) {
         String encodedBase64Key = Crypt.encodeKey(SECRETKEY);

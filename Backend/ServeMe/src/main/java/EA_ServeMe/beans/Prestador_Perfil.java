@@ -19,6 +19,7 @@ public class Prestador_Perfil {
 
     private static final String SECRETKEY =  "servemencriptkey";
     private static final String TAG =  "[PRESTADORPERFIL]";
+
     @Bean
     public static AuthResponse loginTokenPrestador(String email, String toke){
         String token =  toke;
