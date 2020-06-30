@@ -311,4 +311,84 @@ public class Prestador_Perfil {
     }
 
 
+    public static List<String> parseAvaliacaofromCli(String body){
+        List<String> res = new ArrayList<>();
+        String email_pres = "";
+        String classificacao = "";
+        String opiniao = "";
+        String idServ = "";
+        JSONObject jsonObject = new JSONObject(body);
+        try{
+            email_pres = jsonObject.getString("email_prestador");
+            classificacao = String.valueOf(jsonObject.getDouble("classificacao"));
+            opiniao = jsonObject.getString("opiniao");
+            idServ = jsonObject.getString("idServico");
+
+            if(email_pres.equals("") || classificacao.equals("") || opiniao.equals("") || idServ.equals(""))
+                return null;
+            else{
+                //pos 0 -> email_cli
+                res.add(email_pres);
+                //pos 1 -> classificacao
+                res.add(classificacao);
+                //pos 2 -> opiniao
+                res.add(opiniao);
+                //pos 3 -> idServico
+                res.add(idServ);
+                return res;
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Bean
+    public static int avaliar_prestador(String email_cli, List<String> request){
+        String email_pres = request.get(0);
+        double classificacao = Double.valueOf(request.get(1));
+        String opiniao = request.get(2);
+        int idServico = Integer.valueOf(request.get(3));
+
+        String q = "Email = '" + email_cli + "'";
+        String q_2 = "Email = '" + email_pres + "'";
+        Cliente c = null;
+        try {
+            Cliente[] clis = ClienteDAO.listClienteByQuery(q,"Email");
+            c = clis[0];
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        Prestador[] pres;
+        Prestador p = null;
+        try {
+            pres = PrestadorDAO.listPrestadorByQuery(q_2,"Email");
+            p = pres[0];
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        //Update Numero Servicos Realizados
+        p.setNumServicosRealizados(p.getNumServicosRealizados() + 1);
+        //Update Classificacao
+        double nova_classificação = (p.getClassificacao() * p.getNumServicosRealizados() + classificacao)/(p.getNumServicosRealizados() + 1);
+        p.setClassificacao(nova_classificação);
+        try {
+            PrestadorDAO.save(p);
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        Avaliacao_Prestador aval = new Avaliacao_Prestador();
+        aval.setClassificacao(classificacao);
+        aval.setOpiniao(opiniao);
+        aval.setCliente(c);
+        try {
+            Avaliacao_PrestadorDAO.save(aval);
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+
+
 }
