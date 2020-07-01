@@ -133,6 +133,32 @@ public class ServicesController {
             }
             return ResponseEntity.badRequest().body(er);
         }
-
     }
+
+    @PostMapping("/propose-request") // Para Prestadores
+    public ResponseEntity proposeRequest(@RequestBody String propose, @RequestHeader String Authorization){
+
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        if(token.startsWith("C")) return ResponseEntity.badRequest().body("Prestador Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<String> res = Prestador_Services.addPropose(propose,email);
+        int ok = (res.size()>1) ? 0 : 1;
+        if(ok == 1){
+            return ResponseEntity.ok("SUCCESS");
+        }
+        else {
+            ErrorResponse er = new ErrorResponse();
+            res.remove(0);
+            er.setLocalError("propose-request");
+            for (String e: res) {
+                er.addMsg(e);
+            }
+            return ResponseEntity.badRequest().body(er);
+        }
+    }
+
+    @PostMapping
+
 }
