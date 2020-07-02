@@ -30,6 +30,12 @@ export default new Router({
     }
     ,
     {
+      name: "scheduled-services",
+      path: "/scheduled-services",
+      component: () => import("@/views/Client/ScheduledServices")
+    }
+    ,
+    {
         name: "register-provider",
         path: "/register-provider",
         component: () => import("@/views/Provider/Register")

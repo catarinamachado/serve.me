@@ -65,7 +65,7 @@
               <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'scheduled-services' }"
                 >
                   Agendados
                 </router-link>

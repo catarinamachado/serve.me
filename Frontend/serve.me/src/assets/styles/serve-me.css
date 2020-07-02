@@ -29,6 +29,10 @@
   padding-top: 3%;
 }
 
+.space-top-5 {
+  padding-top: 5%;
+}
+
 .space-top-6 {
   padding-top: 6%;
 }
@@ -71,6 +75,11 @@
 
 .space-bottom-17 {
   padding-bottom: 17%;
+}
+
+.space-left-right-5 {
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 /* BUTTONS */
