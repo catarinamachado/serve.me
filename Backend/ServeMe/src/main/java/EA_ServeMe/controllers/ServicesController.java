@@ -4,10 +4,7 @@ import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Cliente_Services;
 import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.beans.Prestador_Services;
-import EA_ServeMe.util.ErrorResponse;
-import EA_ServeMe.util.JwtUtil;
-import EA_ServeMe.util.Log;
-import EA_ServeMe.util.RequestResponse;
+import EA_ServeMe.util.*;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.header.Header;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.tags.Param;
+import servico.Proposta;
 
 import java.util.List;
 
@@ -159,6 +157,58 @@ public class ServicesController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/accept-propose") // Para Clientes
+    public ResponseEntity acceptPropose(@RequestBody String propose, @RequestHeader String Authorization){
 
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Prestador Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<String> r = Cliente_Services.acceptPropose(propose,email);
+        int ok = (r.size()>1) ? 0 : 1;
+        if (ok == 1){
+            return ResponseEntity.ok("SUCCESS");
+        }
+        else {
+            ErrorResponse er = new ErrorResponse();
+            r.remove(0);
+            er.setLocalError("accept-propose");
+            for (String e: r) {
+                er.addMsg(e);
+            }
+            return ResponseEntity.badRequest().body(er);
+        }
+    }
+
+
+    @PostMapping("/request-proposes") //Cliente
+    public ResponseEntity getRecievedProposes(@RequestHeader String Authorization,@RequestBody String json){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        if(token.startsWith("C")) return ResponseEntity.badRequest().body("Cliente Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<ProposeResponse> proposes = Cliente_Services.getRecievedProposes(email,json);
+
+        if(proposes.size() == 0){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(proposes);
+    }
+
+    @GetMapping("/proposes-done")
+    public ResponseEntity getProposesDone(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        if(token.startsWith("C")) return ResponseEntity.badRequest().body("Prestador Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<ProposeProvider> proposes = Prestador_Services.getMyProposes(email);
+
+        if (proposes.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(proposes);
+    }
 }

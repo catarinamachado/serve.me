@@ -20,6 +20,18 @@ public class Prestador_Perfil {
     private static final String SECRETKEY =  "servemencriptkey";
     private static final String TAG =  "[PRESTADORPERFIL]";
 
+
+    public static Prestador getPrestadorbyEmail(String email){
+        String q = "Email = '" + email + "'";
+        try {
+            Prestador p = PrestadorDAO.listPrestadorByQuery(q, "Email")[0];
+            return p;
+        }catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Bean
     public static AuthResponse loginTokenPrestador(String email, String toke){
         String token =  toke;

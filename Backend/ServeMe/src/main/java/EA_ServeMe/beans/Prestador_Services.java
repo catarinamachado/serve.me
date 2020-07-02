@@ -2,6 +2,7 @@ package EA_ServeMe.beans;
 
 import EA_ServeMe.util.DateUtils;
 import EA_ServeMe.util.Log;
+import EA_ServeMe.util.ProposeProvider;
 import EA_ServeMe.util.RequestResponse;
 import categorias.Categoria;
 import org.json.JSONObject;
@@ -25,18 +26,6 @@ import java.util.List;
 
 public class Prestador_Services {
     private static final String TAG =  "[PRESTADORSERVICES]";
-
-
-    public static Prestador getPrestadorbyEmail(String email){
-        String q = "Email = '" + email + "'";
-        try {
-            Prestador p = PrestadorDAO.listPrestadorByQuery(q, "Email")[0];
-            return p;
-        }catch (PersistentException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     @Bean
     public static List<RequestResponse> getRequests() {
@@ -72,7 +61,7 @@ public class Prestador_Services {
         success.add("OK");
 
         // Get prestador
-        Prestador prestador = getPrestadorbyEmail(email);
+        Prestador prestador = Prestador_Perfil.getPrestadorbyEmail(email);
 
         try {
             Proposta proposta = parseProposeJSON(propose,prestador);
@@ -165,5 +154,30 @@ public class Prestador_Services {
         proposta.setPrecoProposto(preco);proposta.setPrestador(prestador);
         proposta.setVencedora(0);
         return proposta;
+    }
+
+    @Bean
+    public static List<ProposeProvider> getMyProposes(String email) {
+        List<ProposeProvider> r = new ArrayList<>();
+        int id = Prestador_Perfil.getPrestadorbyEmail(email).getID();
+        String query = "PrestadorID = " + id;
+
+        try {
+            List<Proposta> propostas = Arrays.asList(PropostaDAO.listPropostaByQuery(query,"HoraInicio"));
+            for (Proposta tmp : propostas){
+                ProposeProvider pp = new ProposeProvider().asResponse(tmp);
+                r.add(pp);
+            }
+
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD problem");
+        }
+
+        if(r.size() == 0)
+            Log.w(TAG, "Proposes - Nothing to show!");
+        else
+            Log.i(TAG,"Proposes Loaded Succesfully");
+
+        return r;
     }
 }

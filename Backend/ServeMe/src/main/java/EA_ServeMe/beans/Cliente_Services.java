@@ -2,14 +2,14 @@ package EA_ServeMe.beans;
 
 import EA_ServeMe.util.DateUtils;
 import EA_ServeMe.util.Log;
+import EA_ServeMe.util.ProposeResponse;
 import EA_ServeMe.util.RequestResponse;
 import categorias.Categoria;
 import categorias.CategoriaDAO;
 import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
-import servico.Pedido;
-import servico.PedidoDAO;
+import servico.*;
 import utilizador.Cliente;
 import utilizador.ClienteDAO;
 
@@ -130,7 +130,7 @@ public class Cliente_Services {
         Pedido p = new Pedido();
         p.setCliente(c);p.setCategoria(cat);p.setPrecoHora(preco);
         p.setData(DateUtils.asDate(DateUtils.asLocalDate(dataInicio)));p.setHoraInicioDisp(dataInicio);p.setHoraFimDisp(dataFim);p.setDuracao(dur);
-        p.setDescricao(desc);p.setEstado(0);
+        p.setDescricao(desc);p.setEstado(PedidoState.WAIT.v());
         return p;
     }
 
@@ -287,5 +287,102 @@ public class Cliente_Services {
             e.printStackTrace();
         }
         return resp;
+    }
+
+    @Bean
+    public static List<String> acceptPropose(String propose, String email) {
+        List<String> error = new ArrayList<>();
+        List<String> success = new ArrayList<>();
+        error.add("Error:");
+        success.add("OK");
+
+//        Needed Vars
+        int id_proposta = -1;
+        Proposta proposta;
+
+//        Get propose ID
+        JSONObject obj = new JSONObject(propose);
+        id_proposta = obj.getInt("id_proposta");
+
+        if(id_proposta == -1 ){
+            Log.e(TAG,"JSON Missing fields");
+            error.add("JSON");
+            return error;
+        }
+        try {
+            proposta = PropostaDAO.getPropostaByORMID(id_proposta);
+            Pedido pedido = proposta.getPedido();
+            Cliente cliente = pedido.getCliente();
+//            Verificaçãões necessárias
+            if (!cliente.getEmail().equals(email)){ //Verificação do Ownership do Pedido
+                error.add("Pedido");
+                Log.e(TAG,"Request Owner invalid");
+                return error;
+            }
+
+            if(pedido.getEstado() > 0){ //Verficiação de +1 vencedores
+                error.add("Pedido");
+                Log.e(TAG,"Request Already have a Winner");
+                return error;
+            }
+
+
+//            Build Servico
+            Servico servico = buildServico(cliente,pedido,proposta);
+//            Guardar o Servico
+            ServicoDAO.save(servico);
+//            Update States
+            pedido.setEstado(PedidoState.SERVICE.v());
+            proposta.setVencedora(1);
+//            Save new states
+            PedidoDAO.save(pedido);
+            PropostaDAO.save(proposta);
+
+            Log.i(TAG,"Propose Accepted Succesfully - Service Scheduled");
+            return success;
+
+        } catch (PersistentException e) {
+            error.add("BD");
+        }
+        return error;
+    }
+
+    private static Servico buildServico(Cliente cliente, Pedido pedido, Proposta proposta) {
+        Servico servico = ServicoDAO.createServico();
+        servico.setCliente(cliente);servico.setPrestador(proposta.getPrestador());
+        servico.setPedido(pedido);servico.setProposta(proposta);
+        servico.setEstado(ServicoState.CREATED.v());
+        return servico;
+    }
+
+    @Bean
+    public static List<ProposeResponse> getRecievedProposes(String email,String idJSON) {
+        List<ProposeResponse> r = new ArrayList<>();
+        int id_pedido = -1;
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        JSONObject obj = new JSONObject(idJSON);
+        id_pedido = obj.getInt("id_pedido");
+        if (id_pedido == -1){
+            Log.e(TAG,"Request has invalid owner");
+            return r;
+        }
+        String query = "PedidoID = " + id_pedido;
+
+        try {
+            List<Proposta> propostas =  Arrays.asList(PropostaDAO.listPropostaByQuery(query,"HoraInicio"));
+            if(propostas.size() == 0 ){
+                Log.w(TAG,"There's no offers for this request");
+                return r;
+            }
+            for(Proposta tmp : propostas ) {
+                ProposeResponse pr =  new ProposeResponse().asResponse(tmp);
+                r.add(pr);
+            }
+            Log.i(TAG,"Proposes Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+           Log.e(TAG,"BD error");
+           return r;
+        }
     }
 }
