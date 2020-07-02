@@ -77,7 +77,7 @@
                 </router-link>
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'history-services' }"
                 >
                   Histórico
                 </router-link>

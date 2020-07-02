@@ -42,6 +42,12 @@ export default new Router({
     }
     ,
     {
+      name: "history-services",
+      path: "/history-services",
+      component: () => import("@/views/Client/HistoryServices")
+    }
+    ,
+    {
         name: "register-provider",
         path: "/register-provider",
         component: () => import("@/views/Provider/Register")
