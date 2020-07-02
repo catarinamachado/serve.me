@@ -46,6 +46,7 @@ export default new Router({
       path: "/history-services",
       component: () => import("@/views/Client/HistoryServices")
     },
+    {
       name: "my-profile",
       path: "/my-profile",
       component: () => import("@/views/Client/MyProfile")
