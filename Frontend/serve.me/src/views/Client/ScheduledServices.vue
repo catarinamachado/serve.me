@@ -31,11 +31,11 @@
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
       <template v-slot:cell(acoes)="row">
-        <b-button size="sm" class="btn btn-blue mr-1">
-          Finalizar
+        <b-button size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
+          <i class="fas fa-times"></i>
         </b-button>
-        <b-button size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red">
-          Cancelar
+        <b-button size="sm" class="btn btn-blue">
+          <i class="fas fa-check"></i>
         </b-button>
       </template>
     </b-table>
@@ -139,7 +139,7 @@
           { key: 'subcategoria', label: 'Subcategoria', sortable: true},
           { key: 'descrição', label: 'Descrição', sortable: true},
           { key: 'prestador', label: 'Prestador', sortable: true},
-          { key: 'data', label: 'Data', sortable: true, sortDirection: 'asc'},
+          { key: 'data', label: 'Data', sortable: true},
           { key: 'hora_início', label: 'Hora Início', sortable: true},
           { key: 'duração', label: 'Duração', sortable: true},
           { key: 'preço_hora', label: 'Preço/hora', sortable: true},
