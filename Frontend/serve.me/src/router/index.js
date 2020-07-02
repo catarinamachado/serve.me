@@ -36,6 +36,12 @@ export default new Router({
     }
     ,
     {
+      name: "published-services",
+      path: "/published-services",
+      component: () => import("@/views/Client/PublishedServices")
+    }
+    ,
+    {
         name: "register-provider",
         path: "/register-provider",
         component: () => import("@/views/Provider/Register")

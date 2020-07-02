@@ -71,7 +71,7 @@
                 </router-link>
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'published-services' }"
                 >
                   Publicados
                 </router-link>
