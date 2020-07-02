@@ -45,6 +45,16 @@ export default new Router({
       name: "history-services",
       path: "/history-services",
       component: () => import("@/views/Client/HistoryServices")
+    },
+      name: "my-profile",
+      path: "/my-profile",
+      component: () => import("@/views/Client/MyProfile")
+    }
+    ,
+    {
+      name: "edit-password",
+      path: "/edit-password",
+      component: () => import("@/views/Client/EditPassword")
     }
     ,
     {

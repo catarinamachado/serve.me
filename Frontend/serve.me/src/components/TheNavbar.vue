@@ -107,9 +107,15 @@
               <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'my-profile' }"
                 >
                   Perfil
+                </router-link>
+                <router-link
+                  class="dropdown-item client"
+                  :to="{ name: 'edit-password' }"
+                >
+                  Alterar password
                 </router-link>
                 <router-link
                   class="dropdown-item client"

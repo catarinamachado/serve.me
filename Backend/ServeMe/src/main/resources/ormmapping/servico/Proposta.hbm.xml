@@ -14,7 +14,7 @@ License Type: Academic
 		</many-to-one>
 		<many-to-one name="prestador" cascade="lock" column="PrestadorID" class="utilizador.Prestador" not-null="true" lazy="proxy" access="field">
 		</many-to-one>
-		<property name="horaInicio" column="HoraInicio" type="date" not-null="false" lazy="false"/>
+		<property name="horaInicio" column="HoraInicio" type="timestamp" not-null="false" lazy="false"/>
 		<property name="precoProposto" column="PrecoProposto" type="double" length="10" not-null="true" lazy="false"/>
 		<property name="vencedora" column="Vencedora" type="integer" length="10" not-null="true" lazy="false"/>
 	</class>

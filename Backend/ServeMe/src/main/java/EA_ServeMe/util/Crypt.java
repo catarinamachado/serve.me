@@ -1,11 +1,15 @@
 package EA_ServeMe.util;
 
 
+import EA_ServeMe.beans.Cliente_Services;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
+import java.util.Date;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -98,10 +102,17 @@ public class Crypt {
             System.out.println("DEU BEm 2 " + deuBEm2);
             System.out.println("PW DA FRANCISCA DEU BEM " + deuBemAPWdaFrancisca);
 
+        LocalDateTime t = LocalDateTime.now();
+            Date n = Date.from(t.atZone(ZoneId.systemDefault()).toInstant());
 
-            Log.d("DEBUG:", "log");
-            Log.e("ERROR:", "log");
-            Log.i("INFO:","log");
-            Log.w("WARNING:" , "log");
+        Log.d("DEBUG:", "log");
+        Log.e("ERROR:", "log");
+        Log.i("INFO:","log");
+        Log.w("WARNING:" , n.toString());
+
+
+        //System.out.println(Cliente_Services.toDate(""));
+
+
     }
 }
