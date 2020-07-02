@@ -52,27 +52,6 @@
 </template>
 
 <style scoped>
-.customPagination > li > a {
-  color: red;
-}
-
-.customPagination > li.active > a,
-.customPagination > li > a:hover
-{
-  color: white;
-  background-color: green!important;
-}
-
-.customPagination {
-    color: white!important;
-  background-color: green!important;
-
-}
-
-.page-link {
-  color: white!important;
-  background-color: green!important;
-}
 </style>
 
 <script>
