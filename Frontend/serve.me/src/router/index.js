@@ -52,5 +52,17 @@ export default new Router({
       path: "/login-provider",
       component: () => import("@/views/Provider/Login")
     }
+    ,
+    {
+      name: "my-profile-provider",
+      path: "/my-profile-provider",
+      component: () => import("@/views/Provider/MyProfile")
+    }
+    ,
+    {
+      name: "edit-password-provider",
+      path: "/edit-password-provider",
+      component: () => import("@/views/Provider/EditPassword")
+    }
   ]
 });

@@ -149,3 +149,7 @@
 .client:active {
   background-color: var(--my-blue) !important;
 }
+
+.provider:active {
+  background-color: var(--my-yellow) !important;
+}
