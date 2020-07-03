@@ -1,8 +1,8 @@
 <template>
   <div class="space-top-5 space-bottom-10 space-left-right-5">
-    <kalendar :configuration="calendar_settings" :events="events"/>
-    <div>
-        <h4 class="space-bottom-2">Serviços Agendados</h4>
+    <h4 class="space-bottom-2">Serviços Agendados</h4>
+    <vue-cal style="height: 550px" :time-from="8 * 60" :time-to="19 * 60" locale="pt-br" />
+    <div class="space-top-5">
         <div class="justify-content-centermy-1 row">
         <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
             <b-form-select
@@ -53,8 +53,16 @@
   </div>
 </template>
 
+<style>
+.vuecal__menu, .vuecal__cell-events-count {background-color: var(--my-yellow);}
+.vuecal__title-bar {background-color: #FBF6D6;}
+.vuecal__cell--today, .vuecal__cell--current {background-color: rgba(252, 248, 224, 0.4) !important;}
+</style>
+
 <script>
-import { Kalendar } from 'kalendar-vue';
+import VueCal from 'vue-cal'
+import 'vue-cal/dist/vuecal.css'
+import 'vue-cal/dist/i18n/pt-br.js'
 
 export default {
   name: "scheduled-services-provider",
@@ -62,22 +70,6 @@ export default {
     window.scrollTo(0, 0);
   },
   data: () => ({
-    calendar_settings: {
-        style: 'material_design',
-        cell_height: 10,
-        current_day: new Date(),
-        read_only: true,
-        day_starts_at: 5,
-        day_ends_at: 24,
-        overlap: true,
-        hide_dates: ['2019-10-31'], // Spooky
-        past_event_creation: true
-    },
-    events: [],
-    new_appointment: {
-        title: null,
-        description: null
-    },
     items: [{
         categoria: "Teste1",
         subcategoria: "Teste2",
@@ -161,7 +153,7 @@ export default {
     }
   },
   components: {
-      Kalendar
+      VueCal
   }
 };
 </script>

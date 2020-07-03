@@ -12,9 +12,9 @@
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
     "jquery": "^3.5.1",
-    "kalendar-vue": "^2.1.1",
     "popper.js": "^1.16.1",
     "vue": "^2.6.11",
+    "vue-cal": "^3.6.2",
     "vue-headful": "^2.1.0",
     "vue-router": "^3.3.4"
   },
