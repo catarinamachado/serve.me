@@ -29,13 +29,10 @@
     </div>
 
     <!-- Main table element -->
-    <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
+    <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" >
       <template v-slot:cell(acoes)="row">
         <b-button size="sm" @click="rejeitar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
           <i class="fas fa-times"></i>
-        </b-button>
-        <b-button size="sm" @click="aceitar(row.item, row.index, $event.target)" class="btn btn-blue">
-          <i class="fas fa-check"></i>
         </b-button>
       </template>
     </b-table>
@@ -59,7 +56,7 @@
 
 <script>
   export default {
-    name: 'inbox-client',
+    name: 'inbox-provider',
     created() {
       window.scrollTo(0, 0);
     },
@@ -69,55 +66,44 @@
           categoria: "Teste1",
           subcategoria: "Teste2",
           descrição: "Descrição",
-          prestador: "Primeiro Último",
+          cliente: "Primeiro Último",
           data: "13/03/1233",
           hora_início: "14h00",
           duração: "1 hora",
-          preço_hora_proposto: "4€",
-          informação: "Proposta de agendamento"
+          preço_hora: "4€",
+          informação: "Pendente"
         },
         {
           categoria: "Teste3",
           subcategoria: "Teste4",
           descrição: "Descrição",
-          prestador: "Primeiro Último",
+          cliente: "Primeiro Último",
           data: "13/03/1233",
           hora_início: "14h00",
           duração: "1 hora",
-          preço_hora_proposto: "4€",
-          informação: "Aviso de cancelamento"
+          preço_hora: "4€",
+          informação: "Aceite"
         },
         {
           categoria: "Teste1",
           subcategoria: "Teste2",
           descrição: "Descrição",
-          prestador: "Primeiro Último",
+          cliente: "Primeiro Último",
           data: "14/03/1233",
           hora_início: "14h00",
           duração: "1 hora",
-          preço_hora_proposto: "4€",
-          informação: "Proposta de agendamento"
+          preço_hora: "4€",
+          informação: "Rejeitado"
         },
         {
           categoria: "Teste1",
           subcategoria: "Teste2",
           descrição: "Descrição",
-          prestador: "Primeiro Último",
+          cliente: "Primeiro Último",
           data: "12/03/1233",
           hora_início: "14h00",
           duração: "1 hora",
-          preço_hora_proposto: "4€",
-          informação: "Proposta de agendamento"
-        },
-        {
-          categoria: "Teste1",
-          subcategoria: "Teste2",
-          descrição: "Descrição",
-          prestador: "Primeiro Último",
-          data: "13/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora_proposto: "4€",
+          preço_hora: "4€",
           informação: "Proposta de agendamento"
         }
       ],
@@ -125,11 +111,11 @@
           { key: 'categoria', label: 'Categoria', sortable: true },
           { key: 'subcategoria', label: 'Subcategoria', sortable: true},
           { key: 'descrição', label: 'Descrição', sortable: true},
-          { key: 'prestador', label: 'Prestador', sortable: true},
+          { key: 'cliente', label: 'Cliente', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
           { key: 'hora_início', label: 'Hora Início', sortable: true},
           { key: 'duração', label: 'Duração', sortable: true},
-          { key: 'preço_hora_proposto', label: 'Preço/hora proposto', sortable: true},
+          { key: 'preço_hora', label: 'Preço/hora', sortable: true},
           { key: 'informação', label: 'Informação', sortable: true},
           { key: 'acoes', label: '' }
       ],
@@ -150,22 +136,13 @@
   }},
   methods: {
     rejeitar(item, index, button) {
-      this.rejeitarModal.title = `Rejeitar serviço`
-      this.rejeitarModal.content = "Deseja rejeitar este serviço?"
+      this.rejeitarModal.title = `Cancelar serviço`
+      this.rejeitarModal.content = "Deseja cancelar este serviço?"
       this.$root.$emit('bv::show::modal', this.rejeitarModal.id, button)
     },
     resetRejeitarModal() {
       this.rejeitarModal.title = ''
       this.rejeitarModal.content = ''
-    },
-    aceitar(item, index, button) {
-      this.aceitarModal.title = `Aceitar serviço`
-      this.aceitarModal.content = "Deseja aceitar este serviço?"
-      this.$root.$emit('bv::show::modal', this.aceitarModal.id, button)
-    },
-    resetAceitarModal() {
-      this.aceitarModal.title = ''
-      this.aceitarModal.content = ''
     }
   }
 }

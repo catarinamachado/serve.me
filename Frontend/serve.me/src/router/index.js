@@ -51,7 +51,8 @@ export default new Router({
       name: "inbox-client",
       path: "/inbox-client",
       component: () => import("@/views/Client/InboxClient")
-    },
+    }
+    ,
     {
       name: "my-profile",
       path: "/my-profile",
@@ -77,9 +78,21 @@ export default new Router({
     }
     ,
     {
+      name: "history-services-provider",
+      path: "/history-services-provider",
+      component: () => import("@/views/Provider/HistoryServices")
+    }
+    ,
+    {
       name: "my-profile-provider",
       path: "/my-profile-provider",
       component: () => import("@/views/Provider/MyProfile")
+    }
+    ,
+    {
+      name: "inbox-provider",
+      path: "/inbox-provider",
+      component: () => import("@/views/Provider/InboxProvider")
     }
     ,
     {

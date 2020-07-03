@@ -86,7 +86,7 @@
           <li class="nav-item">
             <router-link
               class="nav-link"
-              :to="{ name: 'home' }"
+              :to="{ name: 'inbox-client' }"
             >
               Inbox
             </router-link>
@@ -145,7 +145,7 @@
                 </router-link>
                 <router-link
                   class="dropdown-item provider"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'history-services-provider' }"
                 >
                   Histórico
                 </router-link>
@@ -160,7 +160,7 @@
           <li class="nav-item">
             <router-link
               class="nav-link"
-              :to="{ name: 'home' }"
+              :to="{ name: 'inbox-provider' }"
             >
               Inbox
             </router-link>
@@ -168,7 +168,7 @@
           <li class="nav-item">
             <router-link
               class="nav-link"
-              :to="{ name: 'publish-service' }"
+              :to="{ name: 'home' }"
             >
               Consultar serviços
             </router-link>
