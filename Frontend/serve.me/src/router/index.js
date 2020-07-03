@@ -45,6 +45,12 @@ export default new Router({
       name: "history-services",
       path: "/history-services",
       component: () => import("@/views/Client/HistoryServices")
+    }
+    ,
+    {
+      name: "inbox-client",
+      path: "/inbox-client",
+      component: () => import("@/views/Client/InboxClient")
     },
     {
       name: "my-profile",
@@ -59,9 +65,9 @@ export default new Router({
     }
     ,
     {
-        name: "register-provider",
-        path: "/register-provider",
-        component: () => import("@/views/Provider/Register")
+      name: "register-provider",
+      path: "/register-provider",
+      component: () => import("@/views/Provider/Register")
     }
     ,
     {
