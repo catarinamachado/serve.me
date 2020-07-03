@@ -78,6 +78,12 @@ export default new Router({
     }
     ,
     {
+      name: "history-services-provider",
+      path: "/history-services-provider",
+      component: () => import("@/views/Provider/HistoryServices")
+    }
+    ,
+    {
       name: "my-profile-provider",
       path: "/my-profile-provider",
       component: () => import("@/views/Provider/MyProfile")

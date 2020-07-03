@@ -145,7 +145,7 @@
                 </router-link>
                 <router-link
                   class="dropdown-item provider"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'history-services-provider' }"
                 >
                   Histórico
                 </router-link>
