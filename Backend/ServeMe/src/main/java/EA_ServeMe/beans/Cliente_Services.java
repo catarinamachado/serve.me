@@ -1,9 +1,6 @@
 package EA_ServeMe.beans;
 
-import EA_ServeMe.util.DateUtils;
-import EA_ServeMe.util.Log;
-import EA_ServeMe.util.ProposeResponse;
-import EA_ServeMe.util.RequestResponse;
+import EA_ServeMe.util.*;
 import categorias.Categoria;
 import categorias.CategoriaDAO;
 import org.json.JSONObject;
@@ -383,6 +380,113 @@ public class Cliente_Services {
         } catch (PersistentException e) {
            Log.e(TAG,"BD error");
            return r;
+        }
+    }
+
+    @Bean
+    public static List<ServiceResponse> getMyServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        String query = "ClienteID = " + id_cliente;
+
+        List<Servico> servicos = new ArrayList<>();
+        try {
+            servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Services for this Client");
+                return r;
+            }
+            for (Servico tmp :
+                   servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
+            Log.i(TAG,"Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+    @Bean
+    public static List<ServiceResponse> getScheduledServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        int estado = ServicoState.CREATED.v();
+        String query = "ClienteID = " + id_cliente + " AND " + "Estado = " + estado;
+        try {
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Scheduled Services for this Client");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
+            Log.i(TAG,"Scheduled Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+
+    @Bean
+    public static List<ServiceResponse> getCompletedServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        int estado = ServicoState.DONE.v();
+        String query = "ClienteID = " + id_cliente + " AND " + "Estado >= " + estado;
+        try {
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Completed Services for this Client");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
+            Log.i(TAG,"Completed Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+    @Bean
+    public static List<ServiceResponse> getNextServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        int estado = ServicoState.CREATED.v();
+        String query = "ClienteID = " + id_cliente + " AND " + "Estado = " + estado;
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime week = now.minusWeeks(1);
+        try {
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Next Week Services for this Client");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                LocalDateTime hora = DateUtils.asLocalDateTime(tmp.getProposta().getHoraInicio());
+                if(hora.isAfter(now) && hora.isBefore(week)) {
+                    ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                    r.add(sr);
+                }
+            }
+            Log.i(TAG,"Next Week Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
         }
     }
 }

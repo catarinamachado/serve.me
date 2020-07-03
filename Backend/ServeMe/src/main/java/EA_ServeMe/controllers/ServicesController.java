@@ -14,7 +14,9 @@ import org.springframework.security.web.header.Header;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.tags.Param;
 import servico.Proposta;
+import utilizador.Prestador;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -197,7 +199,7 @@ public class ServicesController {
         return ResponseEntity.ok(proposes);
     }
 
-    @GetMapping("/proposes-done")
+    @GetMapping("/proposes-done") // Prestadores
     public ResponseEntity getProposesDone(@RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
@@ -211,4 +213,99 @@ public class ServicesController {
 
         return ResponseEntity.ok(proposes);
     }
+
+    @GetMapping("/my-services")
+    public ResponseEntity getMyServices(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<ServiceResponse> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.getMyServices(email);
+                break;
+            case 'P':
+                r  = Prestador_Services.getMyServices(email);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(r);
+    }
+
+    @PostMapping("/scheduled-services")
+    public ResponseEntity getScheduledServices(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<ServiceResponse> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.getScheduledServices(email);
+                break;
+            case 'P':
+                r  = Prestador_Services.getMyServices(email);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(r);
+    }
+
+    @PostMapping("/completed-services")
+    public ResponseEntity getCompletedServices(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<ServiceResponse> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.getCompletedServices(email);
+                break;
+            case 'P':
+                r  = Prestador_Services.getCompletedServices(email);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(r);
+    }
+
+    @PostMapping("/next-services")
+    public ResponseEntity getNextServices(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<ServiceResponse> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.getNextServices(email);
+                break;
+            case 'P':
+                r  = Prestador_Services.getNextServices(email);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(r);
+    }
+
+
+
 }

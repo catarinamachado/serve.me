@@ -1,17 +1,11 @@
 package EA_ServeMe.beans;
 
-import EA_ServeMe.util.DateUtils;
-import EA_ServeMe.util.Log;
-import EA_ServeMe.util.ProposeProvider;
-import EA_ServeMe.util.RequestResponse;
+import EA_ServeMe.util.*;
 import categorias.Categoria;
 import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
-import servico.Pedido;
-import servico.PedidoDAO;
-import servico.Proposta;
-import servico.PropostaDAO;
+import servico.*;
 import utilizador.Cliente;
 import utilizador.ClienteDAO;
 import utilizador.Prestador;
@@ -180,4 +174,113 @@ public class Prestador_Services {
 
         return r;
     }
+
+    @Bean
+    public static List<ServiceResponse> getMyServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_prestador = Prestador_Perfil.getPrestadorbyEmail(email).getID();
+        String query = "PrestadorID = " + id_prestador;
+        List<Servico> servicos = new ArrayList<>();
+        try {
+            servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"PrestadorID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Services for this Provider");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
+            Log.i(TAG,"Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+    @Bean
+    public static List<ServiceResponse> getScheduledServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_prestador = Prestador_Perfil.getPrestadorbyEmail(email).getID();
+        int estado = ServicoState.CREATED.v();
+        String query = "PrestadorID = " + id_prestador + " AND " + "Estado = " + estado;
+        List<Servico> servicos = new ArrayList<>();
+        try {
+            servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"PrestadorID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Scheduled Services for this Provider");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
+            Log.i(TAG,"Scheduled Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+    @Bean
+    public static List<ServiceResponse> getCompletedServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_prestador = Prestador_Perfil.getPrestadorbyEmail(email).getID();
+        int estado = ServicoState.DONE.v();
+        String query = "PrestadorID = " + id_prestador + " AND " + "Estado >= " + estado;
+        List<Servico> servicos = new ArrayList<>();
+        try {
+            servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"PrestadorID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Completed Services for this Provider");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
+            Log.i(TAG,"Completed Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+    @Bean
+    public static List<ServiceResponse> getNextServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_prestador = Prestador_Perfil.getPrestadorbyEmail(email).getID();
+        int estado = ServicoState.CREATED.v();
+        String query = "PrestadorID = " + id_prestador + " AND " + "Estado = " + estado;
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime week = now.minusWeeks(1);
+        try {
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"PrestadorID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Next Week Services for this Provider");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                LocalDateTime hora = DateUtils.asLocalDateTime(tmp.getProposta().getHoraInicio());
+                if(hora.isAfter(now) && hora.isBefore(week)) {
+                    ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                    r.add(sr);
+                }
+            }
+            Log.i(TAG,"Next Week Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+    
+    
 }
