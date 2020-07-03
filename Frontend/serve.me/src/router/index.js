@@ -30,6 +30,23 @@ export default new Router({
     }
     ,
     {
+      name: "scheduled-services",
+      path: "/scheduled-services",
+      component: () => import("@/views/Client/ScheduledServices")
+    }
+    ,
+    {
+      name: "published-services",
+      path: "/published-services",
+      component: () => import("@/views/Client/PublishedServices")
+    }
+    ,
+    {
+      name: "history-services",
+      path: "/history-services",
+      component: () => import("@/views/Client/HistoryServices")
+    },
+    {
       name: "my-profile",
       path: "/my-profile",
       component: () => import("@/views/Client/MyProfile")

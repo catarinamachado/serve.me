@@ -65,19 +65,19 @@
               <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'scheduled-services' }"
                 >
                   Agendados
                 </router-link>
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'published-services' }"
                 >
                   Publicados
                 </router-link>
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'history-services' }"
                 >
                   Histórico
                 </router-link>
