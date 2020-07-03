@@ -122,7 +122,7 @@
           { key: 'hora_início', label: 'Hora Início', sortable: true},
           { key: 'duração', label: 'Duração', sortable: true},
           { key: 'preço_hora', label: 'Preço/hora', sortable: true},
-          { key: 'acoes', label: 'Ações' }
+          { key: 'acoes', label: '' }
       ],
       currentPage: 1,
       perPage: 5,

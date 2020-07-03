@@ -131,7 +131,7 @@
           { key: 'duração', label: 'Duração', sortable: true},
           { key: 'preço_hora_proposto', label: 'Preço/hora proposto', sortable: true},
           { key: 'informação', label: 'Informação', sortable: true},
-          { key: 'acoes', label: 'Ações' }
+          { key: 'acoes', label: '' }
       ],
       currentPage: 1,
       perPage: 5,
