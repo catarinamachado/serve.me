@@ -1,5 +1,5 @@
 <template>
-  <div class="scheduled-services space-top-5 space-bottom-10 space-left-right-5">
+  <div class="inbox space-top-5 space-bottom-10 space-left-right-5">
 
     <h4 class="space-bottom-2">Inbox</h4>
     <div class="justify-content-centermy-1 row">
