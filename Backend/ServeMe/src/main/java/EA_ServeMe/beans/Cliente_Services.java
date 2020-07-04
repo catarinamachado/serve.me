@@ -439,7 +439,7 @@ public class Cliente_Services {
     public static List<ServiceResponse> getCompletedServices(String email) {
         List<ServiceResponse> r = new ArrayList<>();
         int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
-        int estado = ServicoState.DONE.v();
+        int estado = ServicoState.CLIENTDONE.v();
         String query = "ClienteID = " + id_cliente + " AND " + "Estado >= " + estado;
         try {
             List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
@@ -489,4 +489,51 @@ public class Cliente_Services {
             return r;
         }
     }
+
+    @Bean
+    public static List<String> cancelService(String email, String idJSON) {
+        List<String> error = new ArrayList<>();
+        List<String> success = new ArrayList<>();
+        error.add("Error:");
+        success.add("OK");
+        Cliente cliente = Cliente_Perfil.getClientebyEmail(email);
+//        Get id of the Service
+        int servico_ID = -1;
+        JSONObject obj = new JSONObject(idJSON);
+        servico_ID = obj.getInt("id_servico");
+
+        if (servico_ID == -1){
+            error.add("JSON");
+            Log.e(TAG,"Missing field in JSON");
+        }
+
+        try {
+            Servico servico = ServicoDAO.getServicoByORMID(servico_ID);
+            if(servico.getEstado() >= ServicoState.CLIENTDONE.v() ){
+                error.add("Servico Evaluated");
+                Log.e(TAG,"Impossible to Cancel Service - It's already Done");
+                return error;
+            }
+            servico.setEstado(ServicoState.CLIENTCANCELLED.v());
+            ServicoDAO.save(servico);
+        } catch (PersistentException e) {
+            error.add("servico");
+            Log.e(TAG,"Error Cancelling the Service");
+            return error;
+        }
+
+        try{
+            int num_cancelados = cliente.getNumServicosCancelados();
+            cliente.setNumServicosCancelados(num_cancelados+1);
+            ClienteDAO.save(cliente);
+            Log.i(TAG,"Service Cancelled Succesfully");
+            return success;
+        } catch (PersistentException e) {
+            error.add("Cliente");
+            Log.e(TAG,"Error Updating the Client");
+            return error;
+        }
+    }
+
+
 }

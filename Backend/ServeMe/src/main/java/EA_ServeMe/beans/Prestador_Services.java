@@ -6,8 +6,6 @@ import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
 import servico.*;
-import utilizador.Cliente;
-import utilizador.ClienteDAO;
 import utilizador.Prestador;
 import utilizador.PrestadorDAO;
 
@@ -230,7 +228,7 @@ public class Prestador_Services {
     public static List<ServiceResponse> getCompletedServices(String email) {
         List<ServiceResponse> r = new ArrayList<>();
         int id_prestador = Prestador_Perfil.getPrestadorbyEmail(email).getID();
-        int estado = ServicoState.DONE.v();
+        int estado = ServicoState.CLIENTDONE.v();
         String query = "PrestadorID = " + id_prestador + " AND " + "Estado >= " + estado;
         List<Servico> servicos = new ArrayList<>();
         try {
@@ -281,6 +279,45 @@ public class Prestador_Services {
             return r;
         }
     }
-    
-    
+
+    @Bean
+    public static List<String> cancelService(String email, String idJSON) {
+        List<String> error = new ArrayList<>();
+        List<String> success = new ArrayList<>();
+        error.add("Error:");
+        success.add("OK");
+        Prestador prestador = Prestador_Perfil.getPrestadorbyEmail(email);
+//        Get id of the Service
+        int servico_ID = -1;
+        JSONObject obj = new JSONObject(idJSON);
+        servico_ID = obj.getInt("id_servico");
+
+        if (servico_ID == -1){
+            error.add("JSON");
+            Log.e(TAG,"Missing field in JSON");
+        }
+
+        try {
+            Servico servico = ServicoDAO.getServicoByORMID(servico_ID);
+            servico.setEstado(ServicoState.PROVIDERCANCELLED.v());
+            ServicoDAO.save(servico);
+        } catch (PersistentException e) {
+            error.add("servico");
+            Log.e(TAG,"Error Cancelling the Service");
+            return error;
+        }
+
+        try{
+            int num_cancelados = prestador.getNumServicosCancelados();
+            prestador.setNumServicosCancelados(num_cancelados+1);
+            PrestadorDAO.save(prestador);
+            Log.i(TAG,"Service Cancelled Succesfully");
+            return success;
+        } catch (PersistentException e) {
+            error.add("Prestador");
+            Log.e(TAG,"Error Updating the Provider");
+            return error;
+        }
+
+    }
 }

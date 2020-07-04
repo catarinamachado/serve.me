@@ -260,7 +260,7 @@ public class ServicesController {
         return ResponseEntity.ok(r);
     }
 
-    @PostMapping("/completed-services")
+    @GetMapping("/completed-services")
     public ResponseEntity getCompletedServices(@RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
@@ -305,6 +305,31 @@ public class ServicesController {
 
         return ResponseEntity.ok(r);
     }
+
+    @PostMapping("/cancel-service")
+    public ResponseEntity cancelService(@RequestHeader String Authorization, @RequestBody String idJSON){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<String> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.cancelService(email,idJSON);
+                break;
+            case 'P':
+                r  = Prestador_Services.cancelService(email,idJSON);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok("Success");
+    }
+
+
 
 
 
