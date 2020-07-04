@@ -96,6 +96,12 @@ export default new Router({
     }
     ,
     {
+      name: "scheduled-services-provider",
+      path: "/scheduled-services-provider",
+      component: () => import("@/views/Provider/ScheduledServices")
+    }
+    ,
+    {
       name: "edit-password-provider",
       path: "/edit-password-provider",
       component: () => import("@/views/Provider/EditPassword")

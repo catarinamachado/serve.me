@@ -139,7 +139,7 @@
               <div class="dropdown-menu" aria-labelledby="navbarDropdown3">
                 <router-link
                   class="dropdown-item provider"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'scheduled-services-provider' }"
                 >
                   Serviços Agendados
                 </router-link>
