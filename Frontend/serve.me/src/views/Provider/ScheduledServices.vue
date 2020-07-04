@@ -35,7 +35,7 @@
             <b-button size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
             <i class="fas fa-times"></i>
             </b-button>
-            <b-button size="sm" class="btn btn-blue">
+            <b-button size="sm" class="btn btn-green">
             <i class="fas fa-check"></i>
             </b-button>
         </template>
