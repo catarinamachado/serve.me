@@ -1,7 +1,7 @@
 <template>
-  <div class="inbox space-top-5 space-bottom-10 space-left-right-5">
+  <div class="proposals space-top-5 space-bottom-10 space-left-right-5">
 
-    <h4 class="space-bottom-2">Inbox</h4>
+    <h4 class="space-bottom-2">Propostas</h4>
     <div class="justify-content-centermy-1 row">
       <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
          <b-form-select
@@ -56,7 +56,7 @@
 
 <script>
   export default {
-    name: 'inbox-provider',
+    name: 'proposals-provider',
     created() {
       window.scrollTo(0, 0);
     },
@@ -104,7 +104,7 @@
           hora_início: "14h00",
           duração: "1 hora",
           preço_hora: "4€",
-          informação: "Proposta de agendamento"
+          informação: "Cancelado"
         }
       ],
       fields: [

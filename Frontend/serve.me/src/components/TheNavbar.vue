@@ -160,15 +160,15 @@
           <li class="nav-item">
             <router-link
               class="nav-link"
-              :to="{ name: 'inbox-provider' }"
+              :to="{ name: 'proposals-provider' }"
             >
-              Inbox
+              Propostas
             </router-link>
           </li>
           <li class="nav-item">
             <router-link
               class="nav-link"
-              :to="{ name: 'home' }"
+              :to="{ name: 'consult-services' }"
             >
               Consultar serviços
             </router-link>

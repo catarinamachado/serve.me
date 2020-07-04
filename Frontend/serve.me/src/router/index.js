@@ -90,9 +90,15 @@ export default new Router({
     }
     ,
     {
-      name: "inbox-provider",
-      path: "/inbox-provider",
-      component: () => import("@/views/Provider/InboxProvider")
+      name: "proposals-provider",
+      path: "/proposals-provider",
+      component: () => import("@/views/Provider/ProposalsProvider")
+    }
+    ,
+    {
+      name: "consult-services",
+      path: "/consult-services",
+      component: () => import("@/views/Provider/ConsultServices")
     }
     ,
     {
