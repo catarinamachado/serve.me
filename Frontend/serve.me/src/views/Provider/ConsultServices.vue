@@ -112,7 +112,7 @@ export default {
             descricao:'C', concelho:'Braga', data:'1998/12/22', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
           {id:5, img: 'https://decortips.com/pt/wp-content/uploads/2018/06/ervas-daninhas-remover-768x511.jpg',
-            categoria:'Remoção de Ervas Daninhas', subcategoria:'Decoração de Jardins', 
+            categoria:'Jardinagem e Bricolage', subcategoria:'Remoção de Ervas Daninhas', 
             descricao:'F', concelho:'Braga', data:'2022/07/02', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'}                                                
       ]
