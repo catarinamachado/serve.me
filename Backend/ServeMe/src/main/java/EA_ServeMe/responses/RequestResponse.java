@@ -1,5 +1,6 @@
-package EA_ServeMe.util;
+package EA_ServeMe.responses;
 
+import EA_ServeMe.util.DateUtils;
 import servico.Pedido;
 
 public class RequestResponse {
@@ -14,7 +15,7 @@ public class RequestResponse {
     private double duracao;
     private String classe;
     private String descricao;
-    private int estado;
+    private String estado;
 
     public int getID() {
         return ID;
@@ -30,14 +31,6 @@ public class RequestResponse {
 
     public void setClasse(String classe) {
         this.classe = classe;
-    }
-
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
     }
 
     public String getCliente_nome() {
@@ -119,12 +112,37 @@ public class RequestResponse {
         this.classe = p.getCategoria().getClasse().getNome();
         this.categoria = p.getCategoria().getNome();
         this.preco = p.getPrecoHora();
-        this.data = DateUtils.asString(p.getData(),0);
-        this.horaInicioDisp = DateUtils.asString(p.getHoraInicioDisp(),1);
-        this.horaFimDisp = DateUtils.asString(p.getHoraFimDisp(),1);
+        this.data = DateUtils.asString(p.getData(), 0);
+        this.horaInicioDisp = DateUtils.asString(p.getHoraInicioDisp(), 1);
+        this.horaFimDisp = DateUtils.asString(p.getHoraFimDisp(), 1);
         this.duracao = p.getDuracao();
         this.descricao = p.getDescricao();
-        this.estado = p.getEstado();
+        this.estado = estadoAsStr(p.getEstado());
         return this;
+    }
+
+    private String estadoAsStr(int estado) {
+        String res = "";
+        switch (estado) {
+            case -1:
+                res = "Em Espera";
+                break;
+            case 0:
+                res = "Em Analise";
+                break;
+            case 1:
+                res = "Servico";
+                break;
+
+        }
+        return res;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

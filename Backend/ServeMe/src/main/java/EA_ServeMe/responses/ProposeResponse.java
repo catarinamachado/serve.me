@@ -1,6 +1,6 @@
-package EA_ServeMe.util;
+package EA_ServeMe.responses;
 
-import servico.Pedido;
+import EA_ServeMe.util.DateUtils;
 import servico.Proposta;
 
 public class ProposeResponse {

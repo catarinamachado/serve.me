@@ -1,4 +1,4 @@
-package EA_ServeMe.util;
+package EA_ServeMe.responses;
 
 import servico.Servico;
 
@@ -16,7 +16,7 @@ public class ServiceResponse {
 
     private ProposeProvider proposta;
 
-    private int estado;
+    private String estado;
 
     public int getID() {
         return ID;
@@ -74,14 +74,6 @@ public class ServiceResponse {
         this.proposta = proposta;
     }
 
-    public int getEstado() {
-        return estado;
-    }
-
-    public void setEstado(int estado) {
-        this.estado = estado;
-    }
-
     public ServiceResponse asResponse(Servico s){
         this.ID = s.getID();
         this.cliente_nome = s.getCliente().getNome();
@@ -90,7 +82,44 @@ public class ServiceResponse {
         this.prestador_email = s.getCliente().getEmail();
         this.pedido = new RequestResponse().asResponse(s.getPedido());
         this.proposta = new ProposeProvider().asResponse(s.getProposta());
-        this.estado = s.getEstado();
+        this.estado = estadoAsStr(s.getEstado());
         return this;
+    }
+
+    private String estadoAsStr(int estado) {
+            String res = "";
+            switch (estado){
+                case -12 :
+                    res = "Cancelado";
+                    break;
+                case -2 :
+                    res = "Cancelado";
+                    break;
+                case -1 :
+                    res = "Cancelado";
+                    break;
+                case 0:
+                    res = "Agendado";
+                    break;
+                case 1:
+                    res = "Realizado[Por Avaliar]";
+                    break;
+                case 2:
+                    res = "Realizado[Por Avaliar]";
+                    break;
+                case 12:
+                    res = "Finalizado";
+                    break;
+
+            }
+            return res;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

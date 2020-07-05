@@ -1,5 +1,9 @@
 package EA_ServeMe.beans;
 
+import EA_ServeMe.responses.AuthResponse;
+import EA_ServeMe.responses.ErrorResponse;
+import EA_ServeMe.responses.MyProfileResponse;
+import EA_ServeMe.responses.PrestadorProfResponse;
 import EA_ServeMe.util.*;
 import org.json.JSONObject;
 import org.orm.PersistentException;
@@ -7,12 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import utilizador.*;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

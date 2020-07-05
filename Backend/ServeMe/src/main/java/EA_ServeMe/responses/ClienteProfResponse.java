@@ -1,12 +1,11 @@
-package EA_ServeMe.util;
+package EA_ServeMe.responses;
 
 import utilizador.Avaliacao_Cliente;
-import utilizador.Avaliacao_Prestador;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class PrestadorProfResponse implements Serializable {
+public class ClienteProfResponse implements Serializable {
 
     String nome;
     String email;
@@ -18,7 +17,7 @@ public class PrestadorProfResponse implements Serializable {
     double classificacao;
     int numServicosRealizados;
     int numServicosCancelados;
-    List<Avaliacao_Prestador> avaliacoes;
+    List<Avaliacao_Cliente> avaliacoes;
 
 
     public double getClassificacao() {
@@ -47,10 +46,13 @@ public class PrestadorProfResponse implements Serializable {
 
 
 
-    public PrestadorProfResponse() {
+
+
+
+    public ClienteProfResponse() {
     }
 
-    public PrestadorProfResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito, double classificacao, int numServicosRealizados, int numServicosCancelados, List<Avaliacao_Prestador> avaliacoes) {
+    public ClienteProfResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito, double classificacao, int numServicosRealizados, int numServicosCancelados, List<Avaliacao_Cliente> avaliacoes) {
         this.nome = nome;
         this.email = email;
         this.nrTelm = nrTelm;
@@ -120,11 +122,11 @@ public class PrestadorProfResponse implements Serializable {
         this.distrito = distrito;
     }
 
-    public List<Avaliacao_Prestador> getAvaliacoes() {
+    public List<Avaliacao_Cliente> getAvaliacoes() {
         return avaliacoes;
     }
 
-    public void setAvaliacoes(List<Avaliacao_Prestador> avaliacoes) {
+    public void setAvaliacoes(List<Avaliacao_Cliente> avaliacoes) {
         this.avaliacoes = avaliacoes;
     }
 }
