@@ -44,7 +44,8 @@
                 </b-col>                
             </b-row>
             <div class="row justify-content-center">
-              <b-card-group deck v-for="row in formattedServices" :key="row" class="space-top-3">
+              <b-card-group deck class="space-top-3" :key="row"
+                    v-for="row in formattedServices">
                     <b-card v-for="service in row" :key="service"
                         no-body
                         style="max-width: 20rem;"
@@ -96,34 +97,81 @@ export default {
       services: [
           {id:1, img: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG', 
             categoria:'Jardinagem e Bricolage', subcategoria:'Vedação para Jardim', 
-            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            descricao:'B', concelho:'Braga', data:'1998/08/15', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
           {id:2, img: 'https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg',
             categoria:'Jardinagem e Bricolage', subcategoria:'Decoração de Jardins', 
-            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            descricao:'D', concelho:'Braga', data:'1998/04/01', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
           {id:3, img: 'https://flores.culturamix.com/blog/wp-content/gallery/A-Manuten%C3%A7%C3%A3o-do-Canteiro-1/A-Manuten%C3%A7%C3%A3o-do-Canteiro-3.jpg',
             categoria:'Jardinagem e Bricolage', subcategoria:'Manutenção de Canteiros', 
-            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            descricao:'A', concelho:'Braga', data:'1998/03/03', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
           {id:4, img: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG', 
             categoria:'Jardinagem e Bricolage', subcategoria:'Vedação para Jardim', 
-            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            descricao:'C', concelho:'Braga', data:'1998/12/22', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
           {id:5, img: 'https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg',
             categoria:'Jardinagem e Bricolage', subcategoria:'Decoração de Jardins', 
-            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            descricao:'F', concelho:'Braga', data:'2022/07/02', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'}                                                
       ]
     }
   },
   computed: {
     formattedServices() {
-        return this.services.reduce((c, n, i) => {
-            if (i % 3 === 0) c.push([]);
-            c[c.length - 1].push(n);
-            return c;
-        }, []);
+        if (this.dropdown_item_ordenar === 'Categoria') {
+            const services = this.services.slice()
+            return services.sort((a, b) => {
+                return a.categoria < b.categoria ? -1 : a.categoria > b.categoria ? 1 : 0
+            }).reduce((c, n, i) => {
+                    if (i % 3 === 0) c.push([]);
+                    c[c.length - 1].push(n);
+                    return c;
+                }, []);
+        } else if (this.dropdown_item_ordenar === 'Subcategoria') {
+            const services = this.services.slice()
+            return services.sort((a, b) => {
+                return a.subcategoria < b.subcategoria ? -1 : a.subcategoria > b.subcategoria ? 1 : 0
+            }).reduce((c, n, i) => {
+                    if (i % 3 === 0) c.push([]);
+                    c[c.length - 1].push(n);
+                    return c;
+                }, []);         
+        } else if (this.dropdown_item_ordenar === 'Descrição') {
+            const services = this.services.slice()
+            return services.sort((a, b) => {
+                return a.descricao < b.descricao ? -1 : a.descricao > b.descricao ? 1 : 0
+            }).reduce((c, n, i) => {
+                    if (i % 3 === 0) c.push([]);
+                    c[c.length - 1].push(n);
+                    return c;
+                }, []);
+        } else if (this.dropdown_item_ordenar === 'Concelho') {
+            const services = this.services.slice()
+            return services.sort((a, b) => {
+                return a.concelho < b.concelho ? -1 : a.concelho > b.concelho ? 1 : 0
+            }).reduce((c, n, i) => {
+                    if (i % 3 === 0) c.push([]);
+                    c[c.length - 1].push(n);
+                    return c;
+                }, []);
+        } else if (this.dropdown_item_ordenar === 'Data') {
+            const services = this.services.slice()
+            return services.sort((a, b) => {
+                return new Date(b.data) - new Date(a.data);
+            }).reduce((c, n, i) => {
+                    if (i % 3 === 0) c.push([]);
+                    c[c.length - 1].push(n);
+                    return c;
+                }, []);                
+         } else {
+            return this.services.reduce((c, n, i) => {
+                if (i % 3 === 0) c.push([]);
+                c[c.length - 1].push(n);
+                return c;
+            }, []);
+        }
     },
     filterServices() {
       // make a shallow copy of the array, so we don't mutate the original array
