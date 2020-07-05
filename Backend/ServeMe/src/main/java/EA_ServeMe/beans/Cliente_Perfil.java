@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import servico.Servico;
+import servico.ServicoDAO;
 import utilizador.*;
 
 
@@ -330,5 +333,113 @@ public class Cliente_Perfil {
             e.printStackTrace();
         }
         return (ResponseEntity) ResponseEntity.notFound();
+    }
+
+
+    public static List<String> parseAvaliacaofromPres(String body){
+        List<String> res = new ArrayList<>();
+        String email_cli = "";
+        String classificacao = "";
+        String opiniao = "";
+        String idServ = "";
+        JSONObject jsonObject = new JSONObject(body);
+        try{
+            email_cli = jsonObject.getString("email_cliente");
+            classificacao = String.valueOf(jsonObject.getDouble("classificacao"));
+            opiniao = jsonObject.getString("opiniao");
+            idServ = jsonObject.getString("idServico");
+
+            if(email_cli.equals("") || classificacao.equals("") || opiniao.equals("") || idServ.equals(""))
+                return null;
+            else{
+                //pos 0 -> email_cli
+                res.add(email_cli);
+                //pos 1 -> classificacao
+                res.add(classificacao);
+                //pos 2 -> opiniao
+                res.add(opiniao);
+                //pos 3 -> idServico
+                res.add(idServ);
+                return res;
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    @Bean
+    public static int avaliar_cliente(String email_pres, List<String> request){
+        String email_cli = request.get(0);
+        double classificacao = Double.valueOf(request.get(1));
+        String opiniao = request.get(2);
+        int idServico = Integer.valueOf(request.get(3));
+
+        try {
+            Servico servico = ServicoDAO.getServicoByORMID(idServico);
+            if(servico.getEstado() < ServicoState.CREATED.v())
+                return -2;
+            if(servico.getEstado() ==ServicoState.CLIENTDONE.v() || servico.getEstado() == ServicoState.EVALUATED.v())
+                return -1;
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+
+        String q = "Email = '" + email_cli + "'";
+        String q_2 = "Email = '" + email_pres + "'";
+        Cliente c = null;
+        try {
+            Cliente[] clis = ClienteDAO.listClienteByQuery(q,"Email");
+            c = clis[0];
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        //Update Numero Servicos Realizados
+        c.setNumServicosRealizados(c.getNumServicosRealizados() + 1);
+        //Update Classificacao
+        double nova_classificação = (c.getClassificacao() * c.getNumServicosRealizados() + classificacao)/(c.getNumServicosRealizados() + 1);
+        c.setClassificacao(nova_classificação);
+        try {
+            ClienteDAO.save(c);
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        Prestador[] pres;
+        Prestador p = null;
+        try {
+            pres = PrestadorDAO.listPrestadorByQuery(q_2,"Email");
+            p = pres[0];
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        Avaliacao_Cliente aval = new Avaliacao_Cliente();
+        aval.setClassificacao(classificacao);
+        aval.setOpiniao(opiniao);
+        aval.setPrestador(p);
+        try {
+            c.avaliacoes.add(aval);
+            ClienteDAO.save(c);
+            //Avaliacao_ClienteDAO.save(aval);
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Servico servico = ServicoDAO.getServicoByORMID(idServico);
+            if(servico.getEstado() == ServicoState.CREATED.v()){
+                servico.setEstado(ServicoState.CLIENTDONE.v());
+                ServicoDAO.save(servico);
+            }
+            if(servico.getEstado() == ServicoState.PROVIDERDONE.v()){
+                servico.setEstado(ServicoState.EVALUATED.v());
+                ServicoDAO.save(servico);
+            }
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+
+        return 1;
     }
 }

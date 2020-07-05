@@ -8,10 +8,13 @@ import EA_ServeMe.util.*;
 import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
+import servico.Pedido;
+import servico.PedidoDAO;
+import servico.Servico;
+import servico.ServicoDAO;
 import servico.*;
 import utilizador.Prestador;
 import utilizador.PrestadorDAO;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +51,26 @@ public class Prestador_Services {
     }
 
     @Bean
+    public static List<Servico> getServicesDone(String email) {
+        List<Servico> r = new ArrayList<>();
+        int id_prestador = Prestador_Perfil.getPrestadorbyEmail(email).getID();
+        int estado = ServicoState.CLIENTDONE.v();
+        String query = "PrestadorID = " + id_prestador + " AND " + "Estado >= " + estado;
+        List<Servico> servicos = new ArrayList<>();
+        try {
+            servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"PrestadorID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Completed Services for this Provider");
+                return r;
+            }
+            Log.i(TAG,"Completed Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+  
     public static List<String> addPropose(String propose, String email) {
         List<String> error = new ArrayList<>();
         List<String> success = new ArrayList<>();
@@ -251,6 +274,7 @@ public class Prestador_Services {
             return r;
         }
     }
+
 
     @Bean
     public static List<ServiceResponse> getNextServices(String email) {

@@ -10,11 +10,20 @@ import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import servico.Proposta;
+import servico.Servico;
+import servico.ServicoDAO;
 import utilizador.*;
-
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.lang.reflect.Array;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Prestador_Perfil {
 
@@ -324,4 +333,177 @@ public class Prestador_Perfil {
     }
 
 
+    public static List<String> parseAvaliacaofromCli(String body){
+        List<String> res = new ArrayList<>();
+        String email_pres = "";
+        String classificacao = "";
+        String opiniao = "";
+        String idServ = "";
+        JSONObject jsonObject = new JSONObject(body);
+        try{
+            email_pres = jsonObject.getString("email_prestador");
+            classificacao = String.valueOf(jsonObject.getDouble("classificacao"));
+            opiniao = jsonObject.getString("opiniao");
+            idServ = jsonObject.getString("idServico");
+
+            if(email_pres.equals("") || classificacao.equals("") || opiniao.equals("") || idServ.equals(""))
+                return null;
+            else{
+                //pos 0 -> email_cli
+                res.add(email_pres);
+                //pos 1 -> classificacao
+                res.add(classificacao);
+                //pos 2 -> opiniao
+                res.add(opiniao);
+                //pos 3 -> idServico
+                res.add(idServ);
+                return res;
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Bean
+    public static int avaliar_prestador(String email_cli, List<String> request){
+        String email_pres = request.get(0);
+        double classificacao = Double.valueOf(request.get(1));
+        String opiniao = request.get(2);
+        int idServico = Integer.valueOf(request.get(3));
+
+        try {
+            Servico servico = ServicoDAO.getServicoByORMID(idServico);
+            if(servico.getEstado() < ServicoState.CREATED.v())
+                return -2;
+            if(servico.getEstado() == ServicoState.PROVIDERDONE.v() || servico.getEstado() == ServicoState.EVALUATED.v())
+                return -1;
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+
+        String q = "Email = '" + email_cli + "'";
+        String q_2 = "Email = '" + email_pres + "'";
+        Cliente c = null;
+        try {
+            Cliente[] clis = ClienteDAO.listClienteByQuery(q,"Email");
+            c = clis[0];
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        Prestador[] pres;
+        Prestador p = null;
+        try {
+            pres = PrestadorDAO.listPrestadorByQuery(q_2,"Email");
+            p = pres[0];
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        //Update Numero Servicos Realizados
+        p.setNumServicosRealizados(p.getNumServicosRealizados() + 1);
+        //Update Classificacao
+        double nova_classificação = (p.getClassificacao() * p.getNumServicosRealizados() + classificacao)/(p.getNumServicosRealizados() + 1);
+        p.setClassificacao(nova_classificação);
+        try {
+            PrestadorDAO.save(p);
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        Avaliacao_Prestador aval = new Avaliacao_Prestador();
+        aval.setClassificacao(classificacao);
+        aval.setOpiniao(opiniao);
+        aval.setCliente(c);
+        try {
+            p.avaliacoes.add(aval);
+            PrestadorDAO.save(p);
+            //Avaliacao_PrestadorDAO.save(aval);
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Servico servico = ServicoDAO.getServicoByORMID(idServico);
+            if(servico.getEstado() == ServicoState.CREATED.v()){
+                servico.setEstado(ServicoState.PROVIDERDONE.v());
+                ServicoDAO.save(servico);
+            }
+            if(servico.getEstado() == ServicoState.CLIENTDONE.v()){
+                servico.setEstado(ServicoState.EVALUATED.v());
+                ServicoDAO.save(servico);
+            }
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+
+    public static Prestador getPrestadorbyEmail(String email){
+        String q = "Email = '" + email + "'";
+        try {
+            Prestador p = PrestadorDAO.listPrestadorByQuery(q,"Email")[0];
+            return p;
+        }catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static MyStatsResponse generateStats(List<Servico> done_services) {
+        MyStatsResponse msr = new MyStatsResponse();
+        //Get the year of the stats
+        int current_year = Calendar.getInstance().get(Calendar.YEAR);
+        msr.setAno(current_year);
+
+        List<Servico> este_ano = new ArrayList<>();
+
+        //GetTotalServices in Current Year and Total Earned
+        int total_servicos_anual = 0;
+        double total_earned = 0;
+        for(Servico sr: done_services){
+            if(sr.getProposta().getHoraInicio().getYear() == current_year){
+                este_ano.add(sr);
+                total_servicos_anual++;
+                if(sr.getProposta().getVencedora() > 0)
+                    total_earned += sr.getPedido().getDuracao() * sr.getProposta().getPrecoProposto();
+            }
+        }
+        msr.setServicos_anual(total_servicos_anual);
+        msr.setGanho_anual(total_earned);
+
+        //Initialize Variabels
+        List<Dot> ganhos_por_mes = new ArrayList<>();
+        List<Dot> servicos_por_mes = new ArrayList<>();
+        List<Dot> servicos_por_subcat = new ArrayList<>();
+
+
+        //Initialize Lists by Months
+        String[] shortMonths = new DateFormatSymbols().getShortMonths();
+        for (int i = 0; i < (shortMonths.length-1); i++) {
+            String shortMonth = shortMonths[i];
+            Dot d1 = new Dot(shortMonth,0);
+            ganhos_por_mes.add(d1);
+            servicos_por_mes.add(d1);
+        }
+
+        //Build lists
+        for(Servico s: este_ano){
+            servicos_por_mes.get(s.getPedido().getData().getMonth()-1).incY(1);
+            ganhos_por_mes.get(s.getPedido().getData().getMonth()-1).incY(s.getPedido().getDuracao() * s.getProposta().getPrecoProposto());
+            if(!servicos_por_subcat.contains(s.getPedido().getCategoria().getNome()))
+                servicos_por_subcat.add(new Dot(s.getPedido().getCategoria().getNome(),1));
+            else{
+                for(Dot d: servicos_por_subcat)
+                    if(d.getEixo_x().equals(s.getPedido().getCategoria().getNome()))
+                        d.incY(1);
+            }
+        }
+
+        //Set Lists generated
+        msr.setGanhos_por_mes(ganhos_por_mes);
+        msr.setServicos_por_mes(servicos_por_mes);
+        msr.setServicos_por_subcat(servicos_por_subcat);
+        return msr;
+    }
 }
