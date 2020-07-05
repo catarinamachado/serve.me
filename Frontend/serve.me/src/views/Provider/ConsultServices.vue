@@ -9,12 +9,8 @@
                         <b-dropdown id="dropdown-ordenar" :text="dropdown_item_ordenar" variant="btn btn-green" class="m-md-2">
                             <b-dropdown-item @click="dropdown_item_ordenar = 'Categoria'">Categoria</b-dropdown-item>
                             <b-dropdown-item @click="dropdown_item_ordenar = 'Subcategoria'">Subcategoria</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_ordenar = 'Descrição'">Descrição</b-dropdown-item>
                             <b-dropdown-item @click="dropdown_item_ordenar = 'Concelho'">Concelho</b-dropdown-item>
                             <b-dropdown-item @click="dropdown_item_ordenar = 'Data'">Data</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_ordenar = 'Hora início'">Hora início</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_ordenar = 'Hora fim'">Hora fim</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_ordenar = 'Duração'">Duração</b-dropdown-item>
                             <b-dropdown-item @click="dropdown_item_ordenar = 'Preço/hora'">Preço/hora</b-dropdown-item>
                         </b-dropdown>
                     </b-form>
@@ -102,26 +98,26 @@ export default {
           {id:2, img: 'https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg',
             categoria:'Jardinagem e Bricolage', subcategoria:'Decoração de Jardins', 
             descricao:'D', concelho:'Braga', data:'1998/04/01', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
+            hora_fim:'12h00', duracao: '1h', preco_hora: '3€', cliente: 'António Costa'},
           {id:3, img: 'https://flores.culturamix.com/blog/wp-content/gallery/A-Manuten%C3%A7%C3%A3o-do-Canteiro-1/A-Manuten%C3%A7%C3%A3o-do-Canteiro-3.jpg',
             categoria:'Jardinagem e Bricolage', subcategoria:'Manutenção de Canteiros', 
             descricao:'A', concelho:'Braga', data:'1998/03/03', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
+            hora_fim:'12h00', duracao: '1h', preco_hora: '5€', cliente: 'António Costa'},
           {id:4, img: 'https://ambienteconsciente.files.wordpress.com/2010/10/poda1.jpg', 
             categoria:'Jardinagem e Bricolage', subcategoria:'Corte de Árvores', 
             descricao:'C', concelho:'Braga', data:'1998/12/22', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
+            hora_fim:'12h00', duracao: '1h', preco_hora: '2€', cliente: 'António Costa'},
           {id:5, img: 'https://decortips.com/pt/wp-content/uploads/2018/06/ervas-daninhas-remover-768x511.jpg',
             categoria:'Jardinagem e Bricolage', subcategoria:'Remoção de Ervas Daninhas', 
             descricao:'F', concelho:'Braga', data:'2022/07/02', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'}                                                
+            hora_fim:'12h00', duracao: '1h', preco_hora: '1€', cliente: 'António Costa'}                                                
       ]
     }
   },
   computed: {
     formattedServices() {
         const services = this.services.slice()
-
+        
         if (this.dropdown_item_ordenar === 'Categoria') {
             return services.sort((a, b) => {
                 return a.categoria < b.categoria ? -1 : a.categoria > b.categoria ? 1 : 0
@@ -138,14 +134,6 @@ export default {
                     c[c.length - 1].push(n);
                     return c;
                 }, []);         
-        } else if (this.dropdown_item_ordenar === 'Descrição') {
-            return services.sort((a, b) => {
-                return a.descricao < b.descricao ? -1 : a.descricao > b.descricao ? 1 : 0
-            }).reduce((c, n, i) => {
-                    if (i % 3 === 0) c.push([]);
-                    c[c.length - 1].push(n);
-                    return c;
-                }, []);
         } else if (this.dropdown_item_ordenar === 'Concelho') {
             return services.sort((a, b) => {
                 return a.concelho < b.concelho ? -1 : a.concelho > b.concelho ? 1 : 0
@@ -157,6 +145,14 @@ export default {
         } else if (this.dropdown_item_ordenar === 'Data') {
             return services.sort((a, b) => {
                 return new Date(b.data) - new Date(a.data);
+            }).reduce((c, n, i) => {
+                    if (i % 3 === 0) c.push([]);
+                    c[c.length - 1].push(n);
+                    return c;
+                }, []);
+        } else if (this.dropdown_item_ordenar === 'Preço/hora') {
+            return services.sort((a, b) => {
+                return a.preco_hora < b.preco_hora ? -1 : a.preco_hora > b.preco_hora ? 1 : 0
             }).reduce((c, n, i) => {
                     if (i % 3 === 0) c.push([]);
                     c[c.length - 1].push(n);
