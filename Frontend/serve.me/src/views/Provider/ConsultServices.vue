@@ -93,7 +93,7 @@ export default {
     return {
       dropdown_item_ordenar: 'Categoria',
       dropdown_item_filtrar: 'Categoria',
-      filter: 'decoração',
+      filter: '',
       services: [
           {id:1, img: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG', 
             categoria:'Jardinagem e Bricolage', subcategoria:'Vedação para Jardim', 
@@ -107,12 +107,12 @@ export default {
             categoria:'Jardinagem e Bricolage', subcategoria:'Manutenção de Canteiros', 
             descricao:'A', concelho:'Braga', data:'1998/03/03', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
-          {id:4, img: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG', 
-            categoria:'Jardinagem e Bricolage', subcategoria:'Vedação para Jardim', 
+          {id:4, img: 'https://ambienteconsciente.files.wordpress.com/2010/10/poda1.jpg', 
+            categoria:'Jardinagem e Bricolage', subcategoria:'Corte de Árvores', 
             descricao:'C', concelho:'Braga', data:'1998/12/22', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
-          {id:5, img: 'https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg',
-            categoria:'Jardinagem e Bricolage', subcategoria:'Decoração de Jardins', 
+          {id:5, img: 'https://decortips.com/pt/wp-content/uploads/2018/06/ervas-daninhas-remover-768x511.jpg',
+            categoria:'Remoção de Ervas Daninhas', subcategoria:'Decoração de Jardins', 
             descricao:'F', concelho:'Braga', data:'2022/07/02', hora_inicio:'09h00',
             hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'}                                                
       ]
