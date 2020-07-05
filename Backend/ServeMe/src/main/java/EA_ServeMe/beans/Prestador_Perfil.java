@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import servico.Proposta;
 import servico.Servico;
+import servico.ServicoDAO;
 import utilizador.*;
 
 import java.awt.*;
@@ -356,6 +357,16 @@ public class Prestador_Perfil {
         String opiniao = request.get(2);
         int idServico = Integer.valueOf(request.get(3));
 
+        try {
+            Servico servico = ServicoDAO.getServicoByORMID(idServico);
+            if(servico.getEstado() < ServicoState.CREATED.v())
+                return -2;
+            if(servico.getEstado() == ServicoState.PROVIDERDONE.v() || servico.getEstado() == ServicoState.EVALUATED.v())
+                return -1;
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+
         String q = "Email = '" + email_cli + "'";
         String q_2 = "Email = '" + email_pres + "'";
         Cliente c = null;
@@ -388,7 +399,23 @@ public class Prestador_Perfil {
         aval.setOpiniao(opiniao);
         aval.setCliente(c);
         try {
-            Avaliacao_PrestadorDAO.save(aval);
+            p.avaliacoes.add(aval);
+            PrestadorDAO.save(p);
+            //Avaliacao_PrestadorDAO.save(aval);
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Servico servico = ServicoDAO.getServicoByORMID(idServico);
+            if(servico.getEstado() == ServicoState.CREATED.v()){
+                servico.setEstado(ServicoState.PROVIDERDONE.v());
+                ServicoDAO.save(servico);
+            }
+            if(servico.getEstado() == ServicoState.CLIENTDONE.v()){
+                servico.setEstado(ServicoState.EVALUATED.v());
+                ServicoDAO.save(servico);
+            }
         } catch (PersistentException e) {
             e.printStackTrace();
         }
@@ -446,13 +473,13 @@ public class Prestador_Perfil {
 
         //Build lists
         for(Servico s: este_ano){
-            servicos_por_mes.get(s.getPedido().getData().getMonth()).incY(1);
-            ganhos_por_mes.get(s.getPedido().getData().getMonth()).incY(s.getPedido().getDuracao() * s.getProposta().getPrecoProposto());
-            if(!servicos_por_subcat.contains(s.getPedido().getCategoria().getClasse().getNome()))
-                servicos_por_subcat.add(new Dot(s.getPedido().getCategoria().getClasse().getNome(),1));
+            servicos_por_mes.get(s.getPedido().getData().getMonth()-1).incY(1);
+            ganhos_por_mes.get(s.getPedido().getData().getMonth()-1).incY(s.getPedido().getDuracao() * s.getProposta().getPrecoProposto());
+            if(!servicos_por_subcat.contains(s.getPedido().getCategoria().getNome()))
+                servicos_por_subcat.add(new Dot(s.getPedido().getCategoria().getNome(),1));
             else{
                 for(Dot d: servicos_por_subcat)
-                    if(d.getEixo_x().equals(s.getPedido().getCategoria().getClasse().getNome()))
+                    if(d.getEixo_x().equals(s.getPedido().getCategoria().getNome()))
                         d.incY(1);
             }
         }

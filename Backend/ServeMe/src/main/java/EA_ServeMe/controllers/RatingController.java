@@ -42,30 +42,23 @@ public class RatingController {
         else{
             List<String> request = Cliente_Perfil.parseAvaliacaofromPres(body);
             if(request != null){
-                //PROD : ADD THIS BLOCK
-                /*
-                //Verificar que existe servico
-                try {
-                    Servico s = ServicoDAO.getServicoByORMID(idServico);
-                    if(s != null){
-                        //PROD: Verificar o estado do servico
-                        //Se estado for FEITO e NUNCA AVALIADO
-                        //if(s.getEstado() == 0){
-                            int r = Cliente_Perfil.avaliar_cliente(email,request);
-                            s.setEstado();
-                            ServicoDAO.save(s);
-                        }
+                int r = Cliente_Perfil.avaliar_cliente(email,request);
+                if(r == -2){
+                    ErrorResponse er = new ErrorResponse();
+                    er.setLocalError("RATING");
+                    er.addMsg("CantRating");
+                }
+
+                else{
+                    if(r == -1){
+                        ErrorResponse er = new ErrorResponse();
+                        er.setLocalError("RATING");
+                        er.addMsg("AlreadyRating");
                     }
                     else{
-                        ErrorResponse er = new ErrorResponse();
-                        er.setLocalError("Rating")
-                        er.addMsg("ServiceNotFound");
-                        return ResponseEntity.badrequest().body(er);
+                        return ResponseEntity.ok().body("RATED");
                     }
-                } catch (PersistentException e) {
-                    e.printStackTrace();
                 }
-                 */
             }
             else{
                 ErrorResponse er = new ErrorResponse();
@@ -97,31 +90,24 @@ public class RatingController {
         else{
             List<String> request = Prestador_Perfil.parseAvaliacaofromCli(body);
             if(request != null){
-                //PROD : ADD THIS BLOCK
-                /*
-                //Verificar que existe servico
-                try {
-                    Servico s = ServicoDAO.getServicoByORMID(idServico);
-                    if(s != null){
-                        //PROD: Verificar o estado do servico
-                        //Se estado for FEITO e NUNCA AVALIADO
-                        //if(s.getEstado() == 0){
-                            int r = Cliente_Perfil.avaliar_cliente(email,request);
-                            //Como ja foi avaliado pelo cliente
-                            s.setEstado(2);
-                            ServicoDAO.save(s);
-                        }
+                if(request != null){
+                    int r = Prestador_Perfil.avaliar_prestador(email,request);
+                    if(r == -2){
+                        ErrorResponse er = new ErrorResponse();
+                        er.setLocalError("RATING");
+                        er.addMsg("CantRating");
                     }
                     else{
-                        ErrorResponse er = new ErrorResponse();
-                        er.setLocalError("Rating")
-                        er.addMsg("ServiceNotFound");
-                        return ResponseEntity.badrequest().body(er);
+                        if(r == -1){
+                            ErrorResponse er = new ErrorResponse();
+                            er.setLocalError("RATING");
+                            er.addMsg("AlreadyRating");
+                        }
+                        else{
+                            return ResponseEntity.ok().body("RATED");
+                        }
                     }
-                } catch (PersistentException e) {
-                    e.printStackTrace();
                 }
-                 */
             }
             else{
                 ErrorResponse er = new ErrorResponse();
