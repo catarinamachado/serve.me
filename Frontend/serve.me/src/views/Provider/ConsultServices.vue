@@ -3,7 +3,7 @@
       <div class="container">
           <h4 class="space-bottom-2">Serviços</h4>
             <b-row align-h="end">
-                <b-col cols="6">
+                <b-col cols="7">
                     <b-form inline>
                         <label>Ordenar por:</label>
                         <b-dropdown id="dropdown-ordenar" :text="dropdown_item_ordenar" variant="btn btn-green" class="m-md-2">
@@ -15,27 +15,16 @@
                         </b-dropdown>
                     </b-form>
                 </b-col>
-                <b-col cols="5">
+                <b-col cols="4">
                     <b-form inline>
                         <label>Filtrar por:</label>
 
-                        <label class="sr-only" for="inline-form-input-name">Filtro</label>
+                        <label class="sr-only" for="inline-form-input">Filtro</label>
                         <b-input
-                        id="inline-form-input-name"
+                        v-model="filter"
+                        id="inline-form-input"
                         class="mb-2 mr-sm-2 mb-sm-0 m-md-2"
                         ></b-input>
-
-                        <b-dropdown id="dropdown-filtrar" :text="dropdown_item_filtrar" variant="btn btn-green" class="m-md-2">
-                            <b-dropdown-item @click="dropdown_item_filtrar = 'Categoria'">Categoria</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_filtrar = 'Subcategoria'">Subcategoria</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_filtrar = 'Descrição'">Descrição</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_filtrar = 'Concelho'">Concelho</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_filtrar = 'Data'">Data</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_filtrar = 'Hora início'">Hora início</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_filtrar = 'Hora fim'">Hora fim</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_filtrar = 'Duração'">Duração</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_filtrar = 'Preço/hora'">Preço/hora</b-dropdown-item>
-                        </b-dropdown>
                     </b-form>
                 </b-col>                
             </b-row>
@@ -117,70 +106,29 @@ export default {
   computed: {
     formattedServices() {
         const services = this.services.slice()
-        
-        if (this.dropdown_item_ordenar === 'Categoria') {
             return services.sort((a, b) => {
-                return a.categoria < b.categoria ? -1 : a.categoria > b.categoria ? 1 : 0
-            }).reduce((c, n, i) => {
-                    if (i % 3 === 0) c.push([]);
-                    c[c.length - 1].push(n);
-                    return c;
-                }, []);
-        } else if (this.dropdown_item_ordenar === 'Subcategoria') {
-            return services.sort((a, b) => {
-                return a.subcategoria < b.subcategoria ? -1 : a.subcategoria > b.subcategoria ? 1 : 0
-            }).reduce((c, n, i) => {
-                    if (i % 3 === 0) c.push([]);
-                    c[c.length - 1].push(n);
-                    return c;
-                }, []);         
-        } else if (this.dropdown_item_ordenar === 'Concelho') {
-            return services.sort((a, b) => {
-                return a.concelho < b.concelho ? -1 : a.concelho > b.concelho ? 1 : 0
-            }).reduce((c, n, i) => {
-                    if (i % 3 === 0) c.push([]);
-                    c[c.length - 1].push(n);
-                    return c;
-                }, []);
-        } else if (this.dropdown_item_ordenar === 'Data') {
-            return services.sort((a, b) => {
-                return new Date(b.data) - new Date(a.data);
-            }).reduce((c, n, i) => {
-                    if (i % 3 === 0) c.push([]);
-                    c[c.length - 1].push(n);
-                    return c;
-                }, []);
-        } else if (this.dropdown_item_ordenar === 'Preço/hora') {
-            return services.sort((a, b) => {
+                if (this.dropdown_item_ordenar === 'Categoria') {
+                    return a.categoria < b.categoria ? -1 : a.categoria > b.categoria ? 1 : 0
+                } else if (this.dropdown_item_ordenar === 'Subcategoria') {
+                    return a.subcategoria < b.subcategoria ? -1 : a.subcategoria > b.subcategoria ? 1 : 0
+                } else if (this.dropdown_item_ordenar === 'Concelho') {
+                    return a.concelho < b.concelho ? -1 : a.concelho > b.concelho ? 1 : 0                    
+                } else if (this.dropdown_item_ordenar === 'Data') {
+                    return new Date(b.data) - new Date(a.data);
+                } else if (this.dropdown_item_ordenar === 'Preço/hora') {
                 return a.preco_hora < b.preco_hora ? -1 : a.preco_hora > b.preco_hora ? 1 : 0
+                }
+            }).filter(item => {
+                return (item.categoria.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
+                       (item.subcategoria.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
+                       (item.concelho.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
+                       (item.preco_hora.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
+                       (item.data.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) 
             }).reduce((c, n, i) => {
                     if (i % 3 === 0) c.push([]);
                     c[c.length - 1].push(n);
                     return c;
-                }, []);                
-         } else {
-            return this.services.reduce((c, n, i) => {
-                if (i % 3 === 0) c.push([]);
-                c[c.length - 1].push(n);
-                return c;
             }, []);
-        }
-    },
-    filterServices() {
-      // make a shallow copy of the array, so we don't mutate the original array
-      const services = this.services.slice()
-      // return a filtered and sorted array
-      return services.sort((a, b) => {
-        // Sort by subcategoria
-        return a.subcategoria < b.subcategoria ? -1 : a.subcategoria > b.subcategoria ? 1 : 0
-      }).filter(item => {
-        // Then filter by content
-        return item.subcategoria.toLowerCase().indexOf(this.filter) !== -1
-      }).reduce((c, n, i) => {
-            if (i % 3 === 0) c.push([]);
-            c[c.length - 1].push(n);
-            return c;
-        }, []);
     }
   }
 };
