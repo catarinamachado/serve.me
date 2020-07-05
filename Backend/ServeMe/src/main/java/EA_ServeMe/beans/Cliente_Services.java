@@ -1,15 +1,12 @@
 package EA_ServeMe.beans;
 
-import EA_ServeMe.util.DateUtils;
-import EA_ServeMe.util.Log;
-import EA_ServeMe.util.RequestResponse;
+import EA_ServeMe.util.*;
 import categorias.Categoria;
 import categorias.CategoriaDAO;
 import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
-import servico.Pedido;
-import servico.PedidoDAO;
+import servico.*;
 import utilizador.Cliente;
 import utilizador.ClienteDAO;
 
@@ -130,7 +127,7 @@ public class Cliente_Services {
         Pedido p = new Pedido();
         p.setCliente(c);p.setCategoria(cat);p.setPrecoHora(preco);
         p.setData(DateUtils.asDate(DateUtils.asLocalDate(dataInicio)));p.setHoraInicioDisp(dataInicio);p.setHoraFimDisp(dataFim);p.setDuracao(dur);
-        p.setDescricao(desc);p.setEstado(0);
+        p.setDescricao(desc);p.setEstado(PedidoState.WAIT.v());
         return p;
     }
 
@@ -288,4 +285,255 @@ public class Cliente_Services {
         }
         return resp;
     }
+
+    @Bean
+    public static List<String> acceptPropose(String propose, String email) {
+        List<String> error = new ArrayList<>();
+        List<String> success = new ArrayList<>();
+        error.add("Error:");
+        success.add("OK");
+
+//        Needed Vars
+        int id_proposta = -1;
+        Proposta proposta;
+
+//        Get propose ID
+        JSONObject obj = new JSONObject(propose);
+        id_proposta = obj.getInt("id_proposta");
+
+        if(id_proposta == -1 ){
+            Log.e(TAG,"JSON Missing fields");
+            error.add("JSON");
+            return error;
+        }
+        try {
+            proposta = PropostaDAO.getPropostaByORMID(id_proposta);
+            Pedido pedido = proposta.getPedido();
+            Cliente cliente = pedido.getCliente();
+//            Verificaçãões necessárias
+            if (!cliente.getEmail().equals(email)){ //Verificação do Ownership do Pedido
+                error.add("Pedido");
+                Log.e(TAG,"Request Owner invalid");
+                return error;
+            }
+
+            if(pedido.getEstado() > 0){ //Verficiação de +1 vencedores
+                error.add("Pedido");
+                Log.e(TAG,"Request Already have a Winner");
+                return error;
+            }
+
+
+//            Build Servico
+            Servico servico = buildServico(cliente,pedido,proposta);
+//            Guardar o Servico
+            ServicoDAO.save(servico);
+//            Update States
+            pedido.setEstado(PedidoState.SERVICE.v());
+            proposta.setVencedora(1);
+//            Save new states
+            PedidoDAO.save(pedido);
+            PropostaDAO.save(proposta);
+
+            Log.i(TAG,"Propose Accepted Succesfully - Service Scheduled");
+            return success;
+
+        } catch (PersistentException e) {
+            error.add("BD");
+        }
+        return error;
+    }
+
+    private static Servico buildServico(Cliente cliente, Pedido pedido, Proposta proposta) {
+        Servico servico = ServicoDAO.createServico();
+        servico.setCliente(cliente);servico.setPrestador(proposta.getPrestador());
+        servico.setPedido(pedido);servico.setProposta(proposta);
+        servico.setEstado(ServicoState.CREATED.v());
+        return servico;
+    }
+
+    @Bean
+    public static List<ProposeResponse> getRecievedProposes(String email,String idJSON) {
+        List<ProposeResponse> r = new ArrayList<>();
+        int id_pedido = -1;
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        JSONObject obj = new JSONObject(idJSON);
+        id_pedido = obj.getInt("id_pedido");
+        if (id_pedido == -1){
+            Log.e(TAG,"Request has invalid owner");
+            return r;
+        }
+        String query = "PedidoID = " + id_pedido;
+
+        try {
+            List<Proposta> propostas =  Arrays.asList(PropostaDAO.listPropostaByQuery(query,"HoraInicio"));
+            if(propostas.size() == 0 ){
+                Log.w(TAG,"There's no offers for this request");
+                return r;
+            }
+            for(Proposta tmp : propostas ) {
+                ProposeResponse pr =  new ProposeResponse().asResponse(tmp);
+                r.add(pr);
+            }
+            Log.i(TAG,"Proposes Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+           Log.e(TAG,"BD error");
+           return r;
+        }
+    }
+
+    @Bean
+    public static List<ServiceResponse> getMyServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        String query = "ClienteID = " + id_cliente;
+
+        List<Servico> servicos = new ArrayList<>();
+        try {
+            servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Services for this Client");
+                return r;
+            }
+            for (Servico tmp :
+                   servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
+            Log.i(TAG,"Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+    @Bean
+    public static List<ServiceResponse> getScheduledServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        int estado = ServicoState.CREATED.v();
+        String query = "ClienteID = " + id_cliente + " AND " + "Estado = " + estado;
+        try {
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Scheduled Services for this Client");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
+            Log.i(TAG,"Scheduled Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+
+    @Bean
+    public static List<ServiceResponse> getCompletedServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        int estado = ServicoState.CLIENTDONE.v();
+        String query = "ClienteID = " + id_cliente + " AND " + "Estado >= " + estado;
+        try {
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Completed Services for this Client");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
+            Log.i(TAG,"Completed Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+    @Bean
+    public static List<ServiceResponse> getNextServices(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
+        int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
+        int estado = ServicoState.CREATED.v();
+        String query = "ClienteID = " + id_cliente + " AND " + "Estado = " + estado;
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime week = now.minusWeeks(1);
+        try {
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Next Week Services for this Client");
+                return r;
+            }
+            for (Servico tmp :
+                    servicos) {
+                LocalDateTime hora = DateUtils.asLocalDateTime(tmp.getProposta().getHoraInicio());
+                if(hora.isAfter(now) && hora.isBefore(week)) {
+                    ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                    r.add(sr);
+                }
+            }
+            Log.i(TAG,"Next Week Services Loaded Succesfully");
+            return r;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return r;
+        }
+    }
+
+    @Bean
+    public static List<String> cancelService(String email, String idJSON) {
+        List<String> error = new ArrayList<>();
+        List<String> success = new ArrayList<>();
+        error.add("Error:");
+        success.add("OK");
+        Cliente cliente = Cliente_Perfil.getClientebyEmail(email);
+//        Get id of the Service
+        int servico_ID = -1;
+        JSONObject obj = new JSONObject(idJSON);
+        servico_ID = obj.getInt("id_servico");
+
+        if (servico_ID == -1){
+            error.add("JSON");
+            Log.e(TAG,"Missing field in JSON");
+        }
+
+        try {
+            Servico servico = ServicoDAO.getServicoByORMID(servico_ID);
+            if(servico.getEstado() >= ServicoState.CLIENTDONE.v() ){
+                error.add("Servico Evaluated");
+                Log.e(TAG,"Impossible to Cancel Service - It's already Done");
+                return error;
+            }
+            servico.setEstado(ServicoState.CLIENTCANCELLED.v());
+            ServicoDAO.save(servico);
+        } catch (PersistentException e) {
+            error.add("servico");
+            Log.e(TAG,"Error Cancelling the Service");
+            return error;
+        }
+
+        try{
+            int num_cancelados = cliente.getNumServicosCancelados();
+            cliente.setNumServicosCancelados(num_cancelados+1);
+            ClienteDAO.save(cliente);
+            Log.i(TAG,"Service Cancelled Succesfully");
+            return success;
+        } catch (PersistentException e) {
+            error.add("Cliente");
+            Log.e(TAG,"Error Updating the Client");
+            return error;
+        }
+    }
+
+
 }
