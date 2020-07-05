@@ -2,177 +2,76 @@
   <div class="consult-services space-top-5 space-bottom-10 space-left-right-5">
       <div class="container">
           <h4 class="space-bottom-2">Serviços</h4>
-            <div class="row space-top-3 justify-content-center">
-              <b-card-group deck>
-                  <b-card
-                    no-body
-                    style="max-width: 20rem;"
-                    img-src="https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG"
-                    img-height="170"
-                    img-alt="Image"
-                    img-top
-                    >            
+            <b-row align-h="end">
+                <b-col cols="6">
+                    <b-form inline>
+                        <label>Ordenar por:</label>
+                        <b-dropdown id="dropdown-ordenar" :text="dropdown_item_ordenar" variant="btn btn-green" class="m-md-2">
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Categoria'">Categoria</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Subcategoria'">Subcategoria</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Descrição'">Descrição</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Concelho'">Concelho</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Data'">Data</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Hora início'">Hora início</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Hora fim'">Hora fim</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Duração'">Duração</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Preço/hora'">Preço/hora</b-dropdown-item>
+                        </b-dropdown>
+                    </b-form>
+                </b-col>
+                <b-col cols="5">
+                    <b-form inline>
+                        <label>Filtrar por:</label>
+
+                        <label class="sr-only" for="inline-form-input-name">Filtro</label>
+                        <b-input
+                        id="inline-form-input-name"
+                        class="mb-2 mr-sm-2 mb-sm-0 m-md-2"
+                        ></b-input>
+
+                        <b-dropdown id="dropdown-filtrar" :text="dropdown_item_filtrar" variant="btn btn-green" class="m-md-2">
+                            <b-dropdown-item @click="dropdown_item_filtrar = 'Categoria'">Categoria</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_filtrar = 'Subcategoria'">Subcategoria</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_filtrar = 'Descrição'">Descrição</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_filtrar = 'Concelho'">Concelho</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_filtrar = 'Data'">Data</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_filtrar = 'Hora início'">Hora início</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_filtrar = 'Hora fim'">Hora fim</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_filtrar = 'Duração'">Duração</b-dropdown-item>
+                            <b-dropdown-item @click="dropdown_item_filtrar = 'Preço/hora'">Preço/hora</b-dropdown-item>
+                        </b-dropdown>
+                    </b-form>
+                </b-col>                
+            </b-row>
+            <div class="row justify-content-center">
+              <b-card-group deck v-for="row in formattedServices" :key="row" class="space-top-3">
+                    <b-card v-for="service in row" :key="service"
+                        no-body
+                        style="max-width: 20rem;"
+                        :img-src="service.img"
+                        img-height="170"
+                        img-alt="Img"
+                        img-top
+                    >
                         <b-card-body>
-                            <b-card-title>Jardinagem e Bricolage</b-card-title>
-                            <b-card-sub-title class="mb-2">Vedação para Jardim</b-card-sub-title>
+                            <b-card-title>{{service.categoria}}</b-card-title>
+                            <b-card-sub-title class="mb-2">{{service.subcategoria}}</b-card-sub-title>
                             <b-card-text class="text-left space-top-3">
-                                <p><strong>Descrição: </strong>Cenassss</p>
-                                <p><strong>Local: </strong>Cenas</p>
-                                <p><strong>Data: </strong>Cenas</p>
-                                <p><strong>Hora início: </strong>Cenas</p>
-                                <p><strong>Hora fim: </strong>Cenas</p>
-                                <p><strong>Duração: </strong>Cenas</p>
-                                <p><strong>Preço/hora: </strong>Cenas</p>
-                                <p><strong>Cliente: </strong><a href="#" class="card-link">António Costa</a></p>
+                                <p><strong>Descrição: </strong>{{service.descricao}}</p>
+                                <p><strong>Concelho: </strong>{{service.concelho}}</p>
+                                <p><strong>Data: </strong>{{service.data}}</p>
+                                <p><strong>Hora início: </strong>{{service.hora_inicio}}</p>
+                                <p><strong>Hora fim: </strong>{{service.hora_fim}}</p>
+                                <p><strong>Duração: </strong>{{service.duracao}}</p>
+                                <p><strong>Preço/hora: </strong>{{service.preco_hora}}</p>
+                                <p><strong>Cliente: </strong><a href="#" class="card-link">{{service.cliente}}</a></p>
                             </b-card-text>
                         </b-card-body>
                         <b-card-footer>
-                            <button class="btn btn-green">
+                            <button class="btn btn-yellow-2">
                                 Efetuar proposta
                             </button>
                         </b-card-footer>
-                    </b-card>
-                  <b-card
-                    no-body
-                    style="max-width: 20rem;"
-                    img-src="https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg"
-                    img-height="170"
-                    img-alt="Image"
-                    img-top
-                    >            
-                        <b-card-body>
-                            <b-card-title>Jardinagem e Bricolage</b-card-title>
-                            <b-card-sub-title class="mb-2">Decoração de Jardins</b-card-sub-title>
-                            <b-card-text class="text-left space-top-3">
-                                <p><strong>Descrição: </strong>Cenassss</p>
-                                <p><strong>Local: </strong>Cenas</p>
-                                <p><strong>Data: </strong>Cenas</p>
-                                <p><strong>Hora início: </strong>Cenas</p>
-                                <p><strong>Hora fim: </strong>Cenas</p>
-                                <p><strong>Duração: </strong>Cenas</p>
-                                <p><strong>Preço/hora: </strong>Cenas</p>
-                                <p><strong>Cliente: </strong><a href="#" class="card-link">António Costa</a></p>
-                            </b-card-text>
-                        </b-card-body>
-                        <b-card-footer>
-                            <button class="btn btn-green">
-                                Efetuar proposta
-                            </button>
-                        </b-card-footer>                        
-                    </b-card>
-                  <b-card
-                    no-body
-                    style="max-width: 20rem;"
-                    img-src="https://flores.culturamix.com/blog/wp-content/gallery/A-Manuten%C3%A7%C3%A3o-do-Canteiro-1/A-Manuten%C3%A7%C3%A3o-do-Canteiro-3.jpg"
-                    img-height="170"
-                    img-alt="Image"
-                    img-top
-                    >            
-                        <b-card-body>
-                            <b-card-title>Jardinagem e Bricolage</b-card-title>
-                            <b-card-sub-title class="mb-2">Manutenção de Canteiros</b-card-sub-title>
-                            <b-card-text class="text-left space-top-3">
-                                <p><strong>Descrição: </strong>Cenassss</p>
-                                <p><strong>Local: </strong>Cenas</p>
-                                <p><strong>Data: </strong>Cenas</p>
-                                <p><strong>Hora início: </strong>Cenas</p>
-                                <p><strong>Hora fim: </strong>Cenas</p>
-                                <p><strong>Duração: </strong>Cenas</p>
-                                <p><strong>Preço/hora: </strong>Cenas</p>
-                                <p><strong>Cliente: </strong><a href="#" class="card-link">António Costa</a></p>
-                            </b-card-text>
-                        </b-card-body>
-                        <b-card-footer>
-                            <button class="btn btn-green">
-                                Efetuar proposta
-                            </button>
-                        </b-card-footer>                        
-                    </b-card>
-                </b-card-group>
-              <b-card-group deck class="space-top-3">
-                  <b-card
-                    no-body
-                    style="max-width: 20rem;"
-                    img-src="https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG"
-                    img-height="170"
-                    img-alt="Image"
-                    img-top
-                    >            
-                        <b-card-body>
-                            <b-card-title>Jardinagem e Bricolage</b-card-title>
-                            <b-card-sub-title class="mb-2">Vedação para Jardim</b-card-sub-title>
-                            <b-card-text class="text-left space-top-3">
-                                <p><strong>Descrição: </strong>Cenassss</p>
-                                <p><strong>Local: </strong>Cenas</p>
-                                <p><strong>Data: </strong>Cenas</p>
-                                <p><strong>Hora início: </strong>Cenas</p>
-                                <p><strong>Hora fim: </strong>Cenas</p>
-                                <p><strong>Duração: </strong>Cenas</p>
-                                <p><strong>Preço/hora: </strong>Cenas</p>
-                                <p><strong>Cliente: </strong><a href="#" class="card-link">António Costa</a></p>
-                            </b-card-text>
-                        </b-card-body>
-                        <b-card-footer>
-                            <button class="btn btn-green">
-                                Efetuar proposta
-                            </button>
-                        </b-card-footer>                        
-                    </b-card>
-                  <b-card
-                    no-body
-                    style="max-width: 20rem;"
-                    img-src="https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg"
-                    img-height="170"
-                    img-alt="Image"
-                    img-top
-                    >            
-                        <b-card-body>
-                            <b-card-title>Jardinagem e Bricolage</b-card-title>
-                            <b-card-sub-title class="mb-2">Decoração de Jardins</b-card-sub-title>
-                            <b-card-text class="text-left space-top-3">
-                                <p><strong>Descrição: </strong>Cenassss</p>
-                                <p><strong>Local: </strong>Cenas</p>
-                                <p><strong>Data: </strong>Cenas</p>
-                                <p><strong>Hora início: </strong>Cenas</p>
-                                <p><strong>Hora fim: </strong>Cenas</p>
-                                <p><strong>Duração: </strong>Cenas</p>
-                                <p><strong>Preço/hora: </strong>Cenas</p>
-                                <p><strong>Cliente: </strong><a href="#" class="card-link">António Costa</a></p>
-                            </b-card-text>
-                        </b-card-body>
-                        <b-card-footer>
-                            <button class="btn btn-green">
-                                Efetuar proposta
-                            </button>
-                        </b-card-footer>                        
-                    </b-card>
-                  <b-card
-                    no-body
-                    style="max-width: 20rem;"
-                    img-src="https://flores.culturamix.com/blog/wp-content/gallery/A-Manuten%C3%A7%C3%A3o-do-Canteiro-1/A-Manuten%C3%A7%C3%A3o-do-Canteiro-3.jpg"
-                    img-height="170"
-                    img-alt="Image"
-                    img-top
-                    >            
-                        <b-card-body>
-                            <b-card-title>Jardinagem e Bricolage</b-card-title>
-                            <b-card-sub-title class="mb-2">Manutenção de Canteiros</b-card-sub-title>
-                            <b-card-text class="text-left space-top-3">
-                                <p><strong>Descrição: </strong>Cenassss</p>
-                                <p><strong>Local: </strong>Cenas</p>
-                                <p><strong>Data: </strong>Cenas</p>
-                                <p><strong>Hora início: </strong>Cenas</p>
-                                <p><strong>Hora fim: </strong>Cenas</p>
-                                <p><strong>Duração: </strong>Cenas</p>
-                                <p><strong>Preço/hora: </strong>Cenas</p>
-                                <p><strong>Cliente: </strong><a href="#" class="card-link">António Costa</a></p>
-                            </b-card-text>
-                        </b-card-body>
-                        <b-card-footer>
-                            <button class="btn btn-green">
-                                Efetuar proposta
-                            </button>
-                        </b-card-footer>                        
                     </b-card>
                 </b-card-group>
             </div>
@@ -180,36 +79,68 @@
   </div>
 </template>
 
+<style>
+</style>
+
 <script>
 export default {
   name: "consult-services",
   created() {
     window.scrollTo(0, 0);
   },
-    data() {
+    data: function () {
     return {
-      filter: 'f',
-      items: [
-        { title: 'B', content: 'Foo' },
-        { title: 'A', content: 'Bar' },
-        { title: 'C', content: 'Baz' }
+      dropdown_item_ordenar: 'Categoria',
+      dropdown_item_filtrar: 'Categoria',
+      filter: 'decoração',
+      services: [
+          {id:1, img: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG', 
+            categoria:'Jardinagem e Bricolage', subcategoria:'Vedação para Jardim', 
+            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
+          {id:2, img: 'https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg',
+            categoria:'Jardinagem e Bricolage', subcategoria:'Decoração de Jardins', 
+            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
+          {id:3, img: 'https://flores.culturamix.com/blog/wp-content/gallery/A-Manuten%C3%A7%C3%A3o-do-Canteiro-1/A-Manuten%C3%A7%C3%A3o-do-Canteiro-3.jpg',
+            categoria:'Jardinagem e Bricolage', subcategoria:'Manutenção de Canteiros', 
+            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
+          {id:4, img: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG', 
+            categoria:'Jardinagem e Bricolage', subcategoria:'Vedação para Jardim', 
+            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
+          {id:5, img: 'https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg',
+            categoria:'Jardinagem e Bricolage', subcategoria:'Decoração de Jardins', 
+            descricao:'Olá', concelho:'Braga', data:'75/07/2322', hora_inicio:'09h00',
+            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'}                                                
       ]
     }
   },
   computed: {
-    computedItems() {
+    formattedServices() {
+        return this.services.reduce((c, n, i) => {
+            if (i % 3 === 0) c.push([]);
+            c[c.length - 1].push(n);
+            return c;
+        }, []);
+    },
+    filterServices() {
       // make a shallow copy of the array, so we don't mutate the original array
-      const items = this.items.slice()
+      const services = this.services.slice()
       // return a filtered and sorted array
-      return items.sort((a, b) => {
-        // Sort by title
-        return a.title < b.title ? -1 : a.title > b.title ? 1 : 0
+      return services.sort((a, b) => {
+        // Sort by subcategoria
+        return a.subcategoria < b.subcategoria ? -1 : a.subcategoria > b.subcategoria ? 1 : 0
       }).filter(item => {
         // Then filter by content
-        return item.content.toLowerCase().indexOf(this.filter) !== -1
-      })
+        return item.subcategoria.toLowerCase().indexOf(this.filter) !== -1
+      }).reduce((c, n, i) => {
+            if (i % 3 === 0) c.push([]);
+            c[c.length - 1].push(n);
+            return c;
+        }, []);
     }
   }
-
 };
 </script>
