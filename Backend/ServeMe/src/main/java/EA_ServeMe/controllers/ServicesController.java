@@ -1,22 +1,15 @@
 package EA_ServeMe.controllers;
 
-import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Cliente_Services;
-import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.beans.Prestador_Services;
-import EA_ServeMe.util.ErrorResponse;
-import EA_ServeMe.util.JwtUtil;
-import EA_ServeMe.util.Log;
-import EA_ServeMe.util.RequestResponse;
-import org.apache.coyote.Response;
+import EA_ServeMe.responses.*;
+import EA_ServeMe.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.web.header.Header;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.tags.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -127,6 +120,222 @@ public class ServicesController {
             }
             return ResponseEntity.badRequest().body(er);
         }
+    }
 
+    @PostMapping("/propose-request") // Para Prestadores
+    public ResponseEntity proposeRequest(@RequestBody String propose, @RequestHeader String Authorization){
+
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        if(token.startsWith("C")) return ResponseEntity.badRequest().body("Prestador Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<String> res = Prestador_Services.addPropose(propose,email);
+        int ok = (res.size()>1) ? 0 : 1;
+        if(ok == 1){
+            return ResponseEntity.ok("SUCCESS");
+        }
+        else {
+            ErrorResponse er = new ErrorResponse();
+            res.remove(0);
+            er.setLocalError("propose-request");
+            for (String e: res) {
+                er.addMsg(e);
+            }
+            return ResponseEntity.badRequest().body(er);
+        }
+    }
+
+    @PostMapping("/accept-propose") // Para Clientes
+    public ResponseEntity acceptPropose(@RequestBody String propose, @RequestHeader String Authorization){
+
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Prestador Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<String> r = Cliente_Services.acceptPropose(propose,email);
+        int ok = (r.size()>1) ? 0 : 1;
+        if (ok == 1){
+            return ResponseEntity.ok("SUCCESS");
+        }
+        else {
+            ErrorResponse er = new ErrorResponse();
+            r.remove(0);
+            er.setLocalError("accept-propose");
+            for (String e: r) {
+                er.addMsg(e);
+            }
+            return ResponseEntity.badRequest().body(er);
+        }
+    }
+
+
+    @PostMapping("/request-proposes") //Cliente
+    public ResponseEntity getRecievedProposes(@RequestHeader String Authorization,@RequestBody String json){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        if(token.startsWith("C")) return ResponseEntity.badRequest().body("Cliente Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<ProposeResponse> proposes = Cliente_Services.getRecievedProposes(email,json);
+
+        if(proposes.size() == 0){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(proposes);
+    }
+
+    @GetMapping("/proposes-done") // Prestadores
+    public ResponseEntity getProposesDone(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        if(token.startsWith("C")) return ResponseEntity.badRequest().body("Prestador Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<ProposeProvider> proposes = Prestador_Services.getMyProposes(email);
+
+        if (proposes.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(proposes);
+    }
+
+    @GetMapping("/my-services")
+    public ResponseEntity getMyServices(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<ServiceResponse> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.getMyServices(email);
+                break;
+            case 'P':
+                r  = Prestador_Services.getMyServices(email);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(r);
+    }
+
+    @PostMapping("/scheduled-services")
+    public ResponseEntity getScheduledServices(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<ServiceResponse> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.getScheduledServices(email);
+                break;
+            case 'P':
+                r  = Prestador_Services.getMyServices(email);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(r);
+    }
+
+    @GetMapping("/completed-services")
+    public ResponseEntity getCompletedServices(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<ServiceResponse> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.getCompletedServices(email);
+                break;
+            case 'P':
+                r  = Prestador_Services.getCompletedServices(email);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(r);
+    }
+
+    @PostMapping("/next-services")
+    public ResponseEntity getNextServices(@RequestHeader String Authorization){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<ServiceResponse> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.getNextServices(email);
+                break;
+            case 'P':
+                r  = Prestador_Services.getNextServices(email);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(r);
+    }
+
+    @PostMapping("/cancel-service")
+    public ResponseEntity cancelService(@RequestHeader String Authorization, @RequestBody String idJSON){
+        /* extract Token and email (Verification is already done by filter) */
+        String token = Authorization.substring(7);
+        char type = token.charAt(0);
+        String email = jwtUtil.extractEmail(token);
+        List<String> r = new ArrayList<>();
+
+        switch (type){
+            case 'C':
+                r  = Cliente_Services.cancelService(email,idJSON);
+                break;
+            case 'P':
+                r  = Prestador_Services.cancelService(email,idJSON);
+                break;
+        }
+
+        if (r.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/reject-propose")
+    public ResponseEntity rejectPropose(@RequestHeader String Authorization, @RequestBody String idJSON){
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Cliente Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<String> res = Cliente_Services.rejectPropose(idJSON,email);
+        int ok = (res.size()>1) ? 0 : 1;
+        if(ok == 1){
+            return ResponseEntity.ok("SUCCESS");
+        }
+        else {
+            ErrorResponse er = new ErrorResponse();
+            res.remove(0);
+            er.setLocalError("add-request");
+            for (String e: res) {
+                er.addMsg(e);
+            }
+            return ResponseEntity.badRequest().body(er);
+        }
     }
 }

@@ -65,19 +65,19 @@
               <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'scheduled-services' }"
                 >
                   Agendados
                 </router-link>
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'published-services' }"
                 >
                   Publicados
                 </router-link>
                 <router-link
                   class="dropdown-item client"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'history-services' }"
                 >
                   Histórico
                 </router-link>
@@ -86,7 +86,7 @@
           <li class="nav-item">
             <router-link
               class="nav-link"
-              :to="{ name: 'home' }"
+              :to="{ name: 'inbox-client' }"
             >
               Inbox
             </router-link>
@@ -127,6 +127,81 @@
           </li>
         </ul>
       </div>
+
+
+      <!-- PROVIDER NAVBAR -->
+      <div v-if="typeOf == 'provider'" id="navbarSupportedContent" class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Dashboard
+            </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown3">
+                <router-link
+                  class="dropdown-item provider"
+                  :to="{ name: 'scheduled-services-provider' }"
+                >
+                  Serviços Agendados
+                </router-link>
+                <router-link
+                  class="dropdown-item provider"
+                  :to="{ name: 'history-services-provider' }"
+                >
+                  Histórico
+                </router-link>
+                <router-link
+                  class="dropdown-item provider"
+                  :to="{ name: 'home' }"
+                >
+                  Estatísticas
+                </router-link>
+            </div>
+          </li>
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :to="{ name: 'proposals-provider' }"
+            >
+              Propostas
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :to="{ name: 'consult-services' }"
+            >
+              Consultar serviços
+            </router-link>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img src="../assets/imgs/provider/avatar_amarelo.png" width="20" alt="SERVE.ME" class="d-inline-block mr-1">
+              {{name}}
+            </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown4">
+                <router-link
+                  class="dropdown-item provider"
+                  :to="{ name: 'my-profile-provider' }"
+                >
+                  Perfil
+                </router-link>
+                <router-link
+                  class="dropdown-item provider"
+                  :to="{ name: 'edit-password-provider' }"
+                >
+                  Alterar password
+                </router-link>
+                <router-link
+                  class="dropdown-item provider"
+                  :to="{ name: 'home' }"
+                >
+                  Terminar sessão
+                </router-link>
+            </div>
+          </li>
+        </ul>
+      </div>
+
     </div>
   </nav>
 </template>

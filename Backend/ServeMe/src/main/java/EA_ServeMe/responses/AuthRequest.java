@@ -1,4 +1,4 @@
-package EA_ServeMe.util;
+package EA_ServeMe.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

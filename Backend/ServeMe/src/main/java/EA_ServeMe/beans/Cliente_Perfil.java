@@ -1,5 +1,9 @@
 package EA_ServeMe.beans;
 
+import EA_ServeMe.responses.AuthResponse;
+import EA_ServeMe.responses.ErrorResponse;
+import EA_ServeMe.responses.MyProfileResponse;
+import EA_ServeMe.responses.PrestadorProfResponse;
 import EA_ServeMe.util.*;
 import org.json.JSONObject;
 import org.orm.PersistentException;
@@ -13,8 +17,6 @@ import servico.ServicoDAO;
 import utilizador.*;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

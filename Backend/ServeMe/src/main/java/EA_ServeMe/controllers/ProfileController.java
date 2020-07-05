@@ -3,21 +3,18 @@ package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Prestador_Perfil;
+import EA_ServeMe.responses.ErrorResponse;
+import EA_ServeMe.responses.MyProfileResponse;
 import EA_ServeMe.util.*;
-import org.json.JSONObject;
-import org.orm.PersistentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import servico.Proposta;
-import servico.PropostaDAO;
 import utilizador.*;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 

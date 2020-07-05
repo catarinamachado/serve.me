@@ -2,17 +2,15 @@ package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Prestador_Perfil;
+import EA_ServeMe.responses.AuthRequest;
+import EA_ServeMe.responses.AuthResponse;
+import EA_ServeMe.responses.ErrorResponse;
 import EA_ServeMe.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import utilizador.Cliente;
-import utilizador.ClienteDAO;
-import utilizador.Prestador;
-import utilizador.PrestadorDAO;
 
 @RestController
 @RequestMapping("/api/login")

@@ -9,14 +9,17 @@
   },
   "dependencies": {
     "bootstrap": "^4.5.0",
+    "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
     "vue": "^2.6.11",
+    "vue-cal": "^3.6.2",
     "vue-headful": "^2.1.0",
     "vue-router": "^3.3.4"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.1",
     "@vue/cli-plugin-babel": "~4.4.0",
     "@vue/cli-plugin-eslint": "~4.4.0",
     "@vue/cli-plugin-router": "^4.4.4",

@@ -1,7 +1,10 @@
 package EA_ServeMe.beans;
 
+import EA_ServeMe.responses.AuthResponse;
+import EA_ServeMe.responses.ClienteProfResponse;
+import EA_ServeMe.responses.ErrorResponse;
+import EA_ServeMe.responses.MyProfileResponse;
 import EA_ServeMe.util.*;
-import net.bytebuddy.asm.Advice;
 import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
@@ -11,13 +14,14 @@ import servico.Proposta;
 import servico.Servico;
 import servico.ServicoDAO;
 import utilizador.*;
-
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.lang.reflect.Array;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -25,6 +29,18 @@ public class Prestador_Perfil {
 
     private static final String SECRETKEY =  "servemencriptkey";
     private static final String TAG =  "[PRESTADORPERFIL]";
+
+
+    public static Prestador getPrestadorbyEmail(String email){
+        String q = "Email = '" + email + "'";
+        try {
+            Prestador p = PrestadorDAO.listPrestadorByQuery(q, "Email")[0];
+            return p;
+        }catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Bean
     public static AuthResponse loginTokenPrestador(String email, String toke){

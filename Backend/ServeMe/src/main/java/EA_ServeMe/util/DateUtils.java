@@ -33,7 +33,8 @@ public class DateUtils {
             String hour = ldt.getHour()+"";
             String minute = ldt.getMinute()+"";
 
-            String res = day + "/" + month + "/" + year + "-" + hour + ":" + minute;
+//            YYYY/MM/DD HH:mm
+            String res = year + "/" + month + "/" + day + " " + hour + ":" + minute;
             return res;
         }
         else{
@@ -42,23 +43,23 @@ public class DateUtils {
             String month = ld.getMonth()+"";
             String year = ld.getYear()+"";
 
-            String res = day + "/" + month + "/" + year;
+            String res = year + "/" + month + "/" + day;
             return res;
         }
     }
 
     public static Date toDate(String str) {
-//      DD/MM/YY-hh:mm to Date
-//        str = "27/06/2020-18:07";
-        String[] split = str.split("-");
+//      YYYY/MM/DD hh:mm to Date
+//        str = "27/06/2020 18:07";
+        String[] split = str.split(" ");
         String data = split[0];
         String time = split[1];
 
 //      Take care of date
         split = data.split("/");
-        int day = Integer.valueOf(split[0]);
+        int day = Integer.valueOf(split[2]);
         int month = Integer.valueOf(split[1]);
-        int year = Integer.valueOf(split[2]);
+        int year = Integer.valueOf(split[0]);
 
 //      Take care of hour and minutes
         split = time.split(":");

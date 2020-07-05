@@ -30,6 +30,30 @@ export default new Router({
     }
     ,
     {
+      name: "scheduled-services",
+      path: "/scheduled-services",
+      component: () => import("@/views/Client/ScheduledServices")
+    }
+    ,
+    {
+      name: "published-services",
+      path: "/published-services",
+      component: () => import("@/views/Client/PublishedServices")
+    }
+    ,
+    {
+      name: "history-services",
+      path: "/history-services",
+      component: () => import("@/views/Client/HistoryServices")
+    }
+    ,
+    {
+      name: "inbox-client",
+      path: "/inbox-client",
+      component: () => import("@/views/Client/InboxClient")
+    }
+    ,
+    {
       name: "my-profile",
       path: "/my-profile",
       component: () => import("@/views/Client/MyProfile")
@@ -42,15 +66,51 @@ export default new Router({
     }
     ,
     {
-        name: "register-provider",
-        path: "/register-provider",
-        component: () => import("@/views/Provider/Register")
+      name: "register-provider",
+      path: "/register-provider",
+      component: () => import("@/views/Provider/Register")
     }
     ,
     {
       name: "login-provider",
       path: "/login-provider",
       component: () => import("@/views/Provider/Login")
+    }
+    ,
+    {
+      name: "history-services-provider",
+      path: "/history-services-provider",
+      component: () => import("@/views/Provider/HistoryServices")
+    }
+    ,
+    {
+      name: "my-profile-provider",
+      path: "/my-profile-provider",
+      component: () => import("@/views/Provider/MyProfile")
+    }
+    ,
+    {
+      name: "proposals-provider",
+      path: "/proposals-provider",
+      component: () => import("@/views/Provider/ProposalsProvider")
+    }
+    ,
+    {
+      name: "consult-services",
+      path: "/consult-services",
+      component: () => import("@/views/Provider/ConsultServices")
+    }
+    ,
+    {
+      name: "scheduled-services-provider",
+      path: "/scheduled-services-provider",
+      component: () => import("@/views/Provider/ScheduledServices")
+    }
+    ,
+    {
+      name: "edit-password-provider",
+      path: "/edit-password-provider",
+      component: () => import("@/views/Provider/EditPassword")
     }
   ]
 });
