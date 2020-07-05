@@ -139,6 +139,20 @@
   border-color: var(--my-darker-yellow) !important;
 }
 
+.btn-yellow-2 {
+  color: black !important;
+  background-color: var(--my-yellow) !important;
+  border-color: var(--my-yellow) !important;
+}
+.btn-yellow-2:hover,
+.btn-yellow-2:active,
+.btn-yellow-2:visited,
+.btn-yellow-2:focus {
+  color: black !important;
+  background-color: var(--my-darker-yellow) !important;
+  border-color: var(--my-darker-yellow) !important;
+}
+
 /* FIXED FOOTER */
 #app {
   display: flex;

@@ -1,6 +1,7 @@
 <template>
-  <div class="inbox space-top-5 space-bottom-10 space-left-right-5">
-    <h4 class="space-bottom-2">Inbox</h4>
+  <div class="proposals space-top-5 space-bottom-10 space-left-right-5">
+
+    <h4 class="space-bottom-2">Propostas</h4>
     <div class="justify-content-centermy-1 row">
       <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
          <b-form-select
@@ -30,19 +31,11 @@
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" >
       <template v-slot:cell(acoes)="row">
-        <b-button size="sm" @click="rejeitar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
-          <i class="fas fa-times"></i>
+        <b-button size="sm" @click="limpar(row.item, row.index, $event.target)" class="btn btn-green">
+          OK
         </b-button>
       </template>
     </b-table>
-
-    <!-- Info modal -->
-    <b-modal :id="rejeitarModal.id" :title="rejeitarModal.title" @hide="resetRejeitarModal">
-      <pre>{{ rejeitarModal.content }}</pre>
-    </b-modal>
-    <b-modal :id="aceitarModal.id" :title="aceitarModal.title" @hide="resetAceitarModal">
-      <pre>{{ aceitarModal.content }}</pre>
-    </b-modal>
 
     <div class="justify-content-center row my-1">
       <b-pagination size="md" :total-rows="this.items.length" :per-page="perPage" v-model="currentPage" class="customPagination"/>
@@ -55,7 +48,7 @@
 
 <script>
   export default {
-    name: 'inbox-provider',
+    name: 'proposals-provider',
     created() {
       window.scrollTo(0, 0);
     },
@@ -103,7 +96,7 @@
           hora_início: "14h00",
           duração: "1 hora",
           preço_hora: "4€",
-          informação: "Proposta de agendamento"
+          informação: "Cancelado"
         }
       ],
       fields: [
@@ -121,27 +114,11 @@
       currentPage: 1,
       perPage: 5,
       pageOptions: [5, 10, 15],
-      filter: null,
-      rejeitarModal: {
-        id: 'rejeitar-modal',
-        title: '',
-        content: ''
-      },
-      aceitarModal: {
-        id: 'aceitar-modal',
-        title: '',
-        content: ''
-      }      
+      filter: null
   }},
   methods: {
-    rejeitar(item, index, button) {
-      this.rejeitarModal.title = `Cancelar serviço`
-      this.rejeitarModal.content = "Deseja cancelar este serviço?"
-      this.$root.$emit('bv::show::modal', this.rejeitarModal.id, button)
-    },
-    resetRejeitarModal() {
-      this.rejeitarModal.title = ''
-      this.rejeitarModal.content = ''
+    limpar(item, index, button) {
+      this.$root.$emit('', button)
     }
   }
 }
