@@ -7,13 +7,18 @@ import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import servico.Proposta;
+import servico.Servico;
 import utilizador.*;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Prestador_Perfil {
 
@@ -390,5 +395,72 @@ public class Prestador_Perfil {
         return 1;
     }
 
+    public static Prestador getPrestadorbyEmail(String email){
+        String q = "Email = '" + email + "'";
+        try {
+            Prestador p = PrestadorDAO.listPrestadorByQuery(q,"Email")[0];
+            return p;
+        }catch (PersistentException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+
+    public static MyStatsResponse generateStats(List<Servico> done_services) {
+        MyStatsResponse msr = new MyStatsResponse();
+        //Get the year of the stats
+        int current_year = Calendar.getInstance().get(Calendar.YEAR);
+        msr.setAno(current_year);
+
+        List<Servico> este_ano = new ArrayList<>();
+
+        //GetTotalServices in Current Year and Total Earned
+        int total_servicos_anual = 0;
+        double total_earned = 0;
+        for(Servico sr: done_services){
+            if(sr.getProposta().getHoraInicio().getYear() == current_year){
+                este_ano.add(sr);
+                total_servicos_anual++;
+                if(sr.getProposta().getVencedora() > 0)
+                    total_earned += sr.getPedido().getDuracao() * sr.getProposta().getPrecoProposto();
+            }
+        }
+        msr.setServicos_anual(total_servicos_anual);
+        msr.setGanho_anual(total_earned);
+
+        //Initialize Variabels
+        List<Dot> ganhos_por_mes = new ArrayList<>();
+        List<Dot> servicos_por_mes = new ArrayList<>();
+        List<Dot> servicos_por_subcat = new ArrayList<>();
+
+
+        //Initialize Lists by Months
+        String[] shortMonths = new DateFormatSymbols().getShortMonths();
+        for (int i = 0; i < (shortMonths.length-1); i++) {
+            String shortMonth = shortMonths[i];
+            Dot d1 = new Dot(shortMonth,0);
+            ganhos_por_mes.add(d1);
+            servicos_por_mes.add(d1);
+        }
+
+        //Build lists
+        for(Servico s: este_ano){
+            servicos_por_mes.get(s.getPedido().getData().getMonth()).incY(1);
+            ganhos_por_mes.get(s.getPedido().getData().getMonth()).incY(s.getPedido().getDuracao() * s.getProposta().getPrecoProposto());
+            if(!servicos_por_subcat.contains(s.getPedido().getCategoria().getClasse().getNome()))
+                servicos_por_subcat.add(new Dot(s.getPedido().getCategoria().getClasse().getNome(),1));
+            else{
+                for(Dot d: servicos_por_subcat)
+                    if(d.getEixo_x().equals(s.getPedido().getCategoria().getClasse().getNome()))
+                        d.incY(1);
+            }
+        }
+
+        //Set Lists generated
+        msr.setGanhos_por_mes(ganhos_por_mes);
+        msr.setServicos_por_mes(servicos_por_mes);
+        msr.setServicos_por_subcat(servicos_por_subcat);
+        return msr;
+    }
 }

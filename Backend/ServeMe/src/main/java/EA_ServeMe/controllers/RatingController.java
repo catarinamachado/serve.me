@@ -50,10 +50,9 @@ public class RatingController {
                     if(s != null){
                         //PROD: Verificar o estado do servico
                         //Se estado for FEITO e NUNCA AVALIADO
-                        //if(s.getEstado() == 1){
+                        //if(s.getEstado() == 0){
                             int r = Cliente_Perfil.avaliar_cliente(email,request);
-                            //Como ja foi avaliado pelo prestador
-                            s.setEstado(3);
+                            s.setEstado();
                             ServicoDAO.save(s);
                         }
                     }
@@ -106,7 +105,7 @@ public class RatingController {
                     if(s != null){
                         //PROD: Verificar o estado do servico
                         //Se estado for FEITO e NUNCA AVALIADO
-                        //if(s.getEstado() == 1){
+                        //if(s.getEstado() == 0){
                             int r = Cliente_Perfil.avaliar_cliente(email,request);
                             //Como ja foi avaliado pelo cliente
                             s.setEstado(2);
