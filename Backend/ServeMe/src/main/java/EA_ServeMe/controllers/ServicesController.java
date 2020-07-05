@@ -316,4 +316,27 @@ public class ServicesController {
 
         return ResponseEntity.ok("Success");
     }
+
+    @PostMapping("/reject-propose")
+    public ResponseEntity rejectPropose(@RequestHeader String Authorization, @RequestBody String idJSON){
+        /* extract Token and email (Verification is already done by filter)*/
+        String token = Authorization.substring(7);
+        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Cliente Access Only");
+        String email = jwtUtil.extractEmail(token);
+
+        List<String> res = Cliente_Services.rejectPropose(idJSON,email);
+        int ok = (res.size()>1) ? 0 : 1;
+        if(ok == 1){
+            return ResponseEntity.ok("SUCCESS");
+        }
+        else {
+            ErrorResponse er = new ErrorResponse();
+            res.remove(0);
+            er.setLocalError("add-request");
+            for (String e: res) {
+                er.addMsg(e);
+            }
+            return ResponseEntity.badRequest().body(er);
+        }
+    }
 }

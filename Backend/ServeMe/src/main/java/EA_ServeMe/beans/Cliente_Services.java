@@ -622,4 +622,58 @@ public class Cliente_Services {
         return success;
 
     }
+
+    @Bean
+    public static List<String> rejectPropose(String idJSON, String email) {
+        List<String> error = new ArrayList<>();
+        List<String> success = new ArrayList<>();
+        error.add("Error:");
+        success.add("OK");
+
+//        Needed Vars
+        int id_proposta = -1;
+        Proposta proposta;
+
+//        Get propose ID
+        try {
+
+            JSONObject obj = new JSONObject(idJSON);
+            id_proposta = obj.getInt("id_proposta");
+        }catch (Exception e){
+            error.add("JSON");
+            Log.e(TAG,"Missing Fields in JSON");
+            return error;
+        }
+
+        if(id_proposta == -1 ){
+            Log.e(TAG,"JSON Missing fields");
+            error.add("JSON");
+            return error;
+        }
+        try {
+            proposta = PropostaDAO.getPropostaByORMID(id_proposta);
+            Pedido pedido = proposta.getPedido();
+            Cliente cliente = pedido.getCliente();
+//            Verificaçãões necessárias
+            if (!cliente.getEmail().equals(email)){ //Verificação do Ownership do Pedido
+                error.add("Pedido");
+                Log.e(TAG,"Request Owner invalid");
+                return error;
+            }
+            if(pedido.getEstado() > 0){ //Verficiação de +1 vencedores
+                error.add("Pedido");
+                Log.e(TAG,"Request Already have a Winner");
+                return error;
+            }
+            proposta.setVencedora(PropostaState.REJECTED.v());
+//            Save new states
+            PropostaDAO.save(proposta);
+            Log.i(TAG,"Propose Rejected Succesfully");
+            return success;
+
+        } catch (PersistentException e) {
+            error.add("BD");
+        }
+        return error;
+    }
 }
