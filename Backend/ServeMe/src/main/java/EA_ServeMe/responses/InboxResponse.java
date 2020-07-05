@@ -3,6 +3,7 @@ package EA_ServeMe.responses;
 // Tipos:
 // -1 : Cancelamento
 // 1 : Proposta
+// 2 : Avaliação
 
 
 

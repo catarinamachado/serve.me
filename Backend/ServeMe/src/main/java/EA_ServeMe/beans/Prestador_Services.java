@@ -323,6 +323,11 @@ public class Prestador_Services {
 
     }
 
+
+
+
+
+
     @Bean
     public static List<String> setSeen(String email, String body) {
         List<String> error = new ArrayList<>();
@@ -380,5 +385,43 @@ public class Prestador_Services {
                 }
         }
         return success;
+    }
+
+    @Bean
+    public static List<InboxResponse> getInbox(String email) {
+        List<InboxResponse> ibrs = new ArrayList<>();
+        int prestadorID = Prestador_Perfil.getPrestadorbyEmail(email).getID();
+
+        /*Search for cancelled Services*/
+        try {
+            String query1 = "PrestadorID = " + prestadorID + " AND " + "Estado = " + ServicoState.CLIENTCANCELLED.v();
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query1,"ID"));
+            for (Servico s :
+                    servicos) {
+                InboxResponse ibr = new InboxResponse(s.getID(),s.getCliente().getNome(),s.getCliente().getEmail(),s.getPedido().getDescricao(),s.getPedido().getCategoria().getClasse().getNome(),
+                        s.getPedido().getCategoria().getNome(),DateUtils.asString(s.getProposta().getHoraInicio(),0),DateUtils.asString(s.getProposta().getHoraInicio(),1),s.getPedido().getDuracao(),
+                        s.getProposta().getPrecoProposto(),-1);
+                ibrs.add(ibr);
+            }
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+        }
+
+        /*Search for unevaluated services*/
+        try {
+            String query2 = "PrestadorID = " + prestadorID + " AND " + "Estado = " + ServicoState.CLIENTDONE.v();
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query2,"ID"));
+            for (Servico s :
+                    servicos) {
+                InboxResponse ibr = new InboxResponse(s.getID(),s.getCliente().getNome(),s.getCliente().getEmail(),s.getPedido().getDescricao(),s.getPedido().getCategoria().getClasse().getNome(),
+                        s.getPedido().getCategoria().getNome(),DateUtils.asString(s.getProposta().getHoraInicio(),0),DateUtils.asString(s.getProposta().getHoraInicio(),1),s.getPedido().getDuracao(),
+                        s.getProposta().getPrecoProposto(),2);
+                ibrs.add(ibr);
+            }
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+        }
+
+        return ibrs;
     }
 }

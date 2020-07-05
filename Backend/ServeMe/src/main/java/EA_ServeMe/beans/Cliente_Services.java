@@ -578,6 +578,22 @@ public class Cliente_Services {
             Log.e(TAG,"BD error");
         }
 
+        /*Search for unevaluated services*/
+        try {
+            String query3 = "ClienteID = " + clienteID + " AND " + "Estado = " + ServicoState.PROVIDERDONE.v();
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query3,"ID"));
+            for (Servico s :
+                    servicos) {
+                InboxResponse ibr = new InboxResponse(s.getID(),s.getPrestador().getNome(),s.getPrestador().getEmail(),s.getPedido().getDescricao(),s.getPedido().getCategoria().getClasse().getNome(),
+                        s.getPedido().getCategoria().getNome(),DateUtils.asString(s.getProposta().getHoraInicio(),0),DateUtils.asString(s.getProposta().getHoraInicio(),1),s.getPedido().getDuracao(),
+                        s.getProposta().getPrecoProposto(),2);
+                ibrs.add(ibr);
+            }
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+        }
+
+
         return ibrs;
     }
 

@@ -38,7 +38,7 @@ public class InboxController {
                 r  = Cliente_Services.getInbox(email);
                 break;
             case 'P':
-                return ResponseEntity.badRequest().body("Cliente Acess Only");
+               r = Prestador_Services.getInbox(email);
         }
 
         if (r.size() == 0)
