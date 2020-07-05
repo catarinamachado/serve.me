@@ -66,6 +66,11 @@
 </template>
 
 <style>
+.dropdown-item:active {
+  color: white !important;
+  background-color: var(--my-darker-green) !important;
+  border-color: var(--my-darker-green) !important;
+}
 </style>
 
 <script>
