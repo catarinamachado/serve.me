@@ -120,8 +120,9 @@ export default {
   },
   computed: {
     formattedServices() {
+        const services = this.services.slice()
+
         if (this.dropdown_item_ordenar === 'Categoria') {
-            const services = this.services.slice()
             return services.sort((a, b) => {
                 return a.categoria < b.categoria ? -1 : a.categoria > b.categoria ? 1 : 0
             }).reduce((c, n, i) => {
@@ -130,7 +131,6 @@ export default {
                     return c;
                 }, []);
         } else if (this.dropdown_item_ordenar === 'Subcategoria') {
-            const services = this.services.slice()
             return services.sort((a, b) => {
                 return a.subcategoria < b.subcategoria ? -1 : a.subcategoria > b.subcategoria ? 1 : 0
             }).reduce((c, n, i) => {
@@ -139,7 +139,6 @@ export default {
                     return c;
                 }, []);         
         } else if (this.dropdown_item_ordenar === 'Descrição') {
-            const services = this.services.slice()
             return services.sort((a, b) => {
                 return a.descricao < b.descricao ? -1 : a.descricao > b.descricao ? 1 : 0
             }).reduce((c, n, i) => {
@@ -148,7 +147,6 @@ export default {
                     return c;
                 }, []);
         } else if (this.dropdown_item_ordenar === 'Concelho') {
-            const services = this.services.slice()
             return services.sort((a, b) => {
                 return a.concelho < b.concelho ? -1 : a.concelho > b.concelho ? 1 : 0
             }).reduce((c, n, i) => {
@@ -157,7 +155,6 @@ export default {
                     return c;
                 }, []);
         } else if (this.dropdown_item_ordenar === 'Data') {
-            const services = this.services.slice()
             return services.sort((a, b) => {
                 return new Date(b.data) - new Date(a.data);
             }).reduce((c, n, i) => {
