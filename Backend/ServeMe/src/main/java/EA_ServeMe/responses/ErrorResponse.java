@@ -1,4 +1,4 @@
-package EA_ServeMe.util;
+package EA_ServeMe.responses;
 
 import java.util.ArrayList;
 import java.util.List;

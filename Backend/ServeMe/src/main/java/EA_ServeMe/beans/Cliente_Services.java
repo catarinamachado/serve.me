@@ -1,5 +1,9 @@
 package EA_ServeMe.beans;
 
+import EA_ServeMe.responses.InboxResponse;
+import EA_ServeMe.responses.ProposeResponse;
+import EA_ServeMe.responses.RequestResponse;
+import EA_ServeMe.responses.ServiceResponse;
 import EA_ServeMe.util.*;
 import categorias.Categoria;
 import categorias.CategoriaDAO;
@@ -10,7 +14,6 @@ import servico.*;
 import utilizador.Cliente;
 import utilizador.ClienteDAO;
 
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -330,7 +333,7 @@ public class Cliente_Services {
             ServicoDAO.save(servico);
 //            Update States
             pedido.setEstado(PedidoState.SERVICE.v());
-            proposta.setVencedora(1);
+            proposta.setVencedora(PropostaState.WINNER.v());
 //            Save new states
             PedidoDAO.save(pedido);
             PropostaDAO.save(proposta);
@@ -353,7 +356,7 @@ public class Cliente_Services {
     }
 
     @Bean
-    public static List<ProposeResponse> getRecievedProposes(String email,String idJSON) {
+    public static List<ProposeResponse> getRecievedProposes(String email, String idJSON) {
         List<ProposeResponse> r = new ArrayList<>();
         int id_pedido = -1;
         int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
@@ -535,5 +538,88 @@ public class Cliente_Services {
         }
     }
 
+    @Bean
+    public static List<InboxResponse> getInbox(String email) {
+        List<InboxResponse> ibrs = new ArrayList<>();
+        int clienteID = Cliente_Perfil.getClientebyEmail(email).getID();
 
+        /*Search for new proposes*/
+        try {
+            String query1 = "ClienteID = " + clienteID + " AND " +  "Estado == " + PedidoState.RESPONDED.v();
+            List<Pedido> pedidos = Arrays.asList(PedidoDAO.listPedidoByQuery(query1,"ID"));
+            for (Pedido tmp :
+                    pedidos) {
+                int pedidoID = tmp.getID();
+                String query2 = "PedidoID = " + pedidoID + "Vencedora = " + PropostaState.UNSEEN.v() ;
+                List<Proposta> propostas = Arrays.asList(PropostaDAO.listPropostaByQuery(query2,"ID"));
+                for (Proposta p:
+                     propostas) {
+                    InboxResponse ibr = new InboxResponse(p.getID(),p.getPrestador().getNome(),p.getPrestador().getEmail(),tmp.getDescricao(),tmp.getCategoria().getClasse().getNome(),tmp.getCategoria().getNome(),
+                            DateUtils.asString(tmp.getData(),0),DateUtils.asString(p.getHoraInicio(),1),tmp.getDuracao(),p.getPrecoProposto(),1);
+                    ibrs.add(ibr);
+                }
+            }
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+        }
+
+        /*Search for cancelled Services*/
+        try {
+            String query3 = "ClienteID = " + clienteID + " AND " + "Estado = " + ServicoState.PROVIDERCANCELLED.v();
+            List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query3,"ID"));
+            for (Servico s :
+                    servicos) {
+                InboxResponse ibr = new InboxResponse(s.getID(),s.getPrestador().getNome(),s.getPrestador().getEmail(),s.getPedido().getDescricao(),s.getPedido().getCategoria().getClasse().getNome(),
+                        s.getPedido().getCategoria().getNome(),DateUtils.asString(s.getProposta().getHoraInicio(),0),DateUtils.asString(s.getProposta().getHoraInicio(),1),s.getPedido().getDuracao(),
+                        s.getProposta().getPrecoProposto(),-1);
+                ibrs.add(ibr);
+            }
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+        }
+
+        return ibrs;
+    }
+
+    @Bean
+    public static List<String> setSeen(String email, String body) {
+        List<String> error = new ArrayList<>();
+        List<String> success = new ArrayList<>();
+        error.add("Error:");
+        success.add("OK");
+
+        int id_evento = -100;
+        int tipo_evento = -100;
+        try {
+            JSONObject obj = new JSONObject(body);
+            id_evento = obj.getInt("id");
+            tipo_evento = obj.getInt("tipo");
+        }catch (Exception e){
+            Log.e(TAG,"Missing field in JSON");
+            error.add("JSON");
+            return error;
+        }
+        switch(tipo_evento){
+            case -1: //Cancelamento Servico
+                try {
+                    Servico s = ServicoDAO.getServicoByORMID(id_evento);
+                    s.setEstado(ServicoState.CANCELLEDSEEN.v());
+                    ServicoDAO.save(s);
+                    Log.i(TAG,"Notification Seen");
+                    return success;
+                } catch (PersistentException e) {
+                    error.add("BD");
+                    Log.e(TAG,"BD error");
+                    return error;
+                }
+
+            case 1: //Proposta nova
+                Log.w(TAG,"Invalid operation state");
+                error.add("Event");
+                return error;
+        }
+
+        return success;
+
+    }
 }

@@ -2,8 +2,8 @@ package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Prestador_Perfil;
-import EA_ServeMe.util.AuthResponse;
-import EA_ServeMe.util.ErrorResponse;
+import EA_ServeMe.responses.AuthResponse;
+import EA_ServeMe.responses.ErrorResponse;
 import EA_ServeMe.util.JwtUtil;
 import EA_ServeMe.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import utilizador.Cliente;
 
-import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONObject;
+
 import utilizador.Prestador;
 
 @RestController

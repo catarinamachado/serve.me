@@ -1,7 +1,10 @@
 package EA_ServeMe.beans;
 
+import EA_ServeMe.responses.InboxResponse;
+import EA_ServeMe.responses.ProposeProvider;
+import EA_ServeMe.responses.RequestResponse;
+import EA_ServeMe.responses.ServiceResponse;
 import EA_ServeMe.util.*;
-import categorias.Categoria;
 import org.json.JSONObject;
 import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +12,6 @@ import servico.*;
 import utilizador.Prestador;
 import utilizador.PrestadorDAO;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,7 +146,7 @@ public class Prestador_Services {
         Proposta proposta = PropostaDAO.createProposta();
         proposta.setPedido(pedido);proposta.setHoraInicio(dataInicio);
         proposta.setPrecoProposto(preco);proposta.setPrestador(prestador);
-        proposta.setVencedora(0);
+        proposta.setVencedora(PropostaState.UNSEEN.v());
         return proposta;
     }
 
@@ -319,5 +321,64 @@ public class Prestador_Services {
             return error;
         }
 
+    }
+
+    @Bean
+    public static List<String> setSeen(String email, String body) {
+        List<String> error = new ArrayList<>();
+        List<String> success = new ArrayList<>();
+        error.add("Error:");
+        success.add("OK");
+
+        int id_evento = -100;
+        int tipo_evento = -100;
+        try {
+            JSONObject obj = new JSONObject(body);
+            id_evento = obj.getInt("id");
+            tipo_evento = obj.getInt("tipo");
+        }catch (Exception e){
+            Log.e(TAG,"Missing field in JSON");
+            error.add("JSON");
+            return error;
+        }
+        switch(tipo_evento){
+            case -1: //Cancelamento Servico
+                try {
+                    Servico s = ServicoDAO.getServicoByORMID(id_evento);
+                    s.setEstado(ServicoState.CANCELLEDSEEN.v());
+                    ServicoDAO.save(s);
+                    Log.i(TAG,"Notification Seen");
+                    return success;
+                } catch (PersistentException e) {
+                    error.add("BD");
+                    Log.e(TAG,"BD error");
+                    return error;
+                }
+
+            case 1: //Proposta
+                try{
+                    Proposta proposta = PropostaDAO.getPropostaByORMID(id_evento);
+                    int est = proposta.getVencedora();
+                    switch(est) {
+                        case -1:
+                            proposta.setVencedora(PropostaState.REJECTEDSEEN.v());
+                            PropostaDAO.save(proposta);
+                            break;
+                        case 1:
+                            proposta.setVencedora(PropostaState.WINNERSEEN.v());
+                            PropostaDAO.save(proposta);
+                            break;
+                    }
+
+                    Log.i(TAG,"Notifications Seen Succesfully");
+                    return success;
+
+                } catch (PersistentException e) {
+                    error.add("BD");
+                    Log.e(TAG,"BD Error");
+                    return error;
+                }
+        }
+        return success;
     }
 }

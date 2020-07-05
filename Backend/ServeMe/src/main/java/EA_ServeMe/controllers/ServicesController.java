@@ -1,20 +1,13 @@
 package EA_ServeMe.controllers;
 
-import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Cliente_Services;
-import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.beans.Prestador_Services;
+import EA_ServeMe.responses.*;
 import EA_ServeMe.util.*;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.web.header.Header;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.tags.Param;
-import servico.Proposta;
-import utilizador.Prestador;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,11 +48,6 @@ public class ServicesController {
         }
         return ResponseEntity.ok(reqs);
     }
-
-
-
-
-
 
 
 
@@ -328,9 +316,4 @@ public class ServicesController {
 
         return ResponseEntity.ok("Success");
     }
-
-
-
-
-
 }
