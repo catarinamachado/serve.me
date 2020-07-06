@@ -50,7 +50,7 @@
                                 <p><strong>Hora fim: </strong>{{service.hora_fim}}</p>
                                 <p><strong>Duração: </strong>{{service.duracao}}</p>
                                 <p><strong>Preço/hora (€): </strong>{{service.preco_hora}}</p>
-                                <p><strong>Cliente: </strong><a href="#" class="card-link">{{service.cliente}}</a></p>
+                                <p><strong>Cliente: </strong><a href="/#/client-profile" class="card-link">{{service.cliente}}</a></p>
                             </b-card-text>
                         </b-card-body>
                         <b-card-footer>
