@@ -30,6 +30,10 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" >
+        <template v-slot:cell(preco_hora)="row">
+            {{row.item.preco_hora}} €
+        </template>
+
        <template v-slot:cell(cliente)="row">
         <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
       </template>
@@ -69,7 +73,7 @@
           data: "13/03/1233",
           hora_inicio: "14h00",
           duracao: "1 hora",
-          preco_hora: "4€",
+          preco_hora: "4",
           informacao: "Aviso de cancelamento"
         },
         {
@@ -80,7 +84,7 @@
           data: "13/03/1233",
           hora_inicio: "14h00",
           duracao: "1 hora",
-          preco_hora: "4€",
+          preco_hora: "4",
           informacao: "Requer classificação"
         }
       ],
