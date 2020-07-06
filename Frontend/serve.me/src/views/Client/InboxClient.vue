@@ -34,13 +34,20 @@
         <b-link href="/#/provider-profile">{{row.item.prestador}}</b-link>
       </template>
 
+      <template v-slot:cell(preco_hora_proposto)="row">
+        {{row.item.preco_hora_proposto}} €
+      </template>
+
       <template v-slot:cell(acoes)="row">
-        <b-button size="sm" @click="rejeitar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
+        <b-button size="sm" v-if="row.item.informacao == 'Proposta de agendamento'" @click="rejeitar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
           <i class="fas fa-times"></i>
         </b-button>
-        <b-button size="sm" @click="aceitar(row.item, row.index, $event.target)" class="btn btn-blue">
+        <b-button size="sm" v-if="row.item.informacao == 'Proposta de agendamento'" @click="aceitar(row.item, row.index, $event.target)" class="btn btn-blue">
           <i class="fas fa-check"></i>
         </b-button>
+        <b-button size="sm" v-if="row.item.informacao == 'Aviso de cancelamento'" class="btn btn-blue">
+          OK
+        </b-button>        
       </template>
     </b-table>
 
@@ -72,69 +79,69 @@
         items: [{
           categoria: "Teste1",
           subcategoria: "Teste2",
-          descrição: "Descrição",
+          descricao: "Descrição",
           prestador: "Primeiro Último",
           data: "13/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora_proposto: "4€",
-          informação: "Proposta de agendamento"
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora_proposto: "4",
+          informacao: "Proposta de agendamento"
         },
         {
           categoria: "Teste3",
           subcategoria: "Teste4",
-          descrição: "Descrição",
+          descricao: "Descrição",
           prestador: "Primeiro Último",
           data: "13/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora_proposto: "4€",
-          informação: "Aviso de cancelamento"
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora_proposto: "4",
+          informacao: "Aviso de cancelamento"
         },
         {
           categoria: "Teste1",
           subcategoria: "Teste2",
-          descrição: "Descrição",
+          descricao: "Descrição",
           prestador: "Primeiro Último",
           data: "14/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora_proposto: "4€",
-          informação: "Proposta de agendamento"
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora_proposto: "4",
+          informacao: "Proposta de agendamento"
         },
         {
           categoria: "Teste1",
           subcategoria: "Teste2",
-          descrição: "Descrição",
+          descricao: "Descrição",
           prestador: "Primeiro Último",
           data: "12/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora_proposto: "4€",
-          informação: "Proposta de agendamento"
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora_proposto: "4",
+          informacao: "Proposta de agendamento"
         },
         {
           categoria: "Teste1",
           subcategoria: "Teste2",
-          descrição: "Descrição",
+          descricao: "Descrição",
           prestador: "Primeiro Último",
           data: "13/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora_proposto: "4€",
-          informação: "Proposta de agendamento"
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora_proposto: "4",
+          informacao: "Proposta de agendamento"
         }
       ],
       fields: [
           { key: 'categoria', label: 'Categoria', sortable: true },
           { key: 'subcategoria', label: 'Subcategoria', sortable: true},
-          { key: 'descrição', label: 'Descrição', sortable: true},
+          { key: 'descricao', label: 'Descrição', sortable: true},
           { key: 'prestador', label: 'Prestador', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
-          { key: 'hora_início', label: 'Hora Início', sortable: true},
-          { key: 'duração', label: 'Duração', sortable: true},
-          { key: 'preço_hora_proposto', label: 'Preço/hora proposto', sortable: true},
-          { key: 'informação', label: 'Informação', sortable: true},
+          { key: 'hora_inicio', label: 'Hora Início', sortable: true},
+          { key: 'duracao', label: 'Duração', sortable: true},
+          { key: 'preco_hora_proposto', label: 'Preço/hora proposto', sortable: true},
+          { key: 'informacao', label: 'Informação', sortable: true},
           { key: 'acoes', label: '' }
       ],
       currentPage: 1,

@@ -1,7 +1,7 @@
 <template>
-  <div class="proposals space-top-5 space-bottom-10 space-left-right-5">
+  <div class="inbox-provider space-top-5 space-bottom-10 space-left-right-5">
 
-    <h4 class="space-bottom-2">Propostas</h4>
+    <h4 class="space-bottom-2">Inbox</h4>
     <div class="justify-content-centermy-1 row">
       <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
          <b-form-select
@@ -33,15 +33,18 @@
         <template v-slot:cell(preco_hora)="row">
             {{row.item.preco_hora}} €
         </template>
-       
+
        <template v-slot:cell(cliente)="row">
         <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
       </template>
 
       <template v-slot:cell(acoes)="row">
-        <b-button size="sm" @click="limpar(row.item, row.index, $event.target)" class="btn btn-green">
+        <b-button v-if="row.item.informacao == 'Aviso de cancelamento'" size="sm" @click="limpar(row.item, row.index, $event.target)" class="btn btn-green">
           OK
         </b-button>
+        <b-button v-if="row.item.informacao == 'Requer classificação'" size="sm" class="btn btn-green">
+          Classificar
+        </b-button>        
       </template>
     </b-table>
 
@@ -56,7 +59,7 @@
 
 <script>
   export default {
-    name: 'proposals-provider',
+    name: 'inbox-provider',
     created() {
       window.scrollTo(0, 0);
     },
@@ -71,7 +74,7 @@
           hora_inicio: "14h00",
           duracao: "1 hora",
           preco_hora: "4",
-          informacao: "Pendente"
+          informacao: "Aviso de cancelamento"
         },
         {
           categoria: "Teste3",
@@ -82,18 +85,7 @@
           hora_inicio: "14h00",
           duracao: "1 hora",
           preco_hora: "4",
-          informacao: "Aceite"
-        },
-        {
-          categoria: "Teste1",
-          subcategoria: "Teste2",
-          descricao: "Descrição",
-          cliente: "Primeiro Último",
-          data: "14/03/1233",
-          hora_inicio: "14h00",
-          duracao: "1 hora",
-          preco_hora: "4",
-          informacao: "Rejeitado"
+          informacao: "Requer classificação"
         }
       ],
       fields: [

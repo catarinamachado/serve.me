@@ -35,6 +35,10 @@
             <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
           </template>
 
+          <template v-slot:cell(preco_hora)="row">
+              {{row.item.preco_hora}} €
+          </template>          
+
           <template v-slot:cell(acoes)="row">
               <b-button size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
               <i class="fas fa-times"></i>
@@ -77,62 +81,62 @@ export default {
     items: [{
         categoria: "Teste1",
         subcategoria: "Teste2",
-        descrição: "Descrição",
+        descricao: "Descrição",
         cliente: "Primeiro Último",
         data: "13/03/1233",
-        hora_início: "14h00",
-        duração: "1 hora",
-        preço_hora: "4€"
+        hora_inicio: "14h00",
+        duracao: "1 hora",
+        preco_hora: "4"
     },
     {
         categoria: "Teste3",
         subcategoria: "Teste4",
-        descrição: "Descrição",
+        descricao: "Descrição",
         cliente: "Primeiro Último",
         data: "13/03/1233",
-        hora_início: "14h00",
-        duração: "1 hora",
-        preço_hora: "4€"
+        hora_inicio: "14h00",
+        duracao: "1 hora",
+        preco_hora: "4"
     },
     {
         categoria: "Teste1",
         subcategoria: "Teste2",
-        descrição: "Descrição",
+        descricao: "Descrição",
         cliente: "Primeiro Último",
         data: "14/03/1233",
-        hora_início: "14h00",
-        duração: "1 hora",
-        preço_hora: "4€"
+        hora_inicio: "14h00",
+        duracao: "1 hora",
+        preco_hora: "4"
     },
     {
         categoria: "Teste1",
         subcategoria: "Teste2",
-        descrição: "Descrição",
+        descricao: "Descrição",
         cliente: "Primeiro Último",
         data: "12/03/1233",
-        hora_início: "14h00",
-        duração: "1 hora",
-        preço_hora: "4€"
+        hora_inicio: "14h00",
+        duracao: "1 hora",
+        preco_hora: "4"
     },
     {
         categoria: "Teste1",
         subcategoria: "Teste2",
-        descrição: "Descrição",
+        descricao: "Descrição",
         cliente: "Primeiro Último",
         data: "13/03/1233",
-        hora_início: "14h00",
-        duração: "1 hora",
-        preço_hora: "4€"
+        hora_inicio: "14h00",
+        duracao: "1 hora",
+        preco_hora: "4"
     }],
     fields: [
         { key: 'categoria', label: 'Categoria', sortable: true },
         { key: 'subcategoria', label: 'Subcategoria', sortable: true},
-        { key: 'descrição', label: 'Descrição', sortable: true},
+        { key: 'descricao', label: 'Descrição', sortable: true},
         { key: 'cliente', label: 'Cliente', sortable: true},
         { key: 'data', label: 'Data', sortable: true},
-        { key: 'hora_início', label: 'Hora Início', sortable: true},
-        { key: 'duração', label: 'Duração', sortable: true},
-        { key: 'preço_hora', label: 'Preço/hora', sortable: true},
+        { key: 'hora_inicio', label: 'Hora Início', sortable: true},
+        { key: 'duracao', label: 'Duração', sortable: true},
+        { key: 'preco_hora', label: 'Preço/hora', sortable: true},
         { key: 'acoes', label: '' }
       ],
     currentPage: 1,

@@ -28,15 +28,19 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
-            <template v-slot:cell(cliente)="row">
-                <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
-            </template>            
-            <template v-slot:cell(estado)="row">
-            <b-button v-if="row.item.estado === 'Por classificar'" size="sm" @click="classificar(row.item, row.index, $event.target)" class="btn btn-green mr-1">
-                Por classificar
-            </b-button>
-            <b-form-group v-if="row.item.estado === 'Realizado' || row.item.estado === 'Cancelado'">
-                {{row.item.estado}}
+        <template v-slot:cell(preco_hora)="row">
+            {{row.item.preco_hora}} €
+        </template>
+      
+        <template v-slot:cell(cliente)="row">
+            <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
+        </template>            
+        <template v-slot:cell(estado)="row">
+        <b-button v-if="row.item.estado === 'Por classificar'" size="sm" @click="classificar(row.item, row.index, $event.target)" class="btn btn-green mr-1">
+            Por classificar
+        </b-button>
+        <b-form-group v-if="row.item.estado === 'Realizado' || row.item.estado === 'Cancelado'">
+            {{row.item.estado}}
             </b-form-group>
         </template>
     </b-table>
@@ -170,7 +174,7 @@
           data: "13/03/1233",
           hora_inicio: "14h00",
           duracao: "1 hora",
-          preco_hora: "4€",
+          preco_hora: "4",
           estado: "Realizado"
         },
         {
@@ -181,7 +185,7 @@
           data: "13/03/1233",
           hora_inicio: "14h00",
           duracao: "1 hora",
-          preco_hora: "4€",
+          preco_hora: "4",
           estado: "Cancelado"
         },
         {
@@ -192,7 +196,7 @@
           data: "14/03/1233",
           hora_inicio: "14h00",
           duracao: "1 hora",
-          preco_hora: "4€",
+          preco_hora: "4",
           estado: "Por classificar"          
         }
       ],
