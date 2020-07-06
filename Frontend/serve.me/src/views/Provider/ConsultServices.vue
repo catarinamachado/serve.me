@@ -77,7 +77,7 @@
                             :placeholder="propostaModal.categoria"
                         ></b-form-input>
                         </b-form-group>
-                        
+
                         <b-form-group
                         label="Subcategoria"
                         >
@@ -104,7 +104,7 @@
                             :placeholder="propostaModal.concelho"
                         ></b-form-input>
                         </b-form-group>
-                        
+
                         <b-form-group
                         label="Data"
                         >
@@ -245,9 +245,7 @@ export default {
       ],
         propostaModal: {
             id: 'proposta-modal',
-            title: '',
-            content: '',
-            descricao: ''
+            title: ''
         }
     }
   },
@@ -298,7 +296,6 @@ export default {
         },
         resetPropostaModal() {
             this.propostaModal.title = ''
-            this.propostaModal.content = ''
         }
   }
 };

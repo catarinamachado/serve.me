@@ -28,17 +28,114 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
-            <template v-if="'ola' === 'ola'" v-slot:cell(estado)="row">
-            <b-button size="sm" @click="classificar(row.item, row.index, $event.target)" class="btn btn-green mr-1">
+            <template v-slot:cell(estado)="row">
+            <b-button v-if="row.item.estado === 'Por classificar'" size="sm" @click="classificar(row.item, row.index, $event.target)" class="btn btn-green mr-1">
                 Por classificar
             </b-button>
+            <b-form-group v-if="row.item.estado === 'Realizado' || row.item.estado === 'Cancelado'">
+                {{row.item.estado}}
+            </b-form-group>
         </template>
     </b-table>
 
     <!-- Info modal -->
     <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @hide="resetClassificarModal">
-        <pre>{{ classificarModal.content }}</pre>
-        <b-form-rating v-model="rating" variant="warning"></b-form-rating>
+        <form ref="form" @submit.stop.prevent="handleSubmit">
+            <b-form-group
+            label="Categoria"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.categoria"
+            ></b-form-input>
+            </b-form-group>
+                        
+            <b-form-group
+            label="Subcategoria"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.subcategoria"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Descrição"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.descricao"
+            ></b-form-input>
+            </b-form-group>
+                    
+            <b-form-group
+            label="Data"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.data"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Hora Início"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.hora_inicio"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Duração"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.duracao"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Preço/hora"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.preco_hora"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Cliente"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.cliente"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            :state="classificacao"
+            label="Classificação"
+            label-for="classificacao-input"
+            invalid-feedback="Classificação é obrigatória"
+            >
+            <b-form-rating v-model="rating" variant="warning"></b-form-rating>
+            </b-form-group>
+
+            <b-form-group
+            :state="comentarios"
+            label="Comentários"
+            label-for="comentarios-input"
+            >
+            <b-form-input
+                id="comentarios-input"
+                v-model="comentarios"
+                :state="comentarios"
+                 :rows="3"
+                 :max-rows="6"
+            ></b-form-input>
+            </b-form-group>
+        </form>
     </b-modal>
 
     <div class="justify-content-center row my-1">
@@ -67,46 +164,46 @@
         items: [{
           categoria: "Teste1",
           subcategoria: "Teste2",
-          descrição: "Descrição",
+          descricao: "Descrição",
           cliente: "Primeiro Último",
           data: "13/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora: "4€",
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora: "4€",
           estado: "Realizado"
         },
         {
           categoria: "Teste3",
           subcategoria: "Teste4",
-          descrição: "Descrição",
+          descricao: "Descrição",
           cliente: "Primeiro Último",
           data: "13/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora: "4€",
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora: "4€",
           estado: "Cancelado"
         },
         {
           categoria: "Teste1",
           subcategoria: "Teste2",
-          descrição: "Descrição",
+          descricao: "Descrição",
           cliente: "Primeiro Último",
           data: "14/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora: "4€",
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora: "4€",
           estado: "Por classificar"          
         }
       ],
       fields: [
           { key: 'categoria', label: 'Categoria', sortable: true },
           { key: 'subcategoria', label: 'Subcategoria', sortable: true},
-          { key: 'descrição', label: 'Descrição', sortable: true},
+          { key: 'descricao', label: 'Descrição', sortable: true},
           { key: 'cliente', label: 'Cliente', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
-          { key: 'hora_início', label: 'Hora Início', sortable: true},
-          { key: 'duração', label: 'Duração', sortable: true},
-          { key: 'preço_hora', label: 'Preço/hora', sortable: true},
+          { key: 'hora_inicio', label: 'Hora Início', sortable: true},
+          { key: 'duracao', label: 'Duração', sortable: true},
+          { key: 'preco_hora', label: 'Preço/hora', sortable: true},
           { key: 'estado', label: 'Estado' }
       ],
       currentPage: 1,
@@ -115,15 +212,22 @@
       filter: null,
       classificarModal: {
         id: 'classificar-modal',
-        title: '',
-        content: ''
+        title: ''
       }
   }},
   methods: {
     classificar(item, index, button) {
-      this.classificarModal.title = `Classificação de Serviço`
-      this.classificarModal.content = `Classificação de Serviço`
-      this.$root.$emit('bv::show::modal', this.classificarModal.id, button)
+      this.classificarModal.title = `Classificação de Serviço`;
+      this.classificarModal.categoria = item.categoria;
+      this.classificarModal.subcategoria = item.subcategoria;
+      this.classificarModal.descricao = item.descricao;
+      this.classificarModal.concelho = item.concelho;
+      this.classificarModal.data = item.data;
+      this.classificarModal.hora_inicio = item.hora_inicio;
+      this.classificarModal.duracao = item.duracao;
+      this.classificarModal.preco_hora = item.preco_hora;
+      this.classificarModal.cliente = item.cliente;      
+      this.$root.$emit('bv::show::modal', this.classificarModal.id, button);
     },
     resetClassificarModal() {
       this.classificarModal.title = ''
