@@ -131,8 +131,6 @@
                 id="comentarios-input"
                 v-model="comentarios"
                 :state="comentarios"
-                 :rows="3"
-                 :max-rows="6"
             ></b-form-input>
             </b-form-group>
         </form>
