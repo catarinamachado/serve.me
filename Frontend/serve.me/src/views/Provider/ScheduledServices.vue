@@ -3,7 +3,7 @@
     <h4 class="space-bottom-2">Serviços Agendados</h4>
     <vue-cal style="height: 550px" :time-from="8 * 60" :time-to="19 * 60" locale="pt-br" />
     <div class="space-top-5">
-        <div class="justify-content-centermy-1 row">
+        <div class="justify-content-center my-1 row">
         <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
             <b-form-select
                 v-model="perPage"

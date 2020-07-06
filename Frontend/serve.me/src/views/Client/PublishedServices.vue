@@ -2,7 +2,7 @@
   <div class="published-services space-top-5 space-bottom-10 space-left-right-5">
 
     <h4 class="space-bottom-2">Serviços Publicados</h4>
-    <div class="justify-content-centermy-1 row">
+    <div class="justify-content-center my-1 row">
       <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
          <b-form-select
             v-model="perPage"
@@ -32,7 +32,7 @@
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
       <template v-slot:cell(preco_hora)="row">
         {{row.item.preco_hora}} €
-      </template>      
+      </template>
       
       <template v-slot:cell(acoes)="row">
         <b-button size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
