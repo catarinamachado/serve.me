@@ -49,17 +49,148 @@
                                 <p><strong>Hora início: </strong>{{service.hora_inicio}}</p>
                                 <p><strong>Hora fim: </strong>{{service.hora_fim}}</p>
                                 <p><strong>Duração: </strong>{{service.duracao}}</p>
-                                <p><strong>Preço/hora: </strong>{{service.preco_hora}}</p>
+                                <p><strong>Preço/hora (€): </strong>{{service.preco_hora}}</p>
                                 <p><strong>Cliente: </strong><a href="#" class="card-link">{{service.cliente}}</a></p>
                             </b-card-text>
                         </b-card-body>
                         <b-card-footer>
-                            <button class="btn btn-yellow-2">
+                            <button @click="proposta(service.categoria, service.subcategoria, 
+                                            service.descricao, service.concelho, service.data, service.hora_inicio,
+                                            service.hora_fim, service.duracao, service.preco_hora, service.cliente,
+                                            row.item, row.index, $event.target)" class="btn btn-yellow-2">
                                 Efetuar proposta
                             </button>
                         </b-card-footer>
                     </b-card>
                 </b-card-group>
+
+                <!-- Info modal -->
+                <b-modal :id="propostaModal.id" :title="propostaModal.title" 
+                         size="lg" @hide="resetPropostaModal">
+
+                    <form ref="form" @submit.stop.prevent="handleSubmit">
+                        <b-form-group
+                        label="Categoria"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.categoria"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        label="Subcategoria"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.subcategoria"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        label="Descrição"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.descricao"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        label="Concelho"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.concelho"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        label="Data"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.data"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        label="Hora Início Disponibilidade"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.hora_inicio"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        label="Hora Fim Disponibilidade"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.hora_fim"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        label="Duração"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.duracao"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        label="Preço/hora"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.preco_hora"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        label="Cliente"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.cliente"
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        :state="horainicio"
+                        label="Hora início proposto"
+                        label-for="horainicio-input"
+                        invalid-feedback="Hora de início é obrigatória"
+                        >
+                        <b-form-input
+                            id="horainicio-input"
+                            v-model="horainicio"
+                            :state="horainicio"
+                            type="time"
+                            required
+                        ></b-form-input>
+                        </b-form-group>
+
+                        <b-form-group
+                        :state="precohora"
+                        label="Preço/hora proposto (€)"
+                        label-for="precohora-input"
+                        invalid-feedback="Preço/hora é obrigatório"
+                        >
+                        <b-form-input
+                            id="precohora-input"
+                            v-model="precohora"
+                            :state="precohora"
+                            type="number"
+                            min="0"
+                            required
+                        ></b-form-input>
+                        </b-form-group>
+                    </form>
+                </b-modal>
             </div>
         </div>
   </div>
@@ -67,6 +198,12 @@
 
 <style>
 .dropdown-item:active {
+  color: white !important;
+  background-color: var(--my-darker-green) !important;
+  border-color: var(--my-darker-green) !important;
+}
+
+.btn-primary {
   color: white !important;
   background-color: var(--my-darker-green) !important;
   border-color: var(--my-darker-green) !important;
@@ -88,24 +225,28 @@ export default {
           {id:1, img: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG', 
             categoria:'Jardinagem e Bricolage', subcategoria:'Vedação para Jardim', 
             descricao:'B', concelho:'Braga', data:'1998/08/15', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '4€', cliente: 'António Costa'},
+            hora_fim:'12h00', duracao: '1h', preco_hora: '4', cliente: 'António Costa'},
           {id:2, img: 'https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg',
             categoria:'Jardinagem e Bricolage', subcategoria:'Decoração de Jardins', 
             descricao:'D', concelho:'Braga', data:'1998/04/01', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '3€', cliente: 'António Costa'},
+            hora_fim:'12h00', duracao: '1h', preco_hora: '3', cliente: 'António Costa'},
           {id:3, img: 'https://flores.culturamix.com/blog/wp-content/gallery/A-Manuten%C3%A7%C3%A3o-do-Canteiro-1/A-Manuten%C3%A7%C3%A3o-do-Canteiro-3.jpg',
             categoria:'Jardinagem e Bricolage', subcategoria:'Manutenção de Canteiros', 
             descricao:'A', concelho:'Braga', data:'1998/03/03', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '5€', cliente: 'António Costa'},
+            hora_fim:'12h00', duracao: '1h', preco_hora: '5', cliente: 'António Costa'},
           {id:4, img: 'https://ambienteconsciente.files.wordpress.com/2010/10/poda1.jpg', 
             categoria:'Jardinagem e Bricolage', subcategoria:'Corte de Árvores', 
             descricao:'C', concelho:'Braga', data:'1998/12/22', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '2€', cliente: 'António Costa'},
+            hora_fim:'12h00', duracao: '1h', preco_hora: '2', cliente: 'António Costa'},
           {id:5, img: 'https://decortips.com/pt/wp-content/uploads/2018/06/ervas-daninhas-remover-768x511.jpg',
             categoria:'Jardinagem e Bricolage', subcategoria:'Remoção de Ervas Daninhas', 
             descricao:'F', concelho:'Braga', data:'2022/07/02', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '1€', cliente: 'António Costa'}                                                
-      ]
+            hora_fim:'12h00', duracao: '1h', preco_hora: '1', cliente: 'António Costa'}
+      ],
+        propostaModal: {
+            id: 'proposta-modal',
+            title: ''
+        }
     }
   },
   computed: {
@@ -117,7 +258,7 @@ export default {
                 } else if (this.dropdown_item_ordenar === 'Subcategoria') {
                     return a.subcategoria < b.subcategoria ? -1 : a.subcategoria > b.subcategoria ? 1 : 0
                 } else if (this.dropdown_item_ordenar === 'Concelho') {
-                    return a.concelho < b.concelho ? -1 : a.concelho > b.concelho ? 1 : 0                    
+                    return a.concelho < b.concelho ? -1 : a.concelho > b.concelho ? 1 : 0
                 } else if (this.dropdown_item_ordenar === 'Data') {
                     return new Date(b.data) - new Date(a.data);
                 } else if (this.dropdown_item_ordenar === 'Preço/hora') {
@@ -135,6 +276,27 @@ export default {
                     return c;
             }, []);
     }
+  },
+    methods: {
+        proposta(categoria, subcategoria, descricao, concelho, data,
+                 hora_inicio, hora_fim, duracao, preco_hora, cliente,
+                 item, index, button) {
+            this.propostaModal.title = `Proposta de agendamento de serviço`;
+            this.propostaModal.categoria = categoria;
+            this.propostaModal.subcategoria = subcategoria;
+            this.propostaModal.descricao = descricao;
+            this.propostaModal.concelho = concelho;
+            this.propostaModal.data = data;
+            this.propostaModal.hora_inicio = hora_inicio;
+            this.propostaModal.hora_fim = hora_fim;
+            this.propostaModal.duracao = duracao;
+            this.propostaModal.preco_hora = preco_hora;
+            this.propostaModal.cliente = cliente;
+            this.$root.$emit('bv::show::modal', this.propostaModal.id, button)
+        },
+        resetPropostaModal() {
+            this.propostaModal.title = ''
+        }
   }
 };
 </script>
