@@ -31,14 +31,18 @@
 
         <!-- Main table element -->
         <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
-        <template v-slot:cell(acoes)="row">
-            <b-button size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
-            <i class="fas fa-times"></i>
-            </b-button>
-            <b-button size="sm" class="btn btn-green">
-            <i class="fas fa-check"></i>
-            </b-button>
-        </template>
+          <template v-slot:cell(cliente)="row">
+            <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
+          </template>
+
+          <template v-slot:cell(acoes)="row">
+              <b-button size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
+              <i class="fas fa-times"></i>
+              </b-button>
+              <b-button size="sm" class="btn btn-green">
+              <i class="fas fa-check"></i>
+              </b-button>
+          </template>
         </b-table>
 
         <!-- Info modal -->
@@ -74,7 +78,7 @@ export default {
         categoria: "Teste1",
         subcategoria: "Teste2",
         descrição: "Descrição",
-        prestador: "Primeiro Último",
+        cliente: "Primeiro Último",
         data: "13/03/1233",
         hora_início: "14h00",
         duração: "1 hora",
@@ -84,7 +88,7 @@ export default {
         categoria: "Teste3",
         subcategoria: "Teste4",
         descrição: "Descrição",
-        prestador: "Primeiro Último",
+        cliente: "Primeiro Último",
         data: "13/03/1233",
         hora_início: "14h00",
         duração: "1 hora",
@@ -94,7 +98,7 @@ export default {
         categoria: "Teste1",
         subcategoria: "Teste2",
         descrição: "Descrição",
-        prestador: "Primeiro Último",
+        cliente: "Primeiro Último",
         data: "14/03/1233",
         hora_início: "14h00",
         duração: "1 hora",
@@ -104,7 +108,7 @@ export default {
         categoria: "Teste1",
         subcategoria: "Teste2",
         descrição: "Descrição",
-        prestador: "Primeiro Último",
+        cliente: "Primeiro Último",
         data: "12/03/1233",
         hora_início: "14h00",
         duração: "1 hora",
@@ -114,7 +118,7 @@ export default {
         categoria: "Teste1",
         subcategoria: "Teste2",
         descrição: "Descrição",
-        prestador: "Primeiro Último",
+        cliente: "Primeiro Último",
         data: "13/03/1233",
         hora_início: "14h00",
         duração: "1 hora",
@@ -124,7 +128,7 @@ export default {
         { key: 'categoria', label: 'Categoria', sortable: true },
         { key: 'subcategoria', label: 'Subcategoria', sortable: true},
         { key: 'descrição', label: 'Descrição', sortable: true},
-        { key: 'prestador', label: 'Prestador', sortable: true},
+        { key: 'cliente', label: 'Cliente', sortable: true},
         { key: 'data', label: 'Data', sortable: true},
         { key: 'hora_início', label: 'Hora Início', sortable: true},
         { key: 'duração', label: 'Duração', sortable: true},

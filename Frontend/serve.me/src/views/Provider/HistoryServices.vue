@@ -28,6 +28,9 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
+            <template v-slot:cell(cliente)="row">
+                <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
+            </template>            
             <template v-slot:cell(estado)="row">
             <b-button v-if="row.item.estado === 'Por classificar'" size="sm" @click="classificar(row.item, row.index, $event.target)" class="btn btn-green mr-1">
                 Por classificar

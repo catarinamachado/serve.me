@@ -30,6 +30,10 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" >
+       <template v-slot:cell(cliente)="row">
+        <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
+      </template>
+
       <template v-slot:cell(acoes)="row">
         <b-button size="sm" @click="limpar(row.item, row.index, $event.target)" class="btn btn-green">
           OK

@@ -29,6 +29,9 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
+       <template v-slot:cell(prestador)="row">
+        <b-link href="/#/provider-profile">{{row.item.prestador}}</b-link>
+      </template>    
     </b-table>
 
     <div class="justify-content-center row my-1">
