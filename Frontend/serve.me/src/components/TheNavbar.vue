@@ -160,6 +160,14 @@
           <li class="nav-item">
             <router-link
               class="nav-link"
+              :to="{ name: 'inbox-provider' }"
+            >
+              Inbox
+            </router-link>
+          </li>          
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
               :to="{ name: 'proposals-provider' }"
             >
               Propostas
