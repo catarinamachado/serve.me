@@ -66,6 +66,12 @@ export default new Router({
     }
     ,
     {
+      name: "provider-profile",
+      path: "/provider-profile",
+      component: () => import("@/views/Client/ProviderProfile")
+    }
+    ,
+    {
       name: "register-provider",
       path: "/register-provider",
       component: () => import("@/views/Provider/Register")
@@ -105,6 +111,12 @@ export default new Router({
       name: "scheduled-services-provider",
       path: "/scheduled-services-provider",
       component: () => import("@/views/Provider/ScheduledServices")
+    }
+    ,
+    {
+      name: "client-profile",
+      path: "/client-profile",
+      component: () => import("@/views/Provider/ClientProfile")
     }
     ,
     {
