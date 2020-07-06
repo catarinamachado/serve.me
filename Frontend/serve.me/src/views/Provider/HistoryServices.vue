@@ -37,7 +37,8 @@
 
     <!-- Info modal -->
     <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @hide="resetClassificarModal">
-    <pre>{{ classificarModal.content }}</pre>
+        <pre>{{ classificarModal.content }}</pre>
+        <b-form-rating v-model="rating" variant="warning"></b-form-rating>
     </b-modal>
 
     <div class="justify-content-center row my-1">
@@ -62,7 +63,7 @@
     },
     data: function() {
       return {
-        rating: 0,
+        rating: null,
         items: [{
           categoria: "Teste1",
           subcategoria: "Teste2",
