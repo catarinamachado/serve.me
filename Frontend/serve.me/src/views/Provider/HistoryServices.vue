@@ -28,7 +28,17 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
+            <template v-if="'ola' === 'ola'" v-slot:cell(estado)="row">
+            <b-button size="sm" @click="classificar(row.item, row.index, $event.target)" class="btn btn-green mr-1">
+                Por classificar
+            </b-button>
+        </template>
     </b-table>
+
+    <!-- Info modal -->
+    <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @hide="resetClassificarModal">
+    <pre>{{ classificarModal.content }}</pre>
+    </b-modal>
 
     <div class="justify-content-center row my-1">
       <b-pagination size="md" :total-rows="this.items.length" :per-page="perPage" v-model="currentPage" class="customPagination"/>
@@ -36,7 +46,12 @@
   </div>
 </template>
 
-<style scoped>
+<style>
+.btn-primary {
+  color: white !important;
+  background-color: var(--my-darker-green) !important;
+  border-color: var(--my-darker-green) !important;
+}
 </style>
 
 <script>
@@ -47,6 +62,7 @@
     },
     data: function() {
       return {
+        rating: 0,
         items: [{
           categoria: "Teste1",
           subcategoria: "Teste2",
@@ -95,7 +111,23 @@
       currentPage: 1,
       perPage: 5,
       pageOptions: [5, 10, 15],
-      filter: null
-  }}
+      filter: null,
+      classificarModal: {
+        id: 'classificar-modal',
+        title: '',
+        content: ''
+      }
+  }},
+  methods: {
+    classificar(item, index, button) {
+      this.classificarModal.title = `Classificação de Serviço`
+      this.classificarModal.content = `Classificação de Serviço`
+      this.$root.$emit('bv::show::modal', this.classificarModal.id, button)
+    },
+    resetClassificarModal() {
+      this.classificarModal.title = ''
+      this.classificarModal.content = ''
+    }
+  }
 }
 </script>
