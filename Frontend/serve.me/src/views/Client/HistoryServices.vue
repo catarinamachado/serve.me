@@ -29,6 +29,10 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
+      <template v-slot:cell(preco_hora)="row">
+        {{row.item.preco_hora}} €
+      </template>
+
        <template v-slot:cell(prestador)="row">
         <b-link href="/#/provider-profile">{{row.item.prestador}}</b-link>
       </template>    
@@ -54,46 +58,46 @@
         items: [{
           categoria: "Teste1",
           subcategoria: "Teste2",
-          descrição: "Descrição",
+          descricao: "Descrição",
           prestador: "Primeiro Último",
           data: "13/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora: "4€",
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora: "4",
           estado: "Realizado"
         },
         {
           categoria: "Teste3",
           subcategoria: "Teste4",
-          descrição: "Descrição",
+          descricao: "Descrição",
           prestador: "Primeiro Último",
           data: "13/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora: "4€",
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora: "4",
           estado: "Cancelado"
         },
         {
           categoria: "Teste1",
           subcategoria: "Teste2",
-          descrição: "Descrição",
+          descricao: "Descrição",
           prestador: "Primeiro Último",
           data: "14/03/1233",
-          hora_início: "14h00",
-          duração: "1 hora",
-          preço_hora: "4€",
+          hora_inicio: "14h00",
+          duracao: "1 hora",
+          preco_hora: "4",
           estado: "Por classificar"          
         }
       ],
       fields: [
           { key: 'categoria', label: 'Categoria', sortable: true },
           { key: 'subcategoria', label: 'Subcategoria', sortable: true},
-          { key: 'descrição', label: 'Descrição', sortable: true},
+          { key: 'descricao', label: 'Descrição', sortable: true},
           { key: 'prestador', label: 'Prestador', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
-          { key: 'hora_início', label: 'Hora Início', sortable: true},
-          { key: 'duração', label: 'Duração', sortable: true},
-          { key: 'preço_hora', label: 'Preço/hora', sortable: true},
+          { key: 'hora_inicio', label: 'Hora Início', sortable: true},
+          { key: 'duracao', label: 'Duração', sortable: true},
+          { key: 'preco_hora', label: 'Preço/hora', sortable: true},
           { key: 'estado', label: 'Estado' }
       ],
       currentPage: 1,
