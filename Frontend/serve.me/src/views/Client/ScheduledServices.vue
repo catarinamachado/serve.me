@@ -1,7 +1,7 @@
 <template>
   <div class="scheduled-services space-top-5 space-bottom-10 space-left-right-5">
     <h4 class="space-bottom-2">Serviços Agendados</h4>
-    <div class="justify-content-centermy-1 row">
+    <div class="justify-content-center my-1 row">
       <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
          <b-form-select
             v-model="perPage"
