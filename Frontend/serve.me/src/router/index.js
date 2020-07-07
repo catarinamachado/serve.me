@@ -120,6 +120,12 @@ export default new Router({
     }
     ,
     {
+      name: "stats-provider",
+      path: "/stats-provider",
+      component: () => import("@/views/Provider/StatsProvider")
+    }    
+    ,
+    {
       name: "client-profile",
       path: "/client-profile",
       component: () => import("@/views/Provider/ClientProfile")

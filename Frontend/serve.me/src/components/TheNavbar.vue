@@ -151,7 +151,7 @@
                 </router-link>
                 <router-link
                   class="dropdown-item provider"
-                  :to="{ name: 'home' }"
+                  :to="{ name: 'stats-provider' }"
                 >
                   Estatísticas
                 </router-link>
