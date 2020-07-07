@@ -27,25 +27,29 @@
                 </p>
                 <div class="row">
                     <div class="col-4">
-                        <p>
-                            <label for="freguesia">Freguesia</label>
-                            <input type="text" placeholder="Freguesia" name="freguesia" id="freguesia" v-model="freguesia">
-                        </p>
+                        <label for="distrito">Distrito</label>
+                        <b-form inline>
+                            <b-dropdown id="dropdown-distritos" :text="dropdown_item_distritos" variant="secondary" class="m-md-2">
+                                <b-dropdown-item v-for="distrito in distritos" :key="distrito"
+                                                 @click="dropdown_item_distritos = distrito"
+                                >{{ distrito }}</b-dropdown-item>
+                            </b-dropdown>
+                        </b-form>                            
                     </div>
                     <div class="col-4">
                         <p>
                             <label for="concelho">Concelho</label>
                             <input type="text" placeholder="Concelho" name="concelho" id="concelho" v-model="concelho">
                         </p>
-                    </div>
+                    </div>                                  
                     <div class="col-4">
                         <p>
-                            <label for="distrito">Distrito</label>
-                            <input type="text" placeholder="Distrito" name="distrito" id="distrito" v-model="distrito">
+                            <label for="freguesia">Freguesia</label>
+                            <input type="text" placeholder="Freguesia" name="freguesia" id="freguesia" v-model="freguesia">
                         </p>
-                    </div>      
+                    </div>
                 </div>
-                <div class="row space-top-3">
+                <div class="row space-top-5">
                     <div class="col-6">
                         <p class="text-left">
                             <input class="btn btn-red" type="submit" value="Eliminar conta">
@@ -70,11 +74,44 @@ input,select {
 }
 </style>
 
+<style>
+.dropdown-item:active {
+  color: white !important;
+  background-color: var(--my-blue) !important;
+  border-color: var(--my-blue) !important;
+}
+</style>
+
 <script>
 export default {
   name: "my-profile",
   created() {
     window.scrollTo(0, 0);
+  },
+  data: function () {
+    return {
+        dropdown_item_distritos: 'Distrito',
+        distritos: [
+        'Aveiro',
+        'Beja',
+        'Braga',
+        'Bragança',
+        'Castelo Branco',
+        'Coimbra',
+        'Évora',
+        'Faro',
+        'Guarda',
+        'Leiria',
+        'Lisboa',
+        'Portalegre',
+        'Porto',
+        'Santarém',
+        'Setúbal',
+        'Viana do Castelo',
+        'Vila Real',
+        'Viseu'        
+        ]
+    }
   }
 };
 </script>
