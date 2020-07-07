@@ -78,6 +78,14 @@ input,select {
 }
 </style>
 
+<style>
+.dropdown-item:active {
+  color: white !important;
+  background-color: var(--my-yellow) !important;
+  border-color: var(--my-yellow) !important;
+}
+</style>
+
 <script>
 export default {
   name: "my-profile-provider",
@@ -508,3 +516,4 @@ export default {
     }
   }
 };
+</script>
