@@ -17,6 +17,8 @@ Vue.config.productionTip = false
 
 Vue.component('vue-headful', vueHeadful);
 
+Vue.prototype.$backend = 'http://25.113.37.183:8083/api';
+
 new Vue({
   router,
   render: h => h(App),
