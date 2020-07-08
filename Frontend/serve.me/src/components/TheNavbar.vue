@@ -102,7 +102,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img src="../assets/imgs/client/avatar_azul.png" width="20" alt="SERVE.ME" class="d-inline-block mr-1">
-              {{name}}
+              {{nome}}
             </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
                 <router-link
@@ -184,7 +184,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img src="../assets/imgs/provider/avatar_amarelo.png" width="20" alt="SERVE.ME" class="d-inline-block mr-1">
-              {{name}}
+              {{nome}}
             </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown4">
                 <router-link
@@ -269,7 +269,7 @@ import $ from 'jquery'
 export default {
   props: {
     typeOf: String,
-    name: String
+    nome: String
   },
   mounted() {
     $(function () {

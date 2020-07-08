@@ -21,5 +21,11 @@ Vue.prototype.$backend = 'http://25.113.37.183:8083/api';
 
 new Vue({
   router,
-  render: h => h(App),
+  data(){
+    return {
+      typeOf: 'simple',
+      nome: 'Olá'
+    }
+  },
+  render: h => h(App)
 }).$mount('#app')
