@@ -14,6 +14,7 @@
                 type="email"
                 v-model="email"
                 placeholder="E-mail"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -22,6 +23,7 @@
                 type="password"
                 v-model="password"
                 placeholder="Password"
+                required
               />
             </fieldset>
             <div class="space-top-3 text-right">
