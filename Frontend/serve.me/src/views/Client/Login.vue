@@ -45,7 +45,7 @@
 </style>
 
 <script>
-import axios from 'axios';
+import {CLIENT_AUTH_REQUEST} from '../../store/action_calls/authentication'
 
 export default {
   name: "login-client",
@@ -61,27 +61,24 @@ export default {
   },
   methods: {
     login: function () {
-      axios({
-        method: 'post',
-        url: this.$backend + '/login/cliente',
-        headers: {
-          'content-type': 'application/json',
-          'Access-Control-Allow-Origin': this.$backend + '/login/cliente',
-          'Access-Control-Allow-Credentials': 'true'
-        }, 
-        data: {
-          email: this.email, 
-          password: this.password
-        }
-      }).then((response) => {
-          console.log(response);
+      let user = {
+        email: this.email,
+        password: this.password
+      }
+      this.$store.dispatch(CLIENT_AUTH_REQUEST, user)
+        .then( resp => {
+          this.loginError = false;
+          var data = resp.data;
           this.$root.typeOf = 'client';
-          this.$root.nome = 'Olá';
-          this.$router.push({name: 'home'})
-        }, (error) => {
-          console.log(error);
-          this.errors.push('Credenciais inválidas.')
-      });
+          this.$root.nome = data.nome;
+          this.$router.push({
+             name: 'home'
+           });
+        }).catch( err => {
+          // Instead, this happens:
+          console.log("It failed!", err);
+          this.loginError = true;
+        })
     }
   }
 };

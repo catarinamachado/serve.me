@@ -18,7 +18,9 @@
     "vue": "^2.6.11",
     "vue-cal": "^3.6.2",
     "vue-headful": "^2.1.0",
-    "vue-router": "^3.3.4"
+    "vue-router": "^3.3.4",
+    "vue-store": "^0.3.1-moved",
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.13.1",

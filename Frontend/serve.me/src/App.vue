@@ -21,6 +21,12 @@ export default {
   components: {
     TheNavbar,
     TheFooter
+  },
+  mounted() {
+    if (localStorage.nome) {
+      this.$root.nome = localStorage.nome
+      this.$root.typeOf = localStorage.typeOf
+    }
   }
 }
 </script>

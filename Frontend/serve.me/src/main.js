@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import vueHeadful from 'vue-headful'
 import App from './App.vue'
+import store from "./store";
 import router from "./router";
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 
@@ -21,10 +22,11 @@ Vue.prototype.$backend = 'http://25.113.37.183:8083/api';
 
 new Vue({
   router,
+  store,
   data(){
     return {
       typeOf: 'simple',
-      nome: 'Olá'
+      nome: ''
     }
   },
   render: h => h(App)
