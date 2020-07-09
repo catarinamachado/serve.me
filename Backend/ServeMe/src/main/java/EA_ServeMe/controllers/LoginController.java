@@ -22,6 +22,7 @@ public class LoginController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @CrossOrigin
     @PostMapping("/cliente")
     public ResponseEntity generateTokenCliente(@RequestBody AuthRequest authRequest) {
         String email = authRequest.getEmail();
@@ -42,12 +43,14 @@ public class LoginController {
 
         String token =  jwtUtil.generateToken(email,'C');
         AuthResponse ar = Cliente_Perfil.loginTokenCliente(email,token);
+        ar.setStatus(1);
         Log.i(TAG,"Cliente Logged");
         return ResponseEntity.ok().body(ar);
 
 
     }
 
+    @CrossOrigin
     @PostMapping("/prestador")
     public ResponseEntity generateTokenPrestador(@RequestBody AuthRequest authRequest) {
         String email = authRequest.getEmail();
@@ -66,6 +69,7 @@ public class LoginController {
 
         String token =  jwtUtil.generateToken(email,'P');
         AuthResponse ar = Prestador_Perfil.loginTokenPrestador(email,token);
+        ar.setStatus(1);
         Log.i(TAG,"Prestador Logged");
         return ResponseEntity.ok().body(ar);
     }

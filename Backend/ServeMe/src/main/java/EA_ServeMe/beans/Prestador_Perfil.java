@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import servico.Proposta;
 import servico.Servico;
 import servico.ServicoDAO;
+import servico.ServicoState;
 import utilizador.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -107,19 +108,19 @@ public class Prestador_Perfil {
         //prestador_password = decodePassword(prestador_password);  //PROD: ADD THIS -- Função que faz decode da password vinda do frontend
         String new_Password = new BCryptPasswordEncoder(11).encode( prestador_password);
         p.setPassword(new_Password);
-        /* PROD : ADD THIS
+        /* PROD : ADD THIS */
         try {
             PrestadorDAO.save(p);
-            Log.i(TAG,"Prestador Saved Succesfully")
-            return sucess;
+            Log.i(TAG,"Prestador Saved Succesfully");
+            return success;
         } catch (PersistentException e) {
             e.printStackTrace();
-            Log.e(TAG,"Error Saving Prestador")
+            Log.e(TAG,"Error Saving Prestador");
         }
-         */
-        //error.add("BD");
-        //return  error;
-        return success; // PROD: DELETE THIS
+
+        error.add("BD");
+        return  error;
+        // return success; // PROD: DELETE THIS
 
     }
 
@@ -138,14 +139,14 @@ public class Prestador_Perfil {
             String freguesia = "";
             String morada = "";
             long nif = 0;
-            /* PROD : ADD THIS
+            /* PROD : ADD THIS */
             numT = obj.getLong("telemovel");
             distrito = obj.getString("distrito");
             concelho = obj.getString("concelho");
             freguesia = obj.getString("freguesia");
             morada =  obj.getString("morada");
             nif =  obj.getLong("nif");
-             */
+
             return buildPrestador(nome,email,password,numT,distrito,concelho,freguesia,morada,nif);
         }
         catch (Exception e){
@@ -437,18 +438,6 @@ public class Prestador_Perfil {
         }
         return 1;
     }
-
-    public static Prestador getPrestadorbyEmail(String email){
-        String q = "Email = '" + email + "'";
-        try {
-            Prestador p = PrestadorDAO.listPrestadorByQuery(q,"Email")[0];
-            return p;
-        }catch (PersistentException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
     public static MyStatsResponse generateStats(List<Servico> done_services) {
         MyStatsResponse msr = new MyStatsResponse();

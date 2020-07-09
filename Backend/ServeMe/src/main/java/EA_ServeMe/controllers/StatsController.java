@@ -2,16 +2,13 @@ package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.beans.Prestador_Services;
-import EA_ServeMe.util.ErrorResponse;
+import EA_ServeMe.responses.ErrorResponse;
 import EA_ServeMe.util.JwtUtil;
 import EA_ServeMe.util.Log;
 import EA_ServeMe.util.MyStatsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import servico.Servico;
 import utilizador.Prestador;
 
@@ -26,6 +23,8 @@ public class StatsController {
     @Autowired
     private JwtUtil jwtUtil;
 
+
+    @CrossOrigin
     @GetMapping("/my-stats")
     public ResponseEntity personalStats(@RequestHeader String Authorization) {
 
