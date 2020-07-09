@@ -4,6 +4,21 @@
       <router-link 
         routerLinkActive="active"
         :to="{ name: 'home' }"
+        v-if="typeOf == 'simple'"
+      >
+        <img src="../assets/imgs/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
+      </router-link>
+      <router-link 
+        routerLinkActive="active"
+        :to="{ name: 'scheduled-services' }"
+        v-if="typeOf == 'client'"
+      >
+        <img src="../assets/imgs/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
+      </router-link>
+      <router-link 
+        routerLinkActive="active"
+        :to="{ name: 'scheduled-services-provider' }"
+        v-if="typeOf == 'provider'"
       >
         <img src="../assets/imgs/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
       </router-link>
@@ -102,7 +117,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img src="../assets/imgs/client/avatar_azul.png" width="20" alt="SERVE.ME" class="d-inline-block mr-1">
-              {{name}}
+              {{nome}}
             </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
                 <router-link
@@ -120,6 +135,7 @@
                 <router-link
                   class="dropdown-item client"
                   :to="{ name: 'home' }"
+                  @click.native="logout"                  
                 >
                   Terminar sessão
                 </router-link>
@@ -184,7 +200,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img src="../assets/imgs/provider/avatar_amarelo.png" width="20" alt="SERVE.ME" class="d-inline-block mr-1">
-              {{name}}
+              {{nome}}
             </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown4">
                 <router-link
@@ -202,6 +218,7 @@
                 <router-link
                   class="dropdown-item provider"
                   :to="{ name: 'home' }"
+                  @click.native="logout"
                 >
                   Terminar sessão
                 </router-link>
@@ -264,12 +281,30 @@ nav .navbar-nav li a:hover {
 </style>
 
 <script scoped>
+import {AUTH_LOGOUT} from '../store/action_calls/authentication'
 import $ from 'jquery'
 
 export default {
   props: {
     typeOf: String,
-    name: String
+    nome: String
+  },
+  methods: {
+    logout: function () {
+      this.$store.dispatch(AUTH_LOGOUT)
+        .then( resp => {
+          var data = resp.data;
+          console.log(data);
+          this.$root.typeOf = 'simple';
+          this.$root.nome = '';
+          this.$router.push({
+             name: 'home'
+           });
+        }).catch( err => {
+          console.log("It failed!", err);
+          this.loginError = true;
+        })
+    }
   },
   mounted() {
     $(function () {

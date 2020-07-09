@@ -4,16 +4,16 @@
       <h4 class="space-bottom-5">Estatísticas do ano {{ano}}</h4>
       <div class="row space-bottom-5">
           <div class="col-6">
-              <label class="border"><strong>Ganho anual: </strong> {{ganho_anual}}€</label>
+              <label class="border"><strong>Ganho em {{ano}}:</strong> {{ganho_anual}}€</label>
           </div>
           <div class="col-6">
-              <label class="border"><strong>N.º serviços anual: </strong> {{nr_servicos}}</label>
+              <label class="border"><strong>N.º serviços realizados em {{ano}}:</strong> {{nr_servicos}}</label>
           </div>
       </div>
 
       <div class="row justify-content-between">
         <div class="col-md-6">
-          <h5><strong>Ganho/anual</strong></h5>        
+          <h5><strong>Ganho/mês</strong></h5>        
           <template>
             <mdb-container>
               <mdb-bar-chart
@@ -26,7 +26,7 @@
           </template>
         </div>
         <div class="col-md-6">
-          <h5><strong>Serviços/anual</strong></h5>        
+          <h5><strong>Serviços/mês</strong></h5>        
           <template>
             <mdb-container>
               <mdb-line-chart

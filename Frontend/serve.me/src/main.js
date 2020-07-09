@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import vueHeadful from 'vue-headful'
 import App from './App.vue'
+import store from "./store";
 import router from "./router";
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 
@@ -17,7 +18,16 @@ Vue.config.productionTip = false
 
 Vue.component('vue-headful', vueHeadful);
 
+Vue.prototype.$backend = 'http://25.113.37.183:8083/api';
+
 new Vue({
   router,
-  render: h => h(App),
+  store,
+  data(){
+    return {
+      typeOf: 'simple',
+      nome: ''
+    }
+  },
+  render: h => h(App)
 }).$mount('#app')
