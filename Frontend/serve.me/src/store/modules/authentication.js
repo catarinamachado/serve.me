@@ -1,6 +1,7 @@
 import { CLIENT_AUTH_REQUEST, PROVIDER_AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../action_calls/authentication'
 import { USER_REQUEST } from '../action_calls/user'
 import axios from 'axios'
+import backend from '../consts'
 
 const state = {
   token: localStorage.getItem('user-token') || '',
@@ -36,8 +37,7 @@ const actions = {
   [CLIENT_AUTH_REQUEST]: ({commit, dispatch}, user) => {
     return new Promise((resolve, reject) => { // The Promise used for router redirect in login
       commit(CLIENT_AUTH_REQUEST)
-      //console.log(user);
-      axios({url: 'http://25.113.37.183:8083/api/login/cliente', data: user, method: 'POST' })
+      axios({url: backend.URL + '/login/cliente', data: user, method: 'POST' })
         .then(resp => {
           if (resp.data.status > 0) {
             const token = resp.data.token
@@ -64,7 +64,7 @@ const actions = {
     return new Promise((resolve, reject) => { // The Promise used for router redirect in login
       commit(PROVIDER_AUTH_REQUEST)
       //console.log(user);
-      axios({url: 'http://25.113.37.183:8083/api/login/prestador', data: user, method: 'POST' })
+      axios({url: backend.URL + '/login/prestador', data: user, method: 'POST' })
         .then(resp => {
           if (resp.data.status > 0) {
             const token = resp.data.token
