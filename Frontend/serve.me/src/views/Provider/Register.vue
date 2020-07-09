@@ -4,16 +4,13 @@
       <div class="row space-top-8 space-bottom-6">
         <div class="col-md-6 offset-md-3 col-xs-12">
           <h3 class="text-left space-bottom-6">Registo como Prestador de Serviços</h3>
-          <ul v-if="errors" class="error-messages">
-            <li v-for="(v, k) in errors" :key="k">{{ k }} {{ v | error }}</li>
-          </ul>
-          <form @submit.prevent="onSubmit">
+          <form @submit.prevent="register">
             <fieldset class="form-group">
               <input
                 class="form-control form-control-lg"
                 type="text"
                 v-model="nome"
-                placeholder="Nome"
+                placeholder="Primeiro e Último Nome"
               />
             </fieldset>
             <fieldset class="form-group">
@@ -36,7 +33,7 @@
               <input
                 class="form-control form-control-lg"
                 type="number"
-                v-model="contribuinte"
+                v-model="nif"
                 placeholder="N.º de Contribuinte"
               />
             </fieldset>
@@ -57,15 +54,15 @@
               />
             </fieldset>
             <div>
-                <b-dropdown id="dropdown-distritos" :text="dropdown_item_distritos" block variant="secondary" size="lg">
-                    <b-dropdown-item v-for="distrito in distritos" :key="distrito"
+                <b-dropdown id="dropdown-distritos" :text="dropdown_item_distritos" block variant="dark" size="lg">
+                    <b-dropdown-item id="registprovider" v-for="distrito in distritos" :key="distrito"
                                      @click="dropdown_item_distritos = distrito"
                     >{{ distrito }}</b-dropdown-item>
                 </b-dropdown>
             </div>
             <div class="space-top-3 space-bottom-3 ">
-                <b-dropdown id="dropdown-concelhos" :text="dropdown_item_concelhos" block variant="secondary" size="lg">
-                    <b-dropdown-item v-for="concelho in concelhos" :key="concelho"
+                <b-dropdown id="dropdown-concelhos" :text="dropdown_item_concelhos" block variant="dark" size="lg">
+                    <b-dropdown-item id="registprovider" v-for="concelho in concelhos" :key="concelho"
                                      @click="dropdown_item_concelhos = concelho"
                     >{{ concelho }}</b-dropdown-item>
                 </b-dropdown>
@@ -91,13 +88,13 @@
 </template>
 
 <style>
-.dropdown-item:active {
+#registprovider:active {
   color: white !important;
   background-color: var(--my-yellow) !important;
   border-color: var(--my-yellow) !important;
 }
 
-.btn-secondary {
+.btn-dark {
   color: #6C757D !important;
   background-color: white !important;
   border-color: #d0d4dc !important;
@@ -106,11 +103,53 @@
 </style>
 
 <script>
+import {PROVIDER_AUTH_REQUEST} from '../../store/action_calls/authentication'
+
 export default {
   name: "register-provider",
   created() {
     window.scrollTo(0, 0);
   },
+  methods: {
+    register() {
+      let user = {
+        nome: this.nome,
+        email: this.email,
+        password: this.password,
+        nif: this.nif,
+        telemovel: this.telemovel,
+        morada: this.morada,
+        freguesia: this.freguesia,
+        concelho: this.dropdown_item_concelhos,
+        distrito: this.dropdown_item_distritos
+      }
+
+      this.$axios({url: this.$backend + '/register/prestador', data: user, method: 'POST' })
+      .then(resp => {
+        var status = resp.data.status;
+        if(status == 1) {
+          let user_logged = {
+            email: this.email,
+            password: this.password
+          }
+          this.$store.dispatch(PROVIDER_AUTH_REQUEST, user_logged)
+            .then( resp => {
+              this.loginError = false;
+              var data = resp.data;
+              this.$root.typeOf = 'provider';
+              this.$root.nome = data.nome;
+              this.$router.push({
+                name: 'scheduled-services-provider'
+              });
+            }).catch( err => {
+              // Instead, this happens:
+              console.log("It failed!", err);
+              this.loginError = true;
+            })
+        }
+      })
+    }
+  },  
   data: function () {
     return {
         nome: '',

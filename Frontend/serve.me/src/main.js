@@ -4,6 +4,7 @@ import App from './App.vue'
 import store from "./store";
 import router from "./router";
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import axios from './axios.js'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -18,7 +19,8 @@ Vue.config.productionTip = false
 
 Vue.component('vue-headful', vueHeadful);
 
-Vue.prototype.$backend = 'http://25.113.37.183:8083/api';
+Vue.prototype.$backend = 'http://25.113.37.183:8083/api'
+Vue.prototype.$axios = axios
 
 new Vue({
   router,
