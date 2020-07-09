@@ -19,7 +19,7 @@
         routerLinkActive="active"
         :to="{ name: 'scheduled-services-provider' }"
         v-if="typeOf == 'provider'"
-      >            
+      >
         <img src="../assets/imgs/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
       </router-link>
       <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler">
@@ -135,6 +135,7 @@
                 <router-link
                   class="dropdown-item client"
                   :to="{ name: 'home' }"
+                  @click.native="logout"                  
                 >
                   Terminar sessão
                 </router-link>
@@ -217,6 +218,7 @@
                 <router-link
                   class="dropdown-item provider"
                   :to="{ name: 'home' }"
+                  @click.native="logout"
                 >
                   Terminar sessão
                 </router-link>
@@ -279,12 +281,30 @@ nav .navbar-nav li a:hover {
 </style>
 
 <script scoped>
+import {AUTH_LOGOUT} from '../store/action_calls/authentication'
 import $ from 'jquery'
 
 export default {
   props: {
     typeOf: String,
     nome: String
+  },
+  methods: {
+    logout: function () {
+      this.$store.dispatch(AUTH_LOGOUT)
+        .then( resp => {
+          var data = resp.data;
+          console.log(data);
+          this.$root.typeOf = 'simple';
+          this.$root.nome = '';
+          this.$router.push({
+             name: 'home'
+           });
+        }).catch( err => {
+          console.log("It failed!", err);
+          this.loginError = true;
+        })
+    }
   },
   mounted() {
     $(function () {

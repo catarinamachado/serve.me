@@ -18,7 +18,13 @@ const actions = {
     localStorage.setItem('nome', user.nome);
     localStorage.setItem('typeOf', user.typeOf);
     commit(USER_SUCCESS, user);
-  }
+  },
+  [AUTH_LOGOUT]: ({commit}) => {
+    localStorage.removeItem('nome');
+    localStorage.removeItem('typeOf');
+    localStorage.removeItem('user-token');
+    commit(AUTH_LOGOUT);
+  }  
 }
 
 const mutations = {
