@@ -111,7 +111,7 @@
               class="nav-link"
               :to="{ name: 'publish-service' }"
             >
-              Publicar serviço
+              Publicar pedido
             </router-link>
           </li>
           <li class="nav-item dropdown">
