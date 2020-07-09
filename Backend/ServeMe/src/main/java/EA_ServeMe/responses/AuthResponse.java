@@ -8,6 +8,7 @@ public class AuthResponse implements Serializable {
 
     private String token;
     private String nome;
+    private int status;
 
 
     public AuthResponse(String token, String nome) {
@@ -18,6 +19,7 @@ public class AuthResponse implements Serializable {
     public AuthResponse() {
         nome = "";
         token="";
+        status = -1;
     }
 
     public String getToken() {
@@ -39,6 +41,15 @@ public class AuthResponse implements Serializable {
     public AuthResponse error(String err){
         this.nome = "error";
         this.token = err;
+        this.status = -1;
         return this;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

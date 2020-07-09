@@ -25,6 +25,7 @@ public class InboxController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @CrossOrigin
     @GetMapping("/")
     public ResponseEntity GetMyInbox(@RequestHeader String Authorization) {
         /* extract Token and email (Verification is already done by filter) */
@@ -47,6 +48,7 @@ public class InboxController {
         return ResponseEntity.ok(r);
     }
 
+    @CrossOrigin
     @PostMapping("/seen")
     public ResponseEntity setSeen(@RequestHeader String Authorization,@RequestBody String body){
         /* extract Token and email (Verification is already done by filter) */

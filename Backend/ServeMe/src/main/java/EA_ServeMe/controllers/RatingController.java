@@ -2,7 +2,7 @@ package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Prestador_Perfil;
-import EA_ServeMe.util.ErrorResponse;
+import EA_ServeMe.responses.ErrorResponse;
 import EA_ServeMe.util.JwtUtil;
 import EA_ServeMe.util.Log;
 import org.orm.PersistentException;
@@ -25,6 +25,7 @@ public class RatingController {
     @Autowired
     JwtUtil jwtUtil;
 
+    @CrossOrigin
     @PostMapping("/cliente")
     public ResponseEntity rating_cliente(@RequestHeader String Authorization, @RequestBody String body) {
 
@@ -70,9 +71,7 @@ public class RatingController {
         return ResponseEntity.badRequest().build();
     }
 
-
-
-
+    @CrossOrigin
     @PostMapping("/prestador")
     public ResponseEntity rating_prestador(@RequestHeader String Authorization, @RequestBody String body) {
 

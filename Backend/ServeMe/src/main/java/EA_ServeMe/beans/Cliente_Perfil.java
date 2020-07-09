@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import servico.Servico;
 import servico.ServicoDAO;
+import servico.ServicoState;
 import utilizador.*;
 
 
@@ -106,7 +107,7 @@ public class Cliente_Perfil {
         String new_Password = new BCryptPasswordEncoder(11).encode(client_password);
         c.setPassword(new_Password);
 
-        /* PROD : ADD THIS
+        /* PROD : ADD THIS */
 
 
         try {
@@ -118,10 +119,10 @@ public class Cliente_Perfil {
             Log.e(TAG,"Error Saving Cliente");
         }
 
-        //error.add("BD");
-        //return  error;
-         */
-        return success; // PROD: DELETE THIS
+        error.add("BD"); // PROD: ADD THIS
+        return  error; // PROD: ADD THIS
+
+       // return success; // PROD: DELETE THIS
 
     }
 
@@ -140,14 +141,14 @@ public class Cliente_Perfil {
             String freguesia = "";
             String morada = "";
             long nif = 0;
-            /* PROD: ADD THIS
+            /* PROD: ADD THIS */
             numT = obj.getLong("telemovel");
             distrito = obj.getString("distrito");
             concelho = obj.getString("concelho");
             freguesia = obj.getString("freguesia");
             morada =  obj.getString("morada");
             nif =  obj.getLong("nif");
-             */
+
             return buildCliente(nome, email, password, numT, distrito, concelho, freguesia, morada, nif);
         } catch (Exception e) {
             Log.e(TAG, "Missing Fields on JSON");
@@ -381,7 +382,7 @@ public class Cliente_Perfil {
             Servico servico = ServicoDAO.getServicoByORMID(idServico);
             if(servico.getEstado() < ServicoState.CREATED.v())
                 return -2;
-            if(servico.getEstado() ==ServicoState.CLIENTDONE.v() || servico.getEstado() == ServicoState.EVALUATED.v())
+            if(servico.getEstado() == ServicoState.CLIENTDONE.v() || servico.getEstado() == ServicoState.EVALUATED.v())
                 return -1;
         } catch (PersistentException e) {
             e.printStackTrace();

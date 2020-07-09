@@ -27,6 +27,7 @@ public class ProfileController {
     @Autowired
     JwtUtil jwtUtil;
 
+    @CrossOrigin
     @GetMapping("/myprofile")
     public ResponseEntity profile(@RequestHeader String Authorization) {
 
@@ -53,7 +54,7 @@ public class ProfileController {
         return  ResponseEntity.notFound().build();
     }
 
-
+    @CrossOrigin
     @PutMapping
     @RequestMapping("/updateprofile")
     public ResponseEntity updateprofile(@RequestHeader String Authorization, @RequestBody String body){
@@ -104,7 +105,7 @@ public class ProfileController {
         return ResponseEntity.badRequest().build();
     }
 
-
+    @CrossOrigin
     @PutMapping
     @RequestMapping("/updatepw")
     public ResponseEntity updatepassword(@RequestHeader String Authorization, @RequestBody String body){
@@ -140,7 +141,7 @@ public class ProfileController {
         return ResponseEntity.badRequest().build();
     }
 
-
+    @CrossOrigin
     @PutMapping
     @RequestMapping("/clienteprof")
     public ResponseEntity checkCProfileFromP(@RequestHeader String Authorization, @RequestBody String body) {
@@ -176,6 +177,7 @@ public class ProfileController {
         return  ResponseEntity.badRequest().build();
     }
 
+    @CrossOrigin
     @PutMapping
     @RequestMapping("/prestadorprof")
     public ResponseEntity checkPProfileFromC(@RequestHeader String Authorization, @RequestBody String body) {

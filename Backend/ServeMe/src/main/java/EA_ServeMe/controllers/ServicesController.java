@@ -23,6 +23,7 @@ public class ServicesController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @CrossOrigin
     @GetMapping("/")
     public ResponseEntity getRequests(){
         List<RequestResponse> reqs = Prestador_Services.getRequests();
@@ -33,6 +34,7 @@ public class ServicesController {
         return ResponseEntity.ok(reqs);
     }
 
+    @CrossOrigin
     @GetMapping("/my-requests") // Para Clientes
     public ResponseEntity getMyRequests(@RequestHeader String Authorization){
 
@@ -49,7 +51,7 @@ public class ServicesController {
         return ResponseEntity.ok(reqs);
     }
 
-
+    @CrossOrigin
     @PostMapping("/add-request") // Para Clientes
     public ResponseEntity AddRequest(@RequestBody String request, @RequestHeader String Authorization) {
 
@@ -75,6 +77,7 @@ public class ServicesController {
 
     }
 
+    @CrossOrigin
     @PostMapping("/edit-request")
     public ResponseEntity editRequest(@RequestBody String request, @RequestHeader String Authorization){
 
@@ -99,6 +102,7 @@ public class ServicesController {
         }
     }
 
+    @CrossOrigin
     @DeleteMapping("/delete-request")
     public ResponseEntity removeRequest(@RequestBody String request, @RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter)*/
@@ -122,6 +126,7 @@ public class ServicesController {
         }
     }
 
+    @CrossOrigin
     @PostMapping("/propose-request") // Para Prestadores
     public ResponseEntity proposeRequest(@RequestBody String propose, @RequestHeader String Authorization){
 
@@ -146,6 +151,7 @@ public class ServicesController {
         }
     }
 
+    @CrossOrigin
     @PostMapping("/accept-propose") // Para Clientes
     public ResponseEntity acceptPropose(@RequestBody String propose, @RequestHeader String Authorization){
 
@@ -170,7 +176,7 @@ public class ServicesController {
         }
     }
 
-
+    @CrossOrigin
     @PostMapping("/request-proposes") //Cliente
     public ResponseEntity getRecievedProposes(@RequestHeader String Authorization,@RequestBody String json){
         /* extract Token and email (Verification is already done by filter) */
@@ -186,6 +192,7 @@ public class ServicesController {
         return ResponseEntity.ok(proposes);
     }
 
+    @CrossOrigin
     @GetMapping("/proposes-done") // Prestadores
     public ResponseEntity getProposesDone(@RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter) */
@@ -201,6 +208,7 @@ public class ServicesController {
         return ResponseEntity.ok(proposes);
     }
 
+    @CrossOrigin
     @GetMapping("/my-services")
     public ResponseEntity getMyServices(@RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter) */
@@ -224,6 +232,7 @@ public class ServicesController {
         return ResponseEntity.ok(r);
     }
 
+    @CrossOrigin
     @PostMapping("/scheduled-services")
     public ResponseEntity getScheduledServices(@RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter) */
@@ -247,6 +256,7 @@ public class ServicesController {
         return ResponseEntity.ok(r);
     }
 
+    @CrossOrigin
     @GetMapping("/completed-services")
     public ResponseEntity getCompletedServices(@RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter) */
@@ -270,6 +280,7 @@ public class ServicesController {
         return ResponseEntity.ok(r);
     }
 
+    @CrossOrigin
     @PostMapping("/next-services")
     public ResponseEntity getNextServices(@RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter) */
@@ -293,6 +304,7 @@ public class ServicesController {
         return ResponseEntity.ok(r);
     }
 
+    @CrossOrigin
     @PostMapping("/cancel-service")
     public ResponseEntity cancelService(@RequestHeader String Authorization, @RequestBody String idJSON){
         /* extract Token and email (Verification is already done by filter) */
@@ -316,6 +328,7 @@ public class ServicesController {
         return ResponseEntity.ok("Success");
     }
 
+    @CrossOrigin
     @PostMapping("/reject-propose")
     public ResponseEntity rejectPropose(@RequestHeader String Authorization, @RequestBody String idJSON){
         /* extract Token and email (Verification is already done by filter)*/
