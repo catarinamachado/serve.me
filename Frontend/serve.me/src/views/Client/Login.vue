@@ -72,7 +72,7 @@ export default {
           this.$root.typeOf = 'client';
           this.$root.nome = data.nome;
           this.$router.push({
-             name: 'home'
+             name: 'scheduled-services'
            });
         }).catch( err => {
           // Instead, this happens:

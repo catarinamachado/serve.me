@@ -4,7 +4,22 @@
       <router-link 
         routerLinkActive="active"
         :to="{ name: 'home' }"
+        v-if="typeOf == 'simple'"
       >
+        <img src="../assets/imgs/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
+      </router-link>
+      <router-link 
+        routerLinkActive="active"
+        :to="{ name: 'scheduled-services' }"
+        v-if="typeOf == 'client'"
+      >
+        <img src="../assets/imgs/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
+      </router-link>
+      <router-link 
+        routerLinkActive="active"
+        :to="{ name: 'scheduled-services-provider' }"
+        v-if="typeOf == 'provider'"
+      >            
         <img src="../assets/imgs/logo.png" width="120" alt="SERVE.ME" class="d-inline-block align-middle mr-2">
       </router-link>
       <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler">
