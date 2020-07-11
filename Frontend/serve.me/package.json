@@ -17,6 +17,7 @@
     "popper.js": "^1.16.1",
     "vue": "^2.6.11",
     "vue-cal": "^3.6.2",
+    "vue-cryptojs": "^2.1.4",
     "vue-headful": "^2.1.0",
     "vue-router": "^3.3.4",
     "vue-store": "^0.3.1-moved",
