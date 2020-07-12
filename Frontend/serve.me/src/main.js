@@ -4,6 +4,7 @@ import App from './App.vue'
 import store from "./store";
 import router from "./router";
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import VueSimpleAlert from "vue-simple-alert";
 import axios from './axios.js'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -14,6 +15,7 @@ import '@fortawesome/fontawesome-free/js/all.js'
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
+Vue.use(VueSimpleAlert);
 
 Vue.config.productionTip = false
 
