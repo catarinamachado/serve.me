@@ -1,2 +1,3 @@
 ﻿Backend/ServeMe/src/main/resources/ormmapping/Serveme.cfg.xml
 Backend/ServeMe/src/main/resources/ormmapping/database.cfg.xml
+Frontend/serve.me/src/store/consts.js

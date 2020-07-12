@@ -1,7 +1,7 @@
 <template>
   <div class="published-services space-top-5 space-bottom-10 space-left-right-5">
 
-    <h4 class="space-bottom-2">Serviços Publicados</h4>
+    <h4 class="space-bottom-2">Pedidos Publicados</h4>
     <div class="justify-content-center my-1 row">
       <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
          <b-form-select
@@ -59,6 +59,7 @@
 </style>
 
 <script>
+  //import  service from './publishedRequests'
   export default {
     name: 'published-services',
     created() {
@@ -66,7 +67,7 @@
     },
     data: function() {
       return {
-        items: [{
+        items: []/*{
           categoria: "Teste1",
           subcategoria: "Teste2",
           descricao: "Descrição 10",
@@ -99,16 +100,16 @@
           preco_hora: "8",
           estado: "Expirado"
         }
-      ],
+      ]*/,
       fields: [
-          { key: 'categoria', label: 'Categoria', sortable: true },
-          { key: 'subcategoria', label: 'Subcategoria', sortable: true},
+          { key: 'classe', label: 'Categoria', sortable: true },
+          { key: 'categoria', label: 'Subcategoria', sortable: true},
           { key: 'descricao', label: 'Descrição', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
-          { key: 'hora_inicio', label: 'Hora Início', sortable: true},
-          { key: 'hora_fim', label: 'Hora Fim', sortable: true},
+          { key: 'horaInicioDisp', label: 'Hora Início', sortable: true},
+          { key: 'horaFimDisp', label: 'Hora Início', sortable: true},
           { key: 'duracao', label: 'Duração', sortable: true},
-          { key: 'preco_hora', label: 'Preço/hora', sortable: true},
+          { key: 'preco', label: 'Preço/hora', sortable: true},
           { key: 'estado', label: 'Estado', sortable: true},
           { key: 'acoes', label: '' }
       ],
@@ -131,7 +132,57 @@
     resetCancelarModal() {
       this.cancelarModal.title = ''
       this.cancelarModal.content = ''
+    },
+    getMonth(month){
+      if ( month == 'JANUARY') return '01';
+      if ( month == 'FEBRUARY') return '02';
+      if ( month == 'MARCH') return '03';
+      if ( month == 'APRIL') return '04';
+      if ( month == 'MAY') return '05';
+      if ( month == 'JUNE') return '06';
+      if ( month == 'JULY') return '07';
+      if ( month == 'AUGUST') return '08';
+      if ( month == 'SEPTEMBER') return '09';
+      if ( month == 'OCTOBER') return '10';
+      if ( month == 'NOVEMBER') return '11';
+      if ( month == 'DECEMBER') return '12';
     }
+    ,
+    cleanData(list){
+      list.forEach( r => {
+        //Data -  Cleaning
+        var str_data = r.data;
+        var splitted = str_data.split('/')
+        var num_month = this.getMonth(splitted[1]);
+        r.data = splitted[2] + '/' + num_month + '/' + splitted[0] 
+        
+        //Hora Inicio - Cleaning
+        var str_hora = r.horaInicioDisp;
+        splitted = str_hora.split(' ')
+        var hora = splitted[1].split(':')
+        if (hora[1] == '0') hora[1] = '00'
+        r.horaInicioDisp = hora[0] + 'h' + hora[1];
+
+        //Hora Fim - Cleaning
+        str_hora = r.horaFimDisp;
+        splitted = str_hora.split(' ')
+        hora = splitted[1].split(':')
+        r.horaFimDisp = hora[0] + 'h' + hora[1];
+      });
+      return list;
+    }
+    ,
+    PublishedRequests(){
+      this.$axios({url: this.$backend + '/services/my-requests', method: 'GET',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {    
+            this.items = this.cleanData(resp.data);               
+        });
+    }
+  },
+  mounted() {
+    this.PublishedRequests();
   }
 }
 </script>
