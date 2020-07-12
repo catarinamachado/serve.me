@@ -103,7 +103,7 @@ public class ServicesController {
     }
 
     @CrossOrigin
-    @DeleteMapping("/delete-request")
+    @PostMapping("/delete-request")
     public ResponseEntity removeRequest(@RequestBody String request, @RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter)*/
         String token = Authorization.substring(7);

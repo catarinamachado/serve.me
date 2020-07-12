@@ -124,6 +124,9 @@ public class RequestResponse {
     private String estadoAsStr(int estado) {
         String res = "";
         switch (estado) {
+            case -100:
+                res = "Cancelado";
+                break;
             case -1:
                 res = "Em Espera";
                 break;
