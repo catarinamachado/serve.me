@@ -4,7 +4,7 @@
       <div class="row space-top-10 space-bottom-6">
         <div class="col-md-6 offset-md-3 text-left">
           <h5 class="text-left space-bottom-5">Perfil</h5>
-            <form id="my-profile">
+            <form id="my-profile" @submit.prevent="updateProfile">
                 <p>
                     <label for="nome">Nome</label>
                     <input class="w-75" type="text" placeholder="Primeiro e último Nome" name="nome" id="nome" v-model="nome">
@@ -87,6 +87,9 @@ input,select {
 </style>
 
 <script>
+
+import backend from '../../store/consts'
+
 export default {
   name: "my-profile-provider",
   created() {
@@ -94,6 +97,12 @@ export default {
   },
   data: function () {
     return {
+        nome: '',
+        email: '',
+        contribuinte: '',
+        telemovel: '',
+        morada:'',
+        freguesia: '',
         dropdown_item_distritos: 'Distrito',
         dropdown_item_concelhos: 'Concelho',
         distritos: [
@@ -468,6 +477,54 @@ export default {
         ]        
     }
   },
+  methods: {
+     fillData(data){
+        this.nome = data.nome
+        this.email = data.email
+        this.contribuinte = data.nif
+        this.telemovel = data.nrTelm
+        this.morada = data.morada
+        this.freguesia = data.freguesia
+        this.dropdown_item_distritos = data.distrito
+        this.dropdown_item_concelhos = data.concelho
+     }, 
+    checkProfile: function() {
+      let token = localStorage.getItem('user-token')
+      let headers = {
+        Authorization: 'Bearer ' + token
+      }
+      //console.log("------ " + headers.Authorization)
+      this.$axios({url: backend.URL + '/profile/myprofile', headers: headers, method: 'GET' }).
+      then(resp => {
+          console.log(resp.data)    
+          this.fillData(resp.data)
+        });
+    },
+    updateProfile: function(){
+        let token = localStorage.getItem('user-token')
+        let headers = {
+            Authorization: 'Bearer ' + token
+        }
+        let body = {
+            nome: this.nome,
+            nrTelm: this.telemovel,
+            morada: this.morada,
+            distrito: this.dropdown_item_distritos,
+            concelho: this.dropdown_item_concelhos,
+            freguesia: this.freguesia
+        }
+      
+        this.$axios({url: backend.URL + '/profile/updateprofile', headers: headers,data:body ,method: 'POST' }).
+            then(resp => { 
+                if(resp.data != 'OK'){
+                    //console.log('DEU MAL')
+                }
+                else{
+                    //console.log('DEU BEM')
+                }
+            });
+    }
+  },
   computed: {
     concelhos: function() {
         if (this.dropdown_item_distritos == 'Aveiro') {
@@ -514,6 +571,9 @@ export default {
             return ['Concelho'];
         }
     }
+  },
+    mounted(){
+      this.checkProfile();
   }
 };
 </script>

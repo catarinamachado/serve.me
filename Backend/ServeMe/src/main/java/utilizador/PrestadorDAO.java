@@ -13,6 +13,8 @@
  */
 package utilizador;
 
+import EA_ServeMe.beans.Cliente_Perfil;
+import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.util.Log;
 import org.orm.*;
 import org.hibernate.Query;
@@ -357,19 +359,18 @@ public class PrestadorDAO {
 	}
 
 	public static int updatePrestadorProf(String email, String nome, long nrTelm, String morada, String freg, String conc, String distrito){
-		try{
-			PersistentSession s = utilizador.ServemePersistentManager.instance().getSession();
-			String q = "Update Prestador Set " + "Nome = '" + nome + "', " + "Morada = '" + morada + "', "+ " NumTelemovel = ' " + nrTelm + "'," + "Freguesia = '" + freg + "', " + "Concelho = '" + conc + "'," + "Distrito = '" + distrito + "' where " + "email = '" + email + "'";
-			Query query = s.createQuery(q);
-			int r = query.executeUpdate();
-			if(r == 1){
-				Log.i("[Prestador PROFILE]","Profile successfully updated");
-				return 1;
-			}
-			else{
-				Log.e("[Prestador PROFILE]","Profile update went wrong!");
-				return 0;
-			}
+		//get prestador
+		Prestador p = Prestador_Perfil.getPrestadorbyEmail(email);
+		//Update info
+		p.setNome(nome);
+		p.setNumTelemovel(nrTelm);
+		p.setMorada(morada);
+		p.setDistrito(distrito);
+		p.setConcelho(conc);
+		p.setFreguesia(freg);
+		try {
+			PrestadorDAO.save(p);
+			return 1;
 		} catch (PersistentException e) {
 			e.printStackTrace();
 		}
@@ -377,19 +378,11 @@ public class PrestadorDAO {
 	}
 
 	public static int updatePrestadorPW(String email, String new_password){
-		try{
-			PersistentSession s = utilizador.ServemePersistentManager.instance().getSession();
-			String q = "Update Prestador Set " + "Password = '" + new_password + "' where " + "email = '" + email + "'";
-			Query query = s.createQuery(q);
-			int r = query.executeUpdate();
-			if(r == 1){
-				Log.i("[Prestador PROFILE]","Password successfully changed");
-				return 1;
-			}
-			else{
-				Log.e("[Prestador PROFILE]","Password update went wrong!");
-				return 0;
-			}
+		Prestador p = Prestador_Perfil.getPrestadorbyEmail(email);
+		p.setPassword(new_password);
+		try {
+			PrestadorDAO.save(p);
+			return 1;
 		} catch (PersistentException e) {
 			e.printStackTrace();
 		}

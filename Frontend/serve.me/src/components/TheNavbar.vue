@@ -304,7 +304,7 @@ export default {
           console.log("It failed!", err);
           this.loginError = true;
         })
-    }
+    },
   },
   mounted() {
     $(function () {
