@@ -215,6 +215,7 @@ export default {
   name: "consult-services",
   created() {
     window.scrollTo(0, 0);
+    this.publish_service();
   },
   data: function () {
     return {
@@ -306,18 +307,21 @@ export default {
     resetPropostaModal() {
         this.propostaModal.title = ''
     },
+    format_data(list){
+      list.forEach( r => {
+          console.log(r)
+      });
+      return list;
+    },
     publish_service() {
-      this.$axios({url: this.$backend + '/services/add-requests', method: 'GET' })
-      .then(resp => {
-        var data = resp.data;
-        console.log(data)
-        if(data == 1) {
-            console.log(data)
-        } else {
-            console.log(data)
-        }
+      this.$axios({url: this.$backend + '/services/add-requests', method: 'GET',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {
+            this.services = this.format_data(resp.data);
+
       })
-    },        
+    }
   }
 };
 </script>
