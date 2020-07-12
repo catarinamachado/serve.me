@@ -33,6 +33,7 @@ const mutations = {
   }
 }
 
+
 const actions = {
   [CLIENT_AUTH_REQUEST]: ({commit, dispatch}, user) => {
     return new Promise((resolve, reject) => { // The Promise used for router redirect in login
@@ -51,13 +52,12 @@ const actions = {
               dispatch(USER_REQUEST, user)
             resolve(resp)
           }
-          else {
-            const err = "login credentials invalid"
-            commit(AUTH_ERROR, err)
-            localStorage.removeItem('user-token') // if the request fails, remove any possible user token
-            reject(err)
-          }
-        })
+        },(error) => {
+          console.log(error.data) 
+          const err = "Credenciais de login inválidas!"
+          commit(AUTH_ERROR, err)
+          localStorage.removeItem('user-token') // if the request fails, remove any possible user token
+          reject(err)})
       })
   },
   [PROVIDER_AUTH_REQUEST]: ({commit, dispatch}, user) => {
@@ -77,14 +77,14 @@ const actions = {
               }                 
             dispatch(USER_REQUEST, user)
             resolve(resp)
-          }
-          else {
-            const err = "login credentials invalid"
-            commit(AUTH_ERROR, err)
-            localStorage.removeItem('user-token') // if the request fails, remove any possible user token
-            reject(err)
-          }
-        })
+          }         
+        },(error) => { 
+          console.log(error.data) 
+          const err = "Credenciais de login inválidas!"
+          commit(AUTH_ERROR, err)
+          localStorage.removeItem('user-token') // if the request fails, remove any possible user token
+          reject(err)
+         })
       })
   },  
   [AUTH_LOGOUT]: ({commit}) => {

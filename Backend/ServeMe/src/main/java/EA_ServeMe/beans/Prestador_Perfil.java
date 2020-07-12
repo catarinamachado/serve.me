@@ -261,14 +261,15 @@ public class Prestador_Perfil {
     @Bean
     public static ResponseEntity updatePassoword(String email, String pw_atual, String pw_nova) {
         String q = "Email = '" + email + "'";
-        Cliente[] clientes;
+        Prestador[] prestadors;
         try {
-            clientes = ClienteDAO.listClienteByQuery(q, "Email");
-            if (clientes.length > 0) {
-                Cliente c = (Cliente) clientes[0];
-                String password_old = c.getPassword();
+            prestadors = PrestadorDAO.listPrestadorByQuery(q, "Email");
+            if (prestadors.length > 0) {
+                Prestador p = (Prestador) prestadors[0];
+                String password_old = p.getPassword();
+                boolean same = new BCryptPasswordEncoder(11).matches(pw_atual,password_old);
                 //If current password not matches
-                if (!password_old.equals(pw_atual)) {
+                if (!same) {
                     Log.e(TAG, "Prestador current password doesn't match!");
                     ErrorResponse er = new ErrorResponse();
                     er.setLocalError("EditPassword");
@@ -277,7 +278,7 @@ public class Prestador_Perfil {
                 } else {
                     Log.i(TAG, "Prestador current password matches");
                     //If matches, lets update
-                    int res = ClienteDAO.updateClientePW(email, pw_nova);
+                    int res = PrestadorDAO.updatePrestadorPW(email, pw_nova);
                     if (res == 1) {
                         Log.i(TAG, "Prestador password succssefully updated");
                         return ResponseEntity.ok().body("OK");

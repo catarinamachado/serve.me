@@ -74,8 +74,12 @@ public class Crypt {
             // System.out.println(“toDecodeBase64Key = “+toDecodeBase64Key);
 
             String toEncrypt = "PASSWORD DO ZE FErnaNDO!";
-            toEncrypt = "franciscamachado";
+            toEncrypt = "mariasa";
             System.out.println("Plain text = " + toEncrypt);
+
+
+            String encriptada = "9LshQZC2l5ddZxjwn7MTjw==";
+            System.out.println("-------- " + Crypt.decrypt(encriptada,encodedBase64Key));
 
             // AES Encryption based on above secretKey
             String encrStr = Crypt.encrypt(toEncrypt, encodedBase64Key);

@@ -46,6 +46,10 @@
 
 <script>
 import {CLIENT_AUTH_REQUEST} from '../../store/action_calls/authentication'
+//import VueCryptojs from 'vue-cryptojs'
+//import Base64 from 'crypto-js/enc-base64';
+
+
 
 export default {
   name: "login-client",
@@ -61,10 +65,18 @@ export default {
   },
   methods: {
     login: function () {
+      var CryptoJS = require("crypto-js");// Encrypt
+      var encryptedBase64Key = 'c2VydmVtZW5jcmlwdGtleQ==';
+      var parsedBase64Key = CryptoJS.enc.Base64.parse(encryptedBase64Key);
+      var encrypted_pw = CryptoJS.AES.encrypt(this.password, parsedBase64Key,{
+          mode: CryptoJS.mode.ECB,
+          padding: CryptoJS.pad.Pkcs7}).toString();
+      console.log(encrypted_pw);
       let user = {
         email: this.email,
-        password: this.password
+        password: encrypted_pw
       }
+      this.errors=[]
       this.$store.dispatch(CLIENT_AUTH_REQUEST, user)
         .then( resp => {
           this.loginError = false;
@@ -77,6 +89,7 @@ export default {
         }).catch( err => {
           // Instead, this happens:
           console.log("It failed!", err);
+          this.errors.push(err)
           this.loginError = true;
         })
     }

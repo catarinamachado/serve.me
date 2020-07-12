@@ -4,18 +4,18 @@
       <div class="row space-top-10 space-bottom-6">
         <div class="col-md-6 offset-md-3 text-left">
           <h5 class="text-left space-bottom-5">Perfil</h5>
-            <form id="my-profile">
+            <form id="my-profile" @submit.prevent="updateProfile">
                 <p>
                     <label for="nome">Nome</label>
                     <input class="w-75" type="text" placeholder="Primeiro e último Nome" name="nome" id="nome" v-model="nome">
                 </p>
                 <p>
                     <label for="email">E-mail</label>
-                    <input class="w-75" type="email" placeholder="email@email.com" name="email" id="email" v-model="email">
+                    <input class="w-75" type="email" placeholder="email@email.com" name="email" id="email" v-model="email" readonly>
                 </p>
                 <p>
                     <label for="contribuinte">N.º de Contribuinte</label>
-                    <input type="number" placeholder="111222333" name="contribuinte" id="contribuinte" v-model="contribuinte">
+                    <input type="number" placeholder="111222333" name="contribuinte" id="contribuinte" v-model="contribuinte" readonly>
                 </p>
                 <p>
                     <label for="telemovel">N.º de Telemóvel</label>
@@ -29,7 +29,7 @@
                     <div class="col-4">
                         <label for="distrito">Distrito</label>
                         <b-form inline>
-                            <b-dropdown id="dropdown-distritos" :text="dropdown_item_distritos" variant="secondary" class="m-md-2">
+                            <b-dropdown id="dropdown-distritos" :text="dropdown_item_distritos" variant="secondary" class="m-md-2" v-model="distrito">
                                 <b-dropdown-item v-for="distrito in distritos" :key="distrito"
                                                  @click="dropdown_item_distritos = distrito"
                                 >{{ distrito }}</b-dropdown-item>
@@ -39,7 +39,7 @@
                     <div class="col-4">
                         <label for="concelho">Concelho</label>
                         <b-form inline>
-                            <b-dropdown id="dropdown-concelhos" :text="dropdown_item_concelhos" variant="secondary" class="m-md-2">
+                            <b-dropdown id="dropdown-concelhos" :text="dropdown_item_concelhos" variant="secondary" class="m-md-2" v-model="concelho">
                                 <b-dropdown-item v-for="concelho in concelhos" :key="concelho"
                                                  @click="dropdown_item_concelhos = concelho"
                                 >{{ concelho }}</b-dropdown-item>
@@ -86,7 +86,11 @@ input,select {
 }
 </style>
 
+
 <script>
+import backend from '../../store/consts'
+
+
 export default {
   name: "my-profile",
   created() {
@@ -94,6 +98,12 @@ export default {
   },
   data: function () {
     return {
+        nome: '',
+        email: '',
+        contribuinte: '',
+        telemovel: '',
+        morada:'',
+        freguesia: '',
         dropdown_item_distritos: 'Distrito',
         dropdown_item_concelhos: 'Concelho',
         distritos: [
@@ -468,6 +478,56 @@ export default {
         ]        
     }
   },
+  methods: {
+     fillData(data){
+        this.nome = data.nome
+        this.email = data.email
+        this.contribuinte = data.nif
+        this.telemovel = data.nrTelm
+        this.morada = data.morada
+        this.freguesia = data.freguesia
+        this.dropdown_item_distritos = data.distrito
+        this.dropdown_item_concelhos = data.concelho
+     }, 
+    checkProfile: function() {
+      let token = localStorage.getItem('user-token')
+      let headers = {
+        Authorization: 'Bearer ' + token
+      }
+      //console.log("------ " + headers.Authorization)
+      this.$axios({url: backend.URL + '/profile/myprofile', headers: headers, method: 'GET' }).
+      then(resp => {
+          console.log(resp.data)    
+          this.fillData(resp.data)
+        });
+    },
+    updateProfile: function(){
+        let token = localStorage.getItem('user-token')
+        let headers = {
+            Authorization: 'Bearer ' + token
+        }
+        let body = {
+            nome: this.nome,
+            nrTelm: this.telemovel,
+            morada: this.morada,
+            distrito: this.dropdown_item_distritos,
+            concelho: this.dropdown_item_concelhos,
+            freguesia: this.freguesia
+        }
+      
+        this.$axios({url: backend.URL + '/profile/updateprofile', headers: headers,data:body ,method: 'POST' }).
+            then(resp => { 
+                if(resp.data == 'OK'){
+                    var good = "Perfil guardado com sucesso!"
+                    console.log(good)
+                }
+                else{
+                    var err = "Perfil guardado com sucesso!"
+                    console.log(err)
+                }
+            });
+    }
+  },
   computed: {
     concelhos: function() {
         if (this.dropdown_item_distritos == 'Aveiro') {
@@ -514,6 +574,9 @@ export default {
             return ['Concelho'];
         }
     }
+  },
+  mounted(){
+      this.checkProfile();
   }
 };
 </script>
