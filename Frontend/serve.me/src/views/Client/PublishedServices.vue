@@ -163,7 +163,7 @@
           { key: 'descricao', label: 'Descrição', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
           { key: 'horaInicioDisp', label: 'Hora Início', sortable: true},
-          { key: 'horaFimDisp', label: 'Hora Início', sortable: true},
+          { key: 'horaFimDisp', label: 'Hora Fim', sortable: true},
           { key: 'duracao', label: 'Duração', sortable: true},
           { key: 'preco', label: 'Preço/hora', sortable: true},
           { key: 'estado', label: 'Estado', sortable: true},
