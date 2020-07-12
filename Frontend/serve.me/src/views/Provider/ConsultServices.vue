@@ -310,10 +310,11 @@ export default {
       this.$axios({url: this.$backend + '/services/add-requests', method: 'GET' })
       .then(resp => {
         var data = resp.data;
-        if(status == 1) {
-          this.$alert("Serviço publicado com sucesso.", "Sucesso", "success");
+        console.log(data)
+        if(data == 1) {
+            console.log(data)
         } else {
-          this.$alert("O serviço não foi publicado.", "Erro", "error");
+            console.log(data)
         }
       })
     },        
