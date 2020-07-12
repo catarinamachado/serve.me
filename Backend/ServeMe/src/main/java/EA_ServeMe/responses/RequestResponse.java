@@ -128,10 +128,10 @@ public class RequestResponse {
                 res = "Em Espera";
                 break;
             case 0:
-                res = "Em Analise";
+                res = "Em Análise";
                 break;
             case 1:
-                res = "Servico";
+                res = "Serviço";
                 break;
 
         }
