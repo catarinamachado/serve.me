@@ -41,10 +41,10 @@
       
       <template v-slot:cell(acoes)="row">
         <div v-show="row.item.id != editRow">
-          <b-button v-if="row.item.estado !== 'Servico'" size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
+          <b-button v-if="row.item.estado !== 'Servico' && row.item.estado !== 'Cancelado'" size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
             <i class="fas fa-trash-alt"></i>
           </b-button>        
-          <b-button v-if="row.item.estado !== 'Servico'" size="sm" class="btn btn-blue"
+          <b-button v-if="row.item.estado !== 'Servico' && row.item.estado !== 'Cancelado'" size="sm" class="btn btn-blue"
           @click="edit(row.item)" 
           >
             <i class="fas fa-pencil-alt"></i>
@@ -197,9 +197,17 @@
     },
     handleOk() {
         // Prevent modal from closing
-        console.log('Cancelado- ID:' + this.selected);
-        // TODO: Enviar pedido de cancelamento
-        //console.log(bvModalEvt);
+        let req = {
+        id: this.selected
+      }
+        this.$axios({url: this.$backend + '/services/delete-request', data: req, method: 'POST',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {    
+            console.log(resp.status)
+            alert('Pedido Cancelado Com Sucesso!')            
+        });
+        this.PublishedRequests()
       },
     getMonth(month){
       if ( month == 'JANUARY') return '01';
@@ -235,6 +243,7 @@
         str_hora = r.horaFimDisp;
         splitted = str_hora.split(' ')
         hora = splitted[1].split(':')
+        if (hora[1] == '0') hora[1] = '00'
         r.horaFimDisp = hora[0] + 'h' + hora[1];
 
       });
@@ -256,8 +265,21 @@
     },
     sendEdit(item) {
       this.editRow = 0
-      console.log('Send Edit' + item.preco)
-      //TODO: Enviar pedido de edição
+      let req = {
+        id: item.id,
+        preco: item.preco,
+        categoria: item.categoria,
+        duracao: item.duracao,
+        descricao: item.descricao
+      }
+      console.log(req)
+      this.$axios({url: this.$backend + '/services/edit-request', data: req, method: 'POST',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {    
+            console.log(resp.status)
+            alert('Pedido Editado Com Sucesso!')            
+        });
     }
   },
   computed:{

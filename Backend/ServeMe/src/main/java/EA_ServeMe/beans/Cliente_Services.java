@@ -82,6 +82,8 @@ public class Cliente_Services {
         double preco = 0.0;
         Date dataInicio = new Date();
         Date dataFim = new Date();
+        LocalDateTime ldt = DateUtils.asLocalDateTime(dataFim).plusHours(10);
+        dataFim = DateUtils.asDate(ldt);
         double dur = 0.0;
         String desc = "";
         Categoria cat = null;
@@ -89,15 +91,16 @@ public class Cliente_Services {
             categoria = obj.getString("categoria");
             cat = str2cat(categoria);
 
-            preco = obj.getDouble("preco");
+            preco = Double.valueOf(obj.getString("preco"));
 
-            String s_dataInicio = obj.getString("dataInicio");
-            dataInicio = DateUtils.toDate(s_dataInicio);
+            //String s_dataInicio = obj.getString("dataInicio");
+            //dataInicio = DateUtils.toDate(s_dataInicio);
 
-            String s_dataFim = obj.getString("dataFim");
-            dataFim = DateUtils.toDate(s_dataFim);
 
-            dur = obj.getDouble("duracao");
+            //String s_dataFim = obj.getString("dataFim");
+            //dataFim = DateUtils.toDate(s_dataFim);
+
+            dur = Double.valueOf(obj.getDouble("duracao"));
 
             desc = obj.getString("descricao");
 
@@ -195,11 +198,13 @@ public class Cliente_Services {
                 Pedido op = PedidoDAO.getPedidoByORMID(id);
                 if(op.getEstado() <= 0 && op.getCliente().getEmail().equals(email)) {
                     op.setPrecoHora(p.getPrecoHora());
+                    op.setDuracao(p.getDuracao());
+                    /* PROD: ADD THIS - Need Frontend changes
                     op.setData(p.getData());
                     op.setHoraInicioDisp(p.getHoraInicioDisp());
                     op.setHoraFimDisp(p.getHoraFimDisp());
-                    op.setDuracao(p.getDuracao());
                     op.setDescricao(p.getDescricao());
+                     */
                     PedidoDAO.save(op);
                     Log.i(TAG,"Request Edited Succesfully");
                     return success;
@@ -268,8 +273,9 @@ public class Cliente_Services {
         try {
             Pedido p = PedidoDAO.getPedidoByORMID(id);
             if(p.getEstado() <= 0  && p.getCliente().getEmail().equals(c.getEmail())){
-                PedidoDAO.delete(p);
-                Log.i(TAG,"Request Deleted Succesfully");
+                p.setEstado(-100);
+                PedidoDAO.save(p);
+                Log.i(TAG,"Request Cancelled Succesfully");
                 return success;
             }
             else {
