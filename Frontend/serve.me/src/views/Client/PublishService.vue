@@ -4,16 +4,16 @@
       <div class="row space-top-10 space-bottom-6">
         <div class="col-md-6 offset-md-3 text-left">
           <h5 class="text-left space-bottom-5">Publicar pedido</h5>
-            <form id="publish-service">
+            <form id="publish-service" @submit.prevent="publish_service">
                 <p>
                     <label for="categoria">Categoria</label>
-                    <select name="categoria" id="categoria" v-model="categoria">
+                    <select name="categoria" id="categoria" v-model="classe">
                     <option>Jardinagem e Bricolage</option>
                     </select>
                 </p>
                 <p>
                     <label for="subcategoria">Subcategoria</label>
-                    <select name="subcategoria" id="subcategoria" v-model="subcategoria">
+                    <select name="subcategoria" id="subcategoria" v-model="categoria">
                     <option>Vedação para Jardim</option>
                     <option>Decoração de Jardins</option>
                     <option>Manutenção de Canteiros</option>
@@ -70,6 +70,41 @@ export default {
   name: "publish-service",
   created() {
     window.scrollTo(0, 0);
+  },
+  methods: {
+    publish_service() {
+      var dataInicio = this.data.replace(/-/g, "/") + "-" + this.horainicial
+      var dataFim = this.data.replace(/-/g, "/") + "-" + this.horafim
+
+      let servico = {
+        categoria: this.categoria,
+        descricao: this.descricao,
+        preco: this.preco,
+        dataInicio: dataInicio,
+        dataFim: dataFim,
+        duracao: this.duracao.replace(/:/g, ".")
+      }
+
+      this.$axios({url: this.$backend + '/services/add-requests', data: servico, method: 'POST' })
+      .then(resp => {
+        var status = resp.data.status;
+        if(status == 1) {
+            console.log("top!")
+        }
+      })
+    },
+  },
+  data: function () {
+    return {
+      classe: '',
+      categoria: '',
+      descricao: '',
+      preco: '',
+      data: '',
+      horainicial: '',
+      horafim: '',
+      duracao: ''
+    }
   }
 };
 </script>
