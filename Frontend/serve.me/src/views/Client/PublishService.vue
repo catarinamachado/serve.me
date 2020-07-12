@@ -6,14 +6,14 @@
           <h5 class="text-left space-bottom-5">Publicar pedido</h5>
             <form id="publish-service" @submit.prevent="publish_service">
                 <p>
-                    <label for="categoria">Categoria</label>
-                    <select name="categoria" id="categoria" v-model="classe" required>
+                    <label for="classe">Classe</label>
+                    <select name="classe" id="classe" v-model="classe" required>
                     <option>Jardinagem e Bricolage</option>
                     </select>
                 </p>
                 <p>
-                    <label for="subcategoria">Subcategoria</label>
-                    <select name="subcategoria" id="subcategoria" v-model="categoria" required>
+                    <label for="categoria">Categoria</label>
+                    <select name="categoria" id="categoria" v-model="categoria" required>
                     <option>Vedação para Jardim</option>
                     <option>Decoração de Jardins</option>
                     <option>Manutenção de Canteiros</option>
