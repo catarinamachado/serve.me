@@ -67,7 +67,7 @@ export default {
       var encrypted_pw = CryptoJS.AES.encrypt(this.password, parsedBase64Key,{
           mode: CryptoJS.mode.ECB,
           padding: CryptoJS.pad.Pkcs7}).toString();
-      console.log(encrypted_pw);
+      //console.log(encrypted_pw);
       let user = {
         email: this.email,
         password: encrypted_pw

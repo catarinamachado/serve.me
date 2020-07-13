@@ -34,17 +34,10 @@ input,select {
 </style>
 
 <script>
-import backend from '../../store/consts'
-
 export default {
   name: "edit-password-provider",
   created() {
     window.scrollTo(0, 0);
-  },
-  data: function () {
-    return {
-      errors: []
-    }
   },
   methods:{
       updatePassword: function(){
@@ -52,35 +45,40 @@ export default {
         let headers = {
             Authorization: 'Bearer ' + token
         }
-        if(this.nova_password != this.nova_nova_password){
-            var diff = "Por favor confirme a sua nova password"
-            console.log(diff)
-        }
-        else{
-          var password_atual= this.password_atual
-          console.log("ATUAL " + password_atual)
+
+        if(this.password_atual == undefined || this.nova_password == undefined || this.nova_nova_password == undefined || 
+           this.password_atual == '' || this.nova_password == '' || this.nova_nova_password == '') {
+          this.$alert("Preencha todos os campos.", "Erro", "error");
+        } else if(this.nova_password != this.nova_nova_password) {
+            this.$alert("As novas passwords não coincidem.", "Erro", "error");
+        } else {
+          var password_atual = this.password_atual
           var CryptoJS = require("crypto-js");// Encrypt
           var encryptedBase64Key = 'c2VydmVtZW5jcmlwdGtleQ==';
           var parsedBase64Key = CryptoJS.enc.Base64.parse(encryptedBase64Key);
           var encrypted_pw = CryptoJS.AES.encrypt(password_atual, parsedBase64Key,{
           mode: CryptoJS.mode.ECB,
           padding: CryptoJS.pad.Pkcs7}).toString();
-           console.log("ENCRYPT " + encrypted_pw)
           let body = {
             pw_atual: encrypted_pw,
             pw_nova: this.nova_password,
           }
-        this.$axios({url: backend.URL + '/profile/updatepw', headers: headers,data:body ,method: 'POST' }).
+          this.$axios({url: this.$backend + '/profile/updatepw', headers: headers, data:body, method: 'POST' }).
             then(resp => { 
-                if(resp.data == 'OK'){
-                    var good = "Password alterada com sucesso!"
-                    console.log(good)
+                if(resp.data == 'OK') {
+                    this.$alert("Password alterada com sucesso!", "Sucesso", "success")
                 }
-                else{
-                    var err = "Não foi possível alterar a password"
-                    console.log(err)
+                else {
+                    this.$alert("Não foi possível alterar a password.", "Erro", "error")
                 }
-            });
+
+                document.getElementById('password-atual').value = ''
+                document.getElementById('nova-password').value = ''
+                document.getElementById('nova-nova-password').value = ''
+            }).catch(err => {
+                console.log(err)
+                this.$alert("A password atual está incorreta.", "Erro", "error")
+            })
         }
     }
   }
