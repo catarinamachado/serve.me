@@ -259,7 +259,7 @@ public class ServicesController {
     @CrossOrigin
     @GetMapping("/completed-services")
     public ResponseEntity getCompletedServices(@RequestHeader String Authorization){
-        
+
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
         char type = token.charAt(0);

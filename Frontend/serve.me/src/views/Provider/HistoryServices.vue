@@ -265,7 +265,6 @@ import backend from '../../store/consts'
       });
       return list;
     },
-
     CompletedServices: function(){
       let token = localStorage.getItem('user-token')
       let headers = {
