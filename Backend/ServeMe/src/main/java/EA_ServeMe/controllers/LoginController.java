@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import utilizador.Cliente;
 
 @RestController
 @RequestMapping("/api/login")
@@ -27,11 +28,10 @@ public class LoginController {
     public ResponseEntity generateTokenCliente(@RequestBody AuthRequest authRequest) {
         String email = authRequest.getEmail();
         String email_auth = 'C'+email;
-        //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword()); // PROD: ADD THIS
-
+        String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword());
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword()) // PROD: CHANGE TO 'password_auth'
+                    new UsernamePasswordAuthenticationToken(email_auth, password_auth)
             );
         } catch (Exception ex) {
             Log.e(TAG,"Invalid Email/Password");
@@ -55,10 +55,10 @@ public class LoginController {
     public ResponseEntity generateTokenPrestador(@RequestBody AuthRequest authRequest) {
         String email = authRequest.getEmail();
         String email_auth = 'P'+email;
-        //String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword()); // PROD: ADD THIS
+        String password_auth = Cliente_Perfil.decodePassword(authRequest.getPassword());
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email_auth, authRequest.getPassword()) // PROD: CHANGE TO 'password_auth'
+                    new UsernamePasswordAuthenticationToken(email_auth, password_auth)
             );
         } catch (Exception ex) {
             Log.e(TAG,"Invalid Email/Password");

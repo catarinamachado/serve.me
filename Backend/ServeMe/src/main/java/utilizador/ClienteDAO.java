@@ -13,6 +13,7 @@
  */
 package utilizador;
 
+import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.util.Log;
 import org.hibernate.Session;
 import org.orm.*;
@@ -358,19 +359,18 @@ public class ClienteDAO {
 	}
 
 	public static int updateClienteProf(String email, String nome, long nrTelm, String morada, String freg, String conc, String distrito){
-		try{
-			PersistentSession s = utilizador.ServemePersistentManager.instance().getSession();
-			String q = "Update Cliente Set " + "Nome = '" + nome + "', " + "Morada = '" + morada + "', "+ " NumTelemovel = ' " + nrTelm + "'," + "Freguesia = '" + freg + "', " + "Concelho = '" + conc + "'," + "Distrito = '" + distrito + "' where " + "email = '" + email + "'";
-			Query query = s.createQuery(q);
-			int r = query.executeUpdate();
-			if(r == 1){
-				Log.i("[Cliente PROFILE]","Profile successfully updated");
-				return 1;
-			}
-			else{
-				Log.e("[Cliente PROFILE]","Profile update went wrong!");
-				return 0;
-			}
+			//get cliente
+			Cliente c = Cliente_Perfil.getClientebyEmail(email);
+			//Update info
+			c.setNome(nome);
+			c.setNumTelemovel(nrTelm);
+			c.setMorada(morada);
+			c.setDistrito(distrito);
+			c.setConcelho(conc);
+			c.setFreguesia(freg);
+		try {
+			ClienteDAO.save(c);
+			return 1;
 		} catch (PersistentException e) {
 			e.printStackTrace();
 		}
@@ -378,19 +378,11 @@ public class ClienteDAO {
 	}
 
 	public static int updateClientePW(String email, String new_password){
-		try{
-			PersistentSession s = utilizador.ServemePersistentManager.instance().getSession();
-			String q = "Update Cliente Set " + "Password = '" + new_password + "' where " + "email = '" + email + "'";
-			Query query = s.createQuery(q);
-			int r = query.executeUpdate();
-			if(r == 1){
-				Log.i("[Cliente PROFILE]","Password successfully changed");
-				return 1;
-			}
-			else{
-				Log.e("[Cliente PROFILE]","Password update went wrong!");
-				return 0;
-			}
+			Cliente c = Cliente_Perfil.getClientebyEmail(email);
+			c.setPassword(new_password);
+		try {
+			ClienteDAO.save(c);
+			return 1;
 		} catch (PersistentException e) {
 			e.printStackTrace();
 		}
