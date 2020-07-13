@@ -229,7 +229,7 @@ export default {
         url_preparacao_solo: 'https://i.ytimg.com/vi/Gqg5xHO6LKw/maxresdefault.jpg',
         url_limpeza_jardim: 'https://www.fluentu.com/blog/french/wp-content/uploads/sites/3/2014/10/10-cool-colorful-french-autumn-vocab-words2.jpg',
         url_plantacao_arvores: 'https://greensavers.sapo.pt/wp-content/uploads/2020/01/plantar_arvore.jpg',
-        outros: 'https://blog.quintadellarte.com.br/wp-content/uploads/2019/08/303894-aprenda-como-ter-um-jardim-de-luxo-em-casa.jpg',
+        url_outros: 'https://blog.quintadellarte.com.br/wp-content/uploads/2019/08/303894-aprenda-como-ter-um-jardim-de-luxo-em-casa.jpg',
         filter: '',
         services: [
             {id:1, img: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG', 

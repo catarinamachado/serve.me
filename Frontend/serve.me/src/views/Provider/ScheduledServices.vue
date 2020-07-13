@@ -158,6 +158,21 @@ export default {
     resetCancelarModal() {
       this.cancelarModal.title = ''
       this.cancelarModal.content = ''
+    },
+    format_data(list){
+      list.forEach( r => {
+          console.log(r)
+      });
+      return list;
+    },
+    scheduled_services() {
+      this.$axios({url: this.$backend + '/services/my-services', method: 'GET',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {
+            this.items = this.format_data(resp.data);
+
+      })
     }
   },
   components: {
