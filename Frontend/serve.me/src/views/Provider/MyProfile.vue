@@ -7,23 +7,23 @@
             <form id="my-profile" @submit.prevent="updateProfile">
                 <p>
                     <label for="nome">Nome</label>
-                    <input class="w-75" type="text" placeholder="Primeiro e último Nome" name="nome" id="nome" v-model="nome">
+                    <input class="w-75" type="text" name="nome" id="nome" v-model="nome">
                 </p>
                 <p>
                     <label for="email">E-mail</label>
-                    <input class="w-75" type="email" placeholder="email@email.com" name="email" id="email" v-model="email">
+                    <input class="w-75" type="email" name="email" id="email" v-model="email" readonly disabled>
                 </p>
                 <p>
                     <label for="contribuinte">N.º de Contribuinte</label>
-                    <input type="number" placeholder="111222333" name="contribuinte" id="contribuinte" v-model="contribuinte">
+                    <input type="number" name="contribuinte" id="contribuinte" v-model="contribuinte" readonly disabled>
                 </p>
                 <p>
                     <label for="telemovel">N.º de Telemóvel</label>
-                    <input type="tel" placeholder="900000000" name="telemovel" id="telemovel" v-model="telemovel">
+                    <input type="tel" name="telemovel" id="telemovel" v-model="telemovel">
                 </p>
                 <p>
                     <label for="morada">Morada</label>
-                    <input class="w-75" placeholder="Morada" type="text" name="morada" id="morada" v-model="morada">
+                    <input class="w-75" type="text" name="morada" id="morada" v-model="morada">
                 </p>
                 <div class="row">
                     <div class="col-4">
@@ -87,9 +87,6 @@ input,select {
 </style>
 
 <script>
-
-import backend from '../../store/consts'
-
 export default {
   name: "my-profile-provider",
   created() {
@@ -478,6 +475,16 @@ export default {
     }
   },
   methods: {
+     checkTel(tel){
+         if(tel.length > 9){
+            this.$alert("O número de telemóvel tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         } else if(tel.length < 9){
+            this.$alert("O número de telemóvel tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         }
+            return(true)
+     },      
      fillData(data){
         this.nome = data.nome
         this.email = data.email
@@ -494,13 +501,15 @@ export default {
         Authorization: 'Bearer ' + token
       }
       //console.log("------ " + headers.Authorization)
-      this.$axios({url: backend.URL + '/profile/myprofile', headers: headers, method: 'GET' }).
+      this.$axios({url: this.$backend + '/profile/myprofile', headers: headers, method: 'GET' }).
       then(resp => {
           console.log(resp.data)    
           this.fillData(resp.data)
         });
     },
     updateProfile: function(){
+        if(this.checkTel(this.telemovel)) {
+
         let token = localStorage.getItem('user-token')
         let headers = {
             Authorization: 'Bearer ' + token
@@ -514,15 +523,19 @@ export default {
             freguesia: this.freguesia
         }
       
-        this.$axios({url: backend.URL + '/profile/updateprofile', headers: headers,data:body ,method: 'POST' }).
+        this.$axios({url: this.$backend + '/profile/updateprofile', headers: headers, data:body, method: 'POST' }).
             then(resp => { 
-                if(resp.data != 'OK'){
-                    //console.log('DEU MAL')
+                if(resp.data == 'OK'){
+                    localStorage.setItem('nome', this.nome)
+                    this.$root.nome = this.nome
+                    
+                    this.$alert("Perfil guardado com sucesso!", "Sucesso", "success");
                 }
                 else{
-                    //console.log('DEU BEM')
+                    this.$alert("Não foi possível guardar o seu perfil.", "Erro", "error");
                 }
             });
+        }
     }
   },
   computed: {
