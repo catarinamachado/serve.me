@@ -3,8 +3,10 @@ package EA_ServeMe.controllers;
 
 import EA_ServeMe.beans.Cliente_Perfil;
 import EA_ServeMe.beans.Prestador_Perfil;
+import EA_ServeMe.responses.ClienteProfResponse;
 import EA_ServeMe.responses.ErrorResponse;
 import EA_ServeMe.responses.MyProfileResponse;
+import EA_ServeMe.responses.PrestadorProfResponse;
 import EA_ServeMe.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -165,8 +167,10 @@ public class ProfileController {
             } else {
                 //garantir que quem acede é Prestador
                 if (token.startsWith("P")) {
-                    ResponseEntity response = Prestador_Perfil.checkClienteProfile(email_client);
-                    return ResponseEntity.ok().body(response);
+                    ClienteProfResponse response = Prestador_Perfil.checkClienteProfile(email_client);
+                    if(response != null)
+                        return ResponseEntity.ok().body(response);
+                    else return ResponseEntity.badRequest().build();
                 } else {
                     Log.e(TAG, "Clients cant access each other profiles");
                     ErrorResponse er = new ErrorResponse();
@@ -201,8 +205,10 @@ public class ProfileController {
                 return ResponseEntity.badRequest().body(er);
             } else {
                 if (token.startsWith("C")) {
-                    ResponseEntity resp = Cliente_Perfil.checkPrestadorProfile(email_prest);
-                    return ResponseEntity.ok().body(resp);
+                    PrestadorProfResponse resp = Cliente_Perfil.checkPrestadorProfile(email_prest);
+                    if( resp != null)
+                        return ResponseEntity.ok().body(resp);
+                    else return ResponseEntity.badRequest().build();
                 } else {
                     Log.e(TAG, "Prestador cant access each other profiles");
                     ErrorResponse er = new ErrorResponse();

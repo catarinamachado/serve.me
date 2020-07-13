@@ -18,7 +18,7 @@ public class PrestadorProfResponse implements Serializable {
     double classificacao;
     int numServicosRealizados;
     int numServicosCancelados;
-    List<Avaliacao_Prestador> avaliacoes;
+    List<AvaliacaoResponse> avaliacoes;
 
 
     public double getClassificacao() {
@@ -47,10 +47,7 @@ public class PrestadorProfResponse implements Serializable {
 
 
 
-    public PrestadorProfResponse() {
-    }
-
-    public PrestadorProfResponse(String nome, String email, long nrTelm, String morada, String freguesia, String concelho, String distrito, double classificacao, int numServicosRealizados, int numServicosCancelados, List<Avaliacao_Prestador> avaliacoes) {
+    public PrestadorProfResponse(String nome, String email, long numTelemovel, String morada, String freguesia, String concelho, String distrito, double classificacao, int numServicosRealizados, int numServicosCancelados, List<AvaliacaoResponse> avaliacoes) {
         this.nome = nome;
         this.email = email;
         this.nrTelm = nrTelm;
@@ -63,6 +60,7 @@ public class PrestadorProfResponse implements Serializable {
         this.numServicosCancelados = numServicosCancelados;
         this.avaliacoes = avaliacoes;
     }
+
 
     public String getNome() {
         return nome;
@@ -120,11 +118,11 @@ public class PrestadorProfResponse implements Serializable {
         this.distrito = distrito;
     }
 
-    public List<Avaliacao_Prestador> getAvaliacoes() {
+    public List<AvaliacaoResponse> getAvaliacoes() {
         return avaliacoes;
     }
 
-    public void setAvaliacoes(List<Avaliacao_Prestador> avaliacoes) {
+    public void setAvaliacoes(List<AvaliacaoResponse> avaliacoes) {
         this.avaliacoes = avaliacoes;
     }
 }

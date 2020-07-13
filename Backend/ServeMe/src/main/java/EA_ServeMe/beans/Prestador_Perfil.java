@@ -1,9 +1,6 @@
 package EA_ServeMe.beans;
 
-import EA_ServeMe.responses.AuthResponse;
-import EA_ServeMe.responses.ClienteProfResponse;
-import EA_ServeMe.responses.ErrorResponse;
-import EA_ServeMe.responses.MyProfileResponse;
+import EA_ServeMe.responses.*;
 import EA_ServeMe.util.*;
 import org.json.JSONObject;
 import org.orm.PersistentException;
@@ -298,7 +295,7 @@ public class Prestador_Perfil {
     }
 
     @Bean
-    public static ResponseEntity checkClienteProfile(String email_cli){
+    public static ClienteProfResponse checkClienteProfile(String email_cli){
         String q = "Email = '" + email_cli + "'";
         try {
             Cliente[] cli = ClienteDAO.listClienteByQuery(q, "Email");
@@ -306,7 +303,7 @@ public class Prestador_Perfil {
                 ErrorResponse er = new ErrorResponse();
                 er.setLocalError("Cliente not found");
                 Log.e(TAG,"Cliente profile not found");
-                return ResponseEntity.badRequest().body(er);
+                return null;
             } else {
                 Cliente c = cli[0];
                 int id = c.getID();
@@ -322,17 +319,21 @@ public class Prestador_Perfil {
                 //er.setLocalError("Cant acess this profile from external ways);
                 //return ResponseEntity.badrequest().body(er);
                 // }
-                Avaliacao_Cliente[] avaliacao_clientess = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
-                List<Avaliacao_Cliente> avaliacao_clientes = Arrays.asList(avaliacao_clientess);
+                Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
                 //TODO: Criar classe de Resposta Avaliação
-                ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacao_clientes);
+                List<AvaliacaoResponse> avaliacoes = new ArrayList<>();
+                for(Avaliacao_Cliente a : avaliacao_clientes){
+                    AvaliacaoResponse ar = new AvaliacaoResponse(a.getPrestador().getNome(),a.getClassificacao(),a.getOpiniao());
+                    avaliacoes.add(ar);
+                }
+                ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacoes);
                 Log.i(TAG,"Cliente profile sent with success");
-                return ResponseEntity.ok().body(cli_prof);
+                return cli_prof;
             }
         } catch (PersistentException e) {
             e.printStackTrace();
         }
-        return (ResponseEntity) ResponseEntity.notFound();
+        return null;
     }
 
 
