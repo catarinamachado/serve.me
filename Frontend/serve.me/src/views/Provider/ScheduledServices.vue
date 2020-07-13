@@ -1,7 +1,7 @@
 <template>
   <div class="space-top-5 space-bottom-10 space-left-right-5">
     <h4 class="space-bottom-2">Serviços Agendados</h4>
-    <vue-cal style="height: 550px" :time-from="8 * 60" :time-to="19 * 60" locale="pt-br" />
+    <vue-cal style="height: 550px" :time-from="8 * 60" :time-to="19 * 60" locale="pt-br" :events="events"/>
     <div class="space-top-5">
         <div class="justify-content-center my-1 row">
         <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
@@ -83,8 +83,10 @@ export default {
   name: "scheduled-services-provider",
   created() {
     window.scrollTo(0, 0);
+    this.scheduled_services();
   },
   data: () => ({
+    events: [],
     items: [],
     fields: [
         { key: 'classe', label: 'Classe', sortable: true },
@@ -176,12 +178,38 @@ export default {
       if ( month == 'NOVEMBER') return '11';
       if ( month == 'DECEMBER') return '12';
     },
+    cleanCalendar(list){
+      var events = [];
+
+      list.forEach(r => {
+        //Data
+        var str_data = r.data;
+        var splitted = str_data.split('/')
+        var num_month = this.getMonth(splitted[1]);
+        events.start = splitted[2] + '-' + num_month + '-' + splitted[0]
+        events.end = splitted[2] + '-' + num_month + '-' + splitted[0]
+
+        //Data com Hora
+        var str_hora = r.hora;
+        splitted = str_hora.split(' ')
+        var hora = splitted[1].split(':')
+        if (hora[1] == '0') hora[1] = '00'
+        events.start += ' ' + hora[0] + ':' + hora[1];
+        events.end += ' ' + hora[0] + ':' + hora[1];
+
+        //Título
+        events.title = r.categoria
+      });
+
+      return events
+    },
     scheduled_services() {
       this.$axios({url: this.$backend + '/services/my-services', method: 'GET',
         headers: {
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
         }}).then(resp => {
             this.items = this.cleanData(resp.data);
+            this.events = this.cleanCalendar(resp.data);
       })
     },
     seeProfile(email){
@@ -197,5 +225,3 @@ export default {
   }
 };
 </script>
-
-
