@@ -158,19 +158,22 @@
 </style>
 
 <script>
+import backend from '../../store/consts'
+
+
   export default {
     name: 'history-services-provider',
     created() {
       window.scrollTo(0, 0);
+      this.CompletedServices();
     },
     data: function() {
       return {
-        rating: null,
-        items: [{
+        items: [/*{
           categoria: "Teste1",
           subcategoria: "Teste2",
           descricao: "Descrição",
-          cliente: "Primeiro Último",
+          prestador: "Primeiro Último",
           data: "13/03/1233",
           hora_inicio: "14h00",
           duracao: "1 hora",
@@ -181,7 +184,7 @@
           categoria: "Teste3",
           subcategoria: "Teste4",
           descricao: "Descrição",
-          cliente: "Primeiro Último",
+          prestador: "Primeiro Último",
           data: "13/03/1233",
           hora_inicio: "14h00",
           duracao: "1 hora",
@@ -192,19 +195,19 @@
           categoria: "Teste1",
           subcategoria: "Teste2",
           descricao: "Descrição",
-          cliente: "Primeiro Último",
+          prestador: "Primeiro Último",
           data: "14/03/1233",
           hora_inicio: "14h00",
           duracao: "1 hora",
           preco_hora: "4",
           estado: "Por classificar"          
         }
-      ],
+      */],
       fields: [
           { key: 'categoria', label: 'Categoria', sortable: true },
           { key: 'subcategoria', label: 'Subcategoria', sortable: true},
           { key: 'descricao', label: 'Descrição', sortable: true},
-          { key: 'cliente', label: 'Cliente', sortable: true},
+          { key: 'prestador', label: 'Prestador', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
           { key: 'hora_inicio', label: 'Hora Início', sortable: true},
           { key: 'duracao', label: 'Duração', sortable: true},
@@ -237,6 +240,45 @@
     resetClassificarModal() {
       this.classificarModal.title = ''
       this.classificarModal.content = ''
+    },
+    cleanData(list){
+      list.forEach( r => {
+        //Data -  Cleaning
+        var str_data = r.data;
+        var splitted = str_data.split('/')
+        var num_month = this.getMonth(splitted[1]);
+        r.data = splitted[2] + '/' + num_month + '/' + splitted[0] 
+        
+        //Hora Inicio - Cleaning
+        var str_hora = r.horaInicioDisp;
+        splitted = str_hora.split(' ')
+        var hora = splitted[1].split(':')
+        if (hora[1] == '0') hora[1] = '00'
+        r.horaInicioDisp = hora[0] + 'h' + hora[1];
+        
+        //Hora Fim - Cleaning
+        str_hora = r.horaFimDisp;
+        splitted = str_hora.split(' ')
+        hora = splitted[1].split(':')
+        if (hora[1] == '0') hora[1] = '00'
+        r.horaFimDisp = hora[0] + 'h' + hora[1];
+      });
+      return list;
+    },
+
+    CompletedServices: function(){
+      let token = localStorage.getItem('user-token')
+      let headers = {
+        Authorization: 'Bearer ' + token
+      }
+      console.log("Antes de enviar pedido")
+      //console.log("------ " + headers.Authorization)
+      this.$axios({url: backend.URL + '/services/completed-services', headers: headers, method: 'GET' }).
+      then(resp => {
+          console.log("O status é " + resp.data);
+          this.items = this.cleanData(resp.data);
+        }
+        );
     }
   }
 }
