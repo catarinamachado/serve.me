@@ -1,6 +1,7 @@
 import axios from 'axios'
+import backend from './store/consts'
 
-const API_URL = 'http://25.113.37.183:8083/api'
+const API_URL = backend.URL
 
 export default axios.create({
   baseURL: API_URL,

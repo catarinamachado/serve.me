@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static EA_ServeMe.beans.Cliente_Perfil.decodePassword;
+
 
 @RestController
 @RequestMapping("/api/profile")
@@ -55,7 +57,7 @@ public class ProfileController {
     }
 
     @CrossOrigin
-    @PutMapping
+    @PostMapping
     @RequestMapping("/updateprofile")
     public ResponseEntity updateprofile(@RequestHeader String Authorization, @RequestBody String body){
 
@@ -75,6 +77,7 @@ public class ProfileController {
                 else {
                     int res = ClienteDAO.updateClienteProf(email, pr.getNome(), pr.getNrTelm(), pr.getMorada(), pr.getFreguesia(), pr.getConcelho(), pr.getDistrito());
                     if (res == 1) {
+                        Log.i(TAG,"Cliente Profile Updated");
                         return ResponseEntity.ok("OK");
                     } else {
                         ErrorResponse er = new ErrorResponse();
@@ -93,6 +96,7 @@ public class ProfileController {
             }
             int res = PrestadorDAO.updatePrestadorProf(email,pr.getNome(),pr.getNrTelm(),pr.getMorada(),pr.getFreguesia(),pr.getConcelho(),pr.getDistrito());
             if(res == 1){
+                Log.i(TAG,"Provider profile updated");
                 return ResponseEntity.ok("OK");
             }
             else{
@@ -106,7 +110,7 @@ public class ProfileController {
     }
 
     @CrossOrigin
-    @PutMapping
+    @PostMapping
     @RequestMapping("/updatepw")
     public ResponseEntity updatepassword(@RequestHeader String Authorization, @RequestBody String body){
 
@@ -118,17 +122,17 @@ public class ProfileController {
         if(passwords.size() == 2){
             String pw_atual = passwords.get(0);
             String pw_nova = passwords.get(1);
-            //String internal_pw_atual = decodePassword(pw_atual);  //PROD: ADD THIS -- Função que faz decode da password vinda do frontend
+            String internal_pw_atual = Cliente_Perfil.decodePassword(pw_atual);  //PROD: ADD THIS -- Função que faz decode da password vinda do frontend
 
             //PROD: ADD THIS LINE
             String new_Password = new BCryptPasswordEncoder(11).encode(pw_nova);
             //identify User -> Cliente ou Prestador
             if(token.startsWith("C")){
-                ResponseEntity r = Cliente_Perfil.updatePassoword(email,pw_atual,new_Password);
+                ResponseEntity r = Cliente_Perfil.updatePassoword(email,internal_pw_atual,new_Password);
                 return r;
             }
             if(token.startsWith("P")){
-                ResponseEntity re = Prestador_Perfil.updatePassoword(email,pw_atual,new_Password);
+                ResponseEntity re = Prestador_Perfil.updatePassoword(email,internal_pw_atual,new_Password);
                 return re;
             }
         }
@@ -142,7 +146,7 @@ public class ProfileController {
     }
 
     @CrossOrigin
-    @PutMapping
+    @PostMapping
     @RequestMapping("/clienteprof")
     public ResponseEntity checkCProfileFromP(@RequestHeader String Authorization, @RequestBody String body) {
 
@@ -178,7 +182,7 @@ public class ProfileController {
     }
 
     @CrossOrigin
-    @PutMapping
+    @PostMapping
     @RequestMapping("/prestadorprof")
     public ResponseEntity checkPProfileFromC(@RequestHeader String Authorization, @RequestBody String body) {
 
