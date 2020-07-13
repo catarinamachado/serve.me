@@ -90,11 +90,11 @@ public class Prestador_Perfil {
         }
 
         if (bd_e.length != 0)
-             error.add("Email");
+             error.add("Email já está em uso");
         if (bd_n.length != 0)
-            error.add("Nif");
+            error.add("Nif já está em uso");
         if (bd_t.length != 0)
-            error.add("Telemovel");
+            error.add("Telemovel já está em uso");
 
         if (error.size() > 1) return error;
 
@@ -105,7 +105,7 @@ public class Prestador_Perfil {
         //Decode from frontend and Encode to DB
 
         String prestador_password = p.getPassword();
-        //prestador_password = decodePassword(prestador_password);  //PROD: ADD THIS -- Função que faz decode da password vinda do frontend
+        prestador_password = Prestador_Perfil.decodePassword(prestador_password);  //PROD: ADD THIS -- Função que faz decode da password vinda do frontend
         String new_Password = new BCryptPasswordEncoder(11).encode( prestador_password);
         p.setPassword(new_Password);
         /* PROD : ADD THIS */

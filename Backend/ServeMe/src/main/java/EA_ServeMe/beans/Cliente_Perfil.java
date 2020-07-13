@@ -87,11 +87,11 @@ public class Cliente_Perfil {
             return error;
         }
         if (bd_e.length != 0)
-            error.add("Email");
+            error.add("Email já está em uso");
         if (bd_n.length != 0)
-            error.add("Nif");
+            error.add("Nif já está em uso");
         if (bd_t.length != 0)
-            error.add("Telemovel");
+            error.add("Número Telemovel já está em uso");
 
         if (error.size() > 1) return error;
 
@@ -102,7 +102,7 @@ public class Cliente_Perfil {
 
 
         String client_password = c.getPassword();
-        //client_password = decodePassword(client_password); // PROD : ADD THIS Decode encrypted password from frontend
+        client_password = Cliente_Perfil.decodePassword(client_password); // PROD : ADD THIS Decode encrypted password from frontend
 
         String new_Password = new BCryptPasswordEncoder(11).encode(client_password);
         c.setPassword(new_Password);

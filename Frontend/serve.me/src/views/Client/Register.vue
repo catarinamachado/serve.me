@@ -35,6 +35,7 @@
                 type="number"
                 v-model="nif"
                 placeholder="N.º de Contribuinte"
+                maxlength="9" 
               />
             </fieldset>
             <fieldset class="form-group">
@@ -43,6 +44,7 @@
                 type="tel"
                 v-model="telemovel"
                 placeholder="N.º de Telemóvel"
+                maxlength="9" 
               />
             </fieldset>
             <fieldset class="form-group">
@@ -111,11 +113,39 @@ export default {
     window.scrollTo(0, 0);
   },
   methods: {
+    checkTel(tel){
+         if(tel.length > 9){
+            this.$alert("O número de telemóvel tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         } else if(tel.length < 9){
+            this.$alert("O número de telemóvel tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         }
+        return(true)
+     }, 
+     checkNIF(nif){
+         if(nif.length > 9){
+            this.$alert("O seu NIF tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         } else if(nif.length < 9){
+            this.$alert("O seu NIF tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         }
+        return(true)
+     },
     register() {
+
+
+      var CryptoJS = require("crypto-js");// Encrypt
+      var encryptedBase64Key = 'c2VydmVtZW5jcmlwdGtleQ==';
+      var parsedBase64Key = CryptoJS.enc.Base64.parse(encryptedBase64Key);
+      var encrypted_pw = CryptoJS.AES.encrypt(this.password, parsedBase64Key,{
+          mode: CryptoJS.mode.ECB,
+          padding: CryptoJS.pad.Pkcs7}).toString();
       let user = {
         nome: this.nome,
         email: this.email,
-        password: this.password,
+        password: encrypted_pw,
         nif: this.nif,
         telemovel: this.telemovel,
         morada: this.morada,
@@ -123,31 +153,44 @@ export default {
         concelho: this.dropdown_item_concelhos,
         distrito: this.dropdown_item_distritos
       }
+      if(this.nome== '' || this.email == '' || this.nif== '' || 
+           this.password== '' || this.morada == '' || this.freguesia== '' || 
+           this.dropdown_item_distritos== 'Distrito' || this.dropdown_item_concelhos== 'Concelho'){
+             this.$alert("Por favor preencha todos os campos", "Erro", "error");
+           } 
+      else{
 
-      this.$axios({url: this.$backend + '/register/cliente', data: user, method: 'POST' })
-      .then(resp => {
-        var status = resp.data.status;
-        if(status == 1) {
-          let user_logged = {
-            email: this.email,
-            password: this.password
+      if(this.checkTel(this.telemovel) && this.checkNIF(this.nif)){
+
+        this.$axios({url: this.$backend + '/register/cliente', data: user, method: 'POST' })
+        .then(resp => {
+          var status = resp.data.status;
+          if(status == 1) {
+            let user_logged = {
+              email: this.email,
+              password: encrypted_pw
+            }
+            this.$store.dispatch(CLIENT_AUTH_REQUEST, user_logged)
+              .then( resp => {
+                this.loginError = false;
+                var data = resp.data;
+                this.$root.typeOf = 'client';
+                this.$root.nome = data.nome;
+                this.$router.push({
+                  name: 'scheduled-services'
+                });
+              }).catch( err => {
+                // Instead, this happens:
+                console.log("It failed!", err);
+                this.loginError = true;
+              })
           }
-          this.$store.dispatch(CLIENT_AUTH_REQUEST, user_logged)
-            .then( resp => {
-              this.loginError = false;
-              var data = resp.data;
-              this.$root.typeOf = 'client';
-              this.$root.nome = data.nome;
-              this.$router.push({
-                name: 'scheduled-services'
-              });
-            }).catch( err => {
-              // Instead, this happens:
-              console.log("It failed!", err);
-              this.loginError = true;
-            })
-        }
-      })
+        }).catch(err => {
+            console.log(err)
+            this.$alert(err.response.data, "Erro", "error")
+        });
+      } 
+    }
     },
   },
   data: function () {
