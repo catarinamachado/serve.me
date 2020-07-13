@@ -72,7 +72,8 @@ public class ServicesController {
             for (String e: res) {
                 er.addMsg(e);
             }
-            return ResponseEntity.badRequest().body(er);
+            String listString = String.join(", ", res);
+            return ResponseEntity.badRequest().body(listString);
         }
 
     }
