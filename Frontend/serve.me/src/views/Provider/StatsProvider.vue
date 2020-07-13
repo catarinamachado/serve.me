@@ -42,7 +42,7 @@
 
       <div class="row d-flex justify-content-center space-top-8">
         <div>
-        <h5><strong>N.º de Serviços por Subcategoria</strong></h5>
+        <h5><strong>N.º de Serviços por Categoria</strong></h5>
           <template>
           <mdb-container>
             <mdb-pie-chart
@@ -70,6 +70,7 @@
     name: "stats-provider",
     created() {
       window.scrollTo(0, 0);
+      this.stats();
     },    
     components: {
       mdbPieChart,
@@ -77,18 +78,59 @@
       mdbLineChart,
       mdbContainer
     },
+    methods: {
+      servicos_categorias(){
+        this.$axios({url: this.$backend + '/status/my-status', method: 'GET',
+          headers: {
+          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+          }}).then(resp => {
+            return resp.data.servicos_por_subcat.eixo_y
+        })
+      },
+      ganho_mes(){
+        this.$axios({url: this.$backend + '/status/my-status', method: 'GET',
+          headers: {
+          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+          }}).then(resp => {
+            return resp.data.ganhos_por_mes.eixo_x
+        })
+      },
+      servicos_mes(){
+        this.$axios({url: this.$backend + '/status/my-status', method: 'GET',
+          headers: {
+          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+          }}).then(resp => {
+            return resp.data.servicos_por_mes.eixo_x
+        })
+      },          
+      stats(){
+        this.$axios({url: this.$backend + '/status/my-status', method: 'GET',
+          headers: {
+          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+          }}).then(resp => {
+            //Ano atual
+            this.ano = resp.data.ano
+            
+            this.ganho_anual = resp.data.ganho_anual
+            this.nr_servicos = resp.data.servicos_anual
+
+            this.pieChartData.labels = resp.data.servicos_por_subcat.eixo_x
+            this.barChartData.labels = resp.data.ganhos_por_mes.eixo_x
+            this.lineChartData.labels = resp.data.servicos_por_mes.eixo_x
+        })
+      }
+    },
     data() {
       return {
-        ano: 2020,
-        ganho_anual: 1003,
-        nr_servicos: 109,       
+        ano: '',
+        ganho_anual: '',
+        nr_servicos: '',
+        nrs_servicos_categorias: [],
         pieChartData: {
-          labels: ["Vedação para Jardim", "Decoração de Jardins", "Manutenção de Canteiros",
-                   "Corte de Árvores", "Remoção de Ervas Daninhas","Preparação do Solo para Jardinagem",
-                   "Limpeza de Jardim","Plantação de Árvores","Outro"],
+          labels: [],
           datasets: [
             {
-              data: [30, 21, 8, 6, 11, 21, 6, 10, 20],
+              data: this.servicos_categorias(),
               backgroundColor: [
                 "#fab1a0",
                 "#00b894",
@@ -134,24 +176,11 @@
           }
         },
         barChartData: {
-          labels: [
-            "jan",
-            "fev",
-            "mar",
-            "abr",
-            "maio",
-            "jun",
-            "jul",
-            "ago",
-            "set",
-            "out",
-            "nov",
-            "dez"
-          ],
+          labels: [],
           datasets: [
             {
               label: "Ganho (€)",
-              data: [12, 19, 3, 5, 6, 3, 10, 8, 4, 15, 8, 14],
+              data: this.ganho_mes(),
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
                 "rgba(54, 162, 235, 0.2)",
@@ -208,27 +237,14 @@
           }
         },
         lineChartData: {
-          labels: [
-            "jan",
-            "fev",
-            "mar",
-            "abr",
-            "maio",
-            "jun",
-            "jul",
-            "ago",
-            "set",
-            "out",
-            "nov",
-            "dez"
-          ],
+          labels: [],
           datasets: [
             {
               label: "N.º de serviços",
               backgroundColor: "rgba(255, 206, 86, 0.2)",
               borderColor: "rgba(255, 206, 86, 1)",
               borderWidth: 0.7,
-              data: [65, 59, 80, 81, 56, 55, 40, 10, 34, 12, 9, 79]
+              data: this.servicos_mes()
             }
           ]
         },
