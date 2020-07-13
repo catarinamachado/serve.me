@@ -166,6 +166,7 @@ public class ProfileController {
                 //garantir que quem acede é Prestador
                 if (token.startsWith("P")) {
                     ResponseEntity response = Prestador_Perfil.checkClienteProfile(email_client);
+                    return ResponseEntity.ok().body(response);
                 } else {
                     Log.e(TAG, "Clients cant access each other profiles");
                     ErrorResponse er = new ErrorResponse();
@@ -201,7 +202,7 @@ public class ProfileController {
             } else {
                 if (token.startsWith("C")) {
                     ResponseEntity resp = Cliente_Perfil.checkPrestadorProfile(email_prest);
-                    return resp;
+                    return ResponseEntity.ok().body(resp);
                 } else {
                     Log.e(TAG, "Prestador cant access each other profiles");
                     ErrorResponse er = new ErrorResponse();

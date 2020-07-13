@@ -324,6 +324,7 @@ public class Prestador_Perfil {
                 // }
                 Avaliacao_Cliente[] avaliacao_clientess = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
                 List<Avaliacao_Cliente> avaliacao_clientes = Arrays.asList(avaliacao_clientess);
+                //TODO: Criar classe de Resposta Avaliação
                 ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacao_clientes);
                 Log.i(TAG,"Cliente profile sent with success");
                 return ResponseEntity.ok().body(cli_prof);
