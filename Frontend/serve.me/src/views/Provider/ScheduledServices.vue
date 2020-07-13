@@ -32,12 +32,12 @@
         <!-- Main table element -->
         <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
           <template v-slot:cell(cliente)="row">
-            <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
+            <b-link @click="seeProfile(row.item.cliente_email)">{{row.item.cliente}}</b-link>
           </template>
 
           <template v-slot:cell(preco_hora)="row">
               {{row.item.preco_hora}} €
-          </template>          
+          </template>
 
           <template v-slot:cell(acoes)="row">
               <b-button size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
@@ -50,9 +50,16 @@
         </b-table>
 
         <!-- Info modal -->
-        <b-modal :id="cancelarModal.id" :title="cancelarModal.title" @hide="resetCancelarModal">
-        <pre>{{ cancelarModal.content }}</pre>
-        </b-modal>
+        <b-modal :id="rejeitarModal.id" :title="rejeitarModal.title"
+            @hide="resetRejeitarModal"
+            @ok="handleReject" >
+            <pre>{{ rejeitarModal.content }}</pre>
+          </b-modal>
+          <b-modal :id="finalizarModal.id" :title="finalizarModal.title"
+            @hide="resetFinalizarModal"
+            @ok="handleAccept">
+            <pre>{{ finalizarModal.content }}</pre>
+          </b-modal>
 
         <div class="justify-content-center row my-1">
         <b-pagination size="md" :total-rows="this.items.length" :per-page="perPage" v-model="currentPage" class="customPagination"/>
@@ -78,59 +85,10 @@ export default {
     window.scrollTo(0, 0);
   },
   data: () => ({
-    items: [{
-        categoria: "Teste1",
-        subcategoria: "Teste2",
-        descricao: "Descrição",
-        cliente: "Primeiro Último",
-        data: "13/03/1233",
-        hora_inicio: "14h00",
-        duracao: "1 hora",
-        preco_hora: "4"
-    },
-    {
-        categoria: "Teste3",
-        subcategoria: "Teste4",
-        descricao: "Descrição",
-        cliente: "Primeiro Último",
-        data: "13/03/1233",
-        hora_inicio: "14h00",
-        duracao: "1 hora",
-        preco_hora: "4"
-    },
-    {
-        categoria: "Teste1",
-        subcategoria: "Teste2",
-        descricao: "Descrição",
-        cliente: "Primeiro Último",
-        data: "14/03/1233",
-        hora_inicio: "14h00",
-        duracao: "1 hora",
-        preco_hora: "4"
-    },
-    {
-        categoria: "Teste1",
-        subcategoria: "Teste2",
-        descricao: "Descrição",
-        cliente: "Primeiro Último",
-        data: "12/03/1233",
-        hora_inicio: "14h00",
-        duracao: "1 hora",
-        preco_hora: "4"
-    },
-    {
-        categoria: "Teste1",
-        subcategoria: "Teste2",
-        descricao: "Descrição",
-        cliente: "Primeiro Último",
-        data: "13/03/1233",
-        hora_inicio: "14h00",
-        duracao: "1 hora",
-        preco_hora: "4"
-    }],
+    items: [],
     fields: [
-        { key: 'categoria', label: 'Categoria', sortable: true },
-        { key: 'subcategoria', label: 'Subcategoria', sortable: true},
+        { key: 'classe', label: 'Classe', sortable: true },
+        { key: 'categoria', label: 'Categoria', sortable: true},
         { key: 'descricao', label: 'Descrição', sortable: true},
         { key: 'cliente', label: 'Cliente', sortable: true},
         { key: 'data', label: 'Data', sortable: true},
@@ -147,9 +105,23 @@ export default {
         id: 'cancelar-modal',
         title: '',
         content: ''
-    }
+    },
+    finalizarModal: {
+      id: 'finalizar-modal',
+      title: '',
+      content: ''
+    }  
   }),
   methods: {
+    finalizar(item, index, button) {
+      this.finalizarModal.title = `Finalizar serviço`
+      this.finalizarModal.content = "Deseja finalizar este serviço?"
+      this.$root.$emit('bv::show::modal', this.finalizarModal.id, button)
+    },
+    resetFinalizarModal() {
+      this.finalizarModal.title = ''
+      this.finalizarModal.content = ''
+    },
     cancelar(item, index, button) {
       this.cancelarModal.title = `Cancelamento do serviço`
       this.cancelarModal.content = "Deseja cancelar o agendamento deste serviço?"
@@ -159,20 +131,65 @@ export default {
       this.cancelarModal.title = ''
       this.cancelarModal.content = ''
     },
-    format_data(list){
-      list.forEach( r => {
-          console.log(r)
-      });
-      return list;
+    cleanData(list){
+      if(list.length > 0){
+        list.forEach(r => {
+          //Data -  Cleaning
+          var str_data = r.data;
+          var splitted = str_data.split('/')
+          var num_month = this.getMonth(splitted[1]);
+          r.data = splitted[2] + '/' + num_month + '/' + splitted[0]
+
+          //Hora Inicio - Cleaning
+          var str_hora = r.hora;
+          splitted = str_hora.split(' ')
+          var hora = splitted[1].split(':')
+          if (hora[1] == '0') hora[1] = '00'
+          r.hora = hora[0] + 'h' + hora[1];
+
+          //Informação - Cleaning
+          var tipo = r.tipo;
+          r.tipo = this.tipo2str(tipo);
+        });
+      return list
+      }
+      else{
+        return []
+      }
+    },
+    tipo2str(tipo){ //FIX ME
+      if(tipo == -1) return "Aviso de cancelamento"
+      if(tipo ==  1) return "Proposta de Serviço"
+      if(tipo ==  2) return "Por Avaliar"
+    },
+    getMonth(month){
+      if ( month == 'JANUARY') return '01';
+      if ( month == 'FEBRUARY') return '02';
+      if ( month == 'MARCH') return '03';
+      if ( month == 'APRIL') return '04';
+      if ( month == 'MAY') return '05';
+      if ( month == 'JUNE') return '06';
+      if ( month == 'JULY') return '07';
+      if ( month == 'AUGUST') return '08';
+      if ( month == 'SEPTEMBER') return '09';
+      if ( month == 'OCTOBER') return '10';
+      if ( month == 'NOVEMBER') return '11';
+      if ( month == 'DECEMBER') return '12';
     },
     scheduled_services() {
       this.$axios({url: this.$backend + '/services/my-services', method: 'GET',
         headers: {
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
         }}).then(resp => {
-            this.items = this.format_data(resp.data);
-
+            this.items = this.cleanData(resp.data);
       })
+    },
+    seeProfile(email){
+        sessionStorage.setItem('email', email);
+
+        this.$router.push({
+           name: 'client-profile'
+         });
     }
   },
   components: {

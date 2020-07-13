@@ -30,7 +30,7 @@
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
        <template v-slot:cell(prestador)="row">
-        <b-link href="/#/provider-profile">{{row.item.prestador}}</b-link>
+        <b-link @click="seeProfile(row.item.cliente_email)">{{row.item.prestador}}</b-link>
       </template>      
       
       <template v-slot:cell(preco_hora)="row">
@@ -164,6 +164,13 @@
         }}).then(resp => {
             this.items = this.format_data(resp.data);
       })
+    },
+    seeProfile(email){
+        sessionStorage.setItem('email', email);
+
+        this.$router.push({
+           name: 'provider-profile'
+         });
     }    
   }
 }

@@ -50,8 +50,14 @@
                                 <p><strong>Hora fim: </strong>{{service.horaFimDisp}}</p>
                                 <p><strong>Duração: </strong>{{service.duracao}}</p>
                                 <p><strong>Preço/hora (€): </strong>{{service.preco}}</p>
-                                <p><strong>Cliente: </strong><a id="nome-href" @click="seeProfile(service.cliente_email)" class="card-link">
-                                                              {{service.cliente_nome}}</a></p>
+                                <p><strong>Cliente: </strong><b-link @click="seeProfile(service.cliente_email)">{{service.cliente_nome}}</b-link>
+
+                                <!-- FIXME
+                                <a id="nome-href" 
+                                @click="seeProfile(service.cliente_email)" class="card-link">
+                                {{service.cliente_nome}}</a>
+                                -->
+                                </p>
                             </b-card-text>
                         </b-card-body>
                         <b-card-footer>
@@ -209,11 +215,6 @@
   background-color: var(--my-darker-green) !important;
   border-color: var(--my-darker-green) !important;
 }
-
-#nome-href {
-    color: var(--my-darker-green) !important;
-    text-decoration: underline;
-}
 </style>
 
 <script>
@@ -297,7 +298,7 @@ export default {
 
         this.$router.push({
            name: 'client-profile'
-         });        
+         });
     },
     getMonth(month){
       if ( month == 'JANUARY') return '01';
@@ -312,8 +313,7 @@ export default {
       if ( month == 'OCTOBER') return '10';
       if ( month == 'NOVEMBER') return '11';
       if ( month == 'DECEMBER') return '12';
-    }
-    ,
+    },
     cleanData(list){
       list.forEach( r => {
         //Data -  Cleaning
@@ -341,6 +341,7 @@ export default {
             r.descricao = '-'
         }
 
+        //URL das fotos
         if(r.categoria == 'Vedação para Jardim'){
             r.img = this.url_vedacao_jardim
         } else if(r.categoria == 'Decoração de Jardins'){
