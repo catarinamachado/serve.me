@@ -194,7 +194,7 @@
               class="nav-link"
               :to="{ name: 'consult-services' }"
             >
-              Consultar serviços
+              Consultar pedidos
             </router-link>
           </li>
           <li class="nav-item dropdown">

@@ -6,15 +6,15 @@
           <h5 class="text-left space-bottom-5">Perfil</h5>
             <p>
                 <label for="nome"><strong>Nome:</strong></label>
-                <label class="m-md-2">Primeiro e Último</label>
+                <label class="m-md-2">{{nome}}</label>
             </p>
             <p>
                 <label for="email"><strong>E-mail:</strong></label>
-                <label class="m-md-2">email@email.com</label>
+                <label class="m-md-2">{{email}}</label>
             </p>
             <p>
                 <label for="telemovel"><strong>N.º de Telemóvel:</strong></label>
-                <label class="m-md-2">910 000 000</label>
+                <label class="m-md-2">{{telemovel}}</label>
             </p>
             <p>
                 <label for="morada"><strong>Morada:</strong></label>
@@ -116,6 +116,42 @@ export default {
   name: "client-profile",
   created() {
     window.scrollTo(0, 0);
+    this.profile();
+  },
+  data: function () {
+    return {
+        nome: '',
+        email: '',
+        telemovel: '',
+        morada:'',
+        freguesia: '',
+    }
+  },
+  methods: {
+      profile(){
+        if (sessionStorage.getItem("email")) {
+            this.email = sessionStorage.getItem("email");
+        }
+
+        let token = localStorage.getItem('user-token')
+        let headers = {
+            Authorization: 'Bearer ' + token
+        }
+
+        let data = {
+            email_cli: this.email
+        }
+
+        this.$axios({url: this.$backend + '/profile/clienteprof', headers: headers, data: data, method: 'POST' })
+        .then(resp => {
+            this.nome = resp.data.nome
+            this.email = resp.data.email
+            this.telemovel = resp.data.nrTelm
+
+
+            console.log(resp.data)
+        })
+    }
   }
 };
 </script>
