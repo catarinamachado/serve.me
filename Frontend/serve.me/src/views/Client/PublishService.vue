@@ -73,8 +73,13 @@ export default {
   },
   methods: {
     publish_service() {
-      var dataInicio = this.data.replace(/-/g, "/") + "-" + this.horainicial
-      var dataFim = this.data.replace(/-/g, "/") + "-" + this.horafim
+      let token = localStorage.getItem('user-token')
+      let headers = {
+            Authorization: 'Bearer ' + token
+      }
+
+      var dataInicio = this.data.replace(/-/g, "/") + " " + this.horainicial
+      var dataFim = this.data.replace(/-/g, "/") + " " + this.horafim
 
       let servico = {
         categoria: this.categoria,
@@ -85,14 +90,24 @@ export default {
         duracao: this.duracao.replace(/:/g, ".")
       }
 
-      this.$axios({url: this.$backend + '/services/add-requests', data: servico, method: 'POST' })
+      this.$axios({url: this.$backend + '/services/add-request', headers: headers, data: servico, method: 'POST' })
       .then(resp => {
-        var status = resp.data.status;
-        if(status == 1) {
+        if(resp.status == 200) {
+          document.getElementById('classe').value = ''
+          document.getElementById('descricao').value = ''
+          document.getElementById('categoria').value = ''
+          document.getElementById('data').value = ''
+          document.getElementById('horainicial').value = ''
+          document.getElementById('horafim').value = ''
+          document.getElementById('duracao').value = ''
+          document.getElementById('preco').value = ''
+
           this.$alert("Serviço publicado com sucesso.", "Sucesso", "success");
         } else {
           this.$alert("O serviço não foi publicado.", "Erro", "error");
         }
+      }).catch( err => {
+          this.$alert(err.response.data, "Erro", "error");
       })
     },
   },
