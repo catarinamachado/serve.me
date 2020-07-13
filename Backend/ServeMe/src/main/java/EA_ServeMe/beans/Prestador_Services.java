@@ -156,7 +156,7 @@ public class Prestador_Services {
         else {
             if (inicio_proposto.isBefore(inicio_pedido) || inicio_proposto.isAfter(fim_pedido)) err += "2-";
         }
-        if (pedido.getEstado() > 0) err += "4-";
+        if (pedido.getEstado() > 0 || pedido.getEstado() > PedidoState.CANCELLED.v()) err += "4-";
 
         if(!err.equals("")){
             err = err.substring(0,err.length()-1);

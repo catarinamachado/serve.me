@@ -551,12 +551,12 @@ public class Cliente_Services {
 
         /*Search for new proposes*/
         try {
-            String query1 = "ClienteID = " + clienteID + " AND " +  "Estado == " + PedidoState.RESPONDED.v();
+            String query1 = "ClienteID = " + clienteID + " AND " +  "Estado = " + PedidoState.RESPONDED.v();
             List<Pedido> pedidos = Arrays.asList(PedidoDAO.listPedidoByQuery(query1,"ID"));
             for (Pedido tmp :
                     pedidos) {
                 int pedidoID = tmp.getID();
-                String query2 = "PedidoID = " + pedidoID + "Vencedora = " + PropostaState.UNSEEN.v() ;
+                String query2 = "PedidoID = " + pedidoID + " AND " + "Vencedora = " + PropostaState.UNSEEN.v() ;
                 List<Proposta> propostas = Arrays.asList(PropostaDAO.listPropostaByQuery(query2,"ID"));
                 for (Proposta p:
                      propostas) {
@@ -599,7 +599,12 @@ public class Cliente_Services {
             Log.e(TAG,"BD error");
         }
 
-
+        if(ibrs.size() == 0) {
+            Log.w(TAG,"No Inbox to show");
+        }
+        if(ibrs.size() > 0) {
+            Log.i(TAG,"Inbox Loaded Succesfully");
+        }
         return ibrs;
     }
 

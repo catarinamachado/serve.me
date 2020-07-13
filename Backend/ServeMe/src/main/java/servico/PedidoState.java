@@ -1,7 +1,7 @@
 package servico;
 
 public enum PedidoState {
-    WAIT(-1),RESPONDED(0),SERVICE(1);
+    CANCELLED(-100),WAIT(-1),RESPONDED(0),SERVICE(1);
 
     private final int value;
 
