@@ -66,7 +66,7 @@
 
                 <!-- Info modal -->
                 <b-modal :id="propostaModal.id" :title="propostaModal.title" 
-                         size="lg" @hide="resetPropostaModal">
+                         size="lg" @ok="handleOK" @hide="resetPropostaModal">
 
                     <form ref="form" @submit.stop.prevent="handleSubmit">
                         <b-form-group
@@ -278,6 +278,9 @@ export default {
     }
   },
     methods: {
+        handleOk(){
+            //Get values of proposal
+        },
         proposta(categoria, subcategoria, descricao, concelho, data,
                  hora_inicio, hora_fim, duracao, preco_hora, cliente,
                  item, index, button) {

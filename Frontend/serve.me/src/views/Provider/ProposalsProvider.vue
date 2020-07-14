@@ -38,12 +38,16 @@
         <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
       </template>
 
+      <!--
+
       <template v-slot:cell(acoes)="row">
-        <b-button size="sm" @click="limpar(row.item, row.index, $event.target)" class="btn btn-green">
+        <b-button v-if="row.item.informacao != 'Pendente'" size="sm" @click="limpar(row.item, row.index, $event.target)" class="btn btn-green">
           OK
         </b-button>
       </template>
+      -->
     </b-table>
+    
 
     <div class="justify-content-center row my-1">
       <b-pagination size="md" :total-rows="this.items.length" :per-page="perPage" v-model="currentPage" class="customPagination"/>
@@ -66,7 +70,7 @@ import backend from '../../store/consts'
     },
     data: function() {
       return {
-        items: [/*{
+        items: [{
           categoria: "Teste1",
           subcategoria: "Teste2",
           descricao: "Descrição",
@@ -99,7 +103,7 @@ import backend from '../../store/consts'
           preco_hora: "4",
           informacao: "Rejeitado"
         }
-      */],
+      ],
       fields: [
           { key: 'categoria', label: 'Categoria', sortable: true },
           { key: 'subcategoria', label: 'Subcategoria', sortable: true},
@@ -110,7 +114,7 @@ import backend from '../../store/consts'
           { key: 'duracao', label: 'Duração', sortable: true},
           { key: 'preco_hora', label: 'Preço/hora', sortable: true},
           { key: 'informacao', label: 'Informação', sortable: true},
-          { key: 'acoes', label: '' }
+          //{ key: 'acoes', label: '' }
       ],
       currentPage: 1,
       perPage: 5,
@@ -120,6 +124,8 @@ import backend from '../../store/consts'
   methods: {
     limpar(item, index, button) {
       this.$root.$emit('', button)
+
+      //Enviar info para a BD
     },
      cleanData(list){
       list.forEach( r => {
@@ -158,6 +164,20 @@ import backend from '../../store/consts'
           this.items = this.cleanData(resp.data);
           }
         );
+    },
+    seen(item,index){
+      let event = {
+        id: item.id,
+        tipo: this.str2int(item.tipo)
+      }
+      this.$axios({url: this.$backend + '/inbox/seen', data: event ,method: 'POST',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {   
+            console.log(resp.status)  
+            var newArray = this.items.slice(0, index).concat(this.items.slice(index + 1, this.items.length));
+            this.items = newArray;        
+        });
     }
   }
 }

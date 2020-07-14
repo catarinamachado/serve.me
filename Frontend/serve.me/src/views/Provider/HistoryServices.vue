@@ -36,17 +36,19 @@
             <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
         </template>            
         <template v-slot:cell(estado)="row">
-        <b-button v-if="row.item.estado === 'Por classificar'" size="sm" @click="classificar(row.item, row.index, $event.target)" class="btn btn-green mr-1">
-            Por classificar
-        </b-button>
-        <b-form-group v-if="row.item.estado === 'Realizado' || row.item.estado === 'Cancelado'">
+        <b-form-group>
             {{row.item.estado}}
             </b-form-group>
+        </template>
+      <template v-slot:cell(acoes)="row">
+        <b-button v-b-modal.classificar-modal size="sm" v-if="row.item.estado == 'Por classificar'" @click="classificar(row.item, row.index, $event.target)" class="btn btn-green mr-1">
+            <b-icon icon="star-fill" aria-hidden="true"></b-icon>
+        </b-button>
         </template>
     </b-table>
 
     <!-- Info modal -->
-    <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @hide="resetClassificarModal">
+    <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @ok="handleOK" @hide="resetClassificarModal">
         <form ref="form" @submit.stop.prevent="handleSubmit">
             <b-form-group
             label="Categoria"
@@ -158,7 +160,6 @@
 </style>
 
 <script>
-import backend from '../../store/consts'
 
 
   export default {
@@ -169,7 +170,7 @@ import backend from '../../store/consts'
     },
     data: function() {
       return {
-        items: [/*{
+        items: [{
           categoria: "Teste1",
           subcategoria: "Teste2",
           descricao: "Descrição",
@@ -202,7 +203,7 @@ import backend from '../../store/consts'
           preco_hora: "4",
           estado: "Por classificar"          
         }
-      */],
+      ],
       fields: [
           { key: 'categoria', label: 'Categoria', sortable: true },
           { key: 'subcategoria', label: 'Subcategoria', sortable: true},
@@ -212,7 +213,8 @@ import backend from '../../store/consts'
           { key: 'hora_inicio', label: 'Hora Início', sortable: true},
           { key: 'duracao', label: 'Duração', sortable: true},
           { key: 'preco_hora', label: 'Preço/hora', sortable: true},
-          { key: 'estado', label: 'Estado' }
+          { key: 'estado', label: 'Estado' },
+          {key: 'acoes', label: ''}
       ],
       currentPage: 1,
       perPage: 5,
@@ -224,6 +226,14 @@ import backend from '../../store/consts'
       }
   }},
   methods: {
+    handleOK(){
+      console.log(this.rating)
+      console.log(this.comentarios)
+
+      //Enviar para a BD a avaliação
+
+      
+    },
     classificar(item, index, button) {
       this.classificarModal.title = `Classificação de Serviço`;
       this.classificarModal.categoria = item.categoria;
@@ -270,9 +280,8 @@ import backend from '../../store/consts'
       let headers = {
         Authorization: 'Bearer ' + token
       }
-      console.log("Antes de enviar pedido")
       //console.log("------ " + headers.Authorization)
-      this.$axios({url: backend.URL + '/services/completed-services', headers: headers, method: 'GET' }).
+      this.$axios({url: this.$backend + '/services/completed-services', headers: headers, method: 'GET' }).
       then(resp => {
           console.log("O status é " + resp.data);
           this.items = this.cleanData(resp.data);

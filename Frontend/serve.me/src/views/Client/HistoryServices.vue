@@ -3,7 +3,7 @@
 
     <h4 class="space-bottom-2">Histórico de Serviços</h4>
     <div class="justify-content-center my-1 row">
-      <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
+      <b-form-fieldset horizontal label="Linhas por página" class="col-6" label-size="6">
          <b-form-select
             v-model="perPage"
             id="perPageSelect"
@@ -12,7 +12,7 @@
           ></b-form-select>
       </b-form-fieldset>
 
-      <b-form-fieldset horizontal label="Filtro" class="col-6" :label-size="2">
+      <b-form-fieldset horizontal label="Filtro" class="col-6" label-size="2">
           <b-input-group size="sm">
             <b-form-input
               v-model="filter"
@@ -38,17 +38,20 @@
       </template>
 
         <template v-slot:cell(estado)="row">
-        <b-button v-if="row.item.estado === 'Por classificar'" size="sm" @click="classificar(row.item, row.index, $event.target)" class="btn btn-blue mr-1">
-            Por classificar
-        </b-button>
-        <b-form-group v-if="row.item.estado === 'Realizado' || row.item.estado === 'Cancelado'">
+        <b-form-group>
             {{row.item.estado}}
             </b-form-group>
+        </template>
+
+      <template v-slot:cell(acoes)="row">
+        <b-button v-b-modal.classificar-modal size="sm" v-if="row.item.estado == 'Por classificar'" @click="classificar(row.item, row.index, $event.target)" class="btn btn-blue">
+            <b-icon icon="star-fill" aria-hidden="true"></b-icon>
+        </b-button>
         </template>
     </b-table>
 
     <!-- Info modal -->
-    <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @hide="resetClassificarModal">
+    <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @ok="handleOK" @hide="resetClassificarModal">
         <form ref="form" @submit.stop.prevent="handleSubmit">
             <b-form-group
             label="Categoria"
@@ -114,11 +117,11 @@
             </b-form-group>
 
             <b-form-group
-            label="Cliente"
+            label="Prestador"
             >
             <b-form-input
                 :disabled='true'
-                :placeholder="classificarModal.cliente"
+                :placeholder="classificarModal.prestador"
             ></b-form-input>
             </b-form-group>
 
@@ -161,9 +164,6 @@
 
 <script>
 
-import backend from '../../store/consts'
-
-
   export default {
     name: 'history-services',
     created() {
@@ -172,7 +172,7 @@ import backend from '../../store/consts'
     },
     data: function() {
       return {
-        items: [/*{
+        items: [{
           categoria: "Teste1",
           subcategoria: "Teste2",
           descricao: "Descrição",
@@ -181,7 +181,7 @@ import backend from '../../store/consts'
           hora_inicio: "14h00",
           duracao: "1 hora",
           preco_hora: "4",
-          estado: "Realizado"
+          estado: "Realizado",
         },
         {
           categoria: "Teste3",
@@ -203,9 +203,9 @@ import backend from '../../store/consts'
           hora_inicio: "14h00",
           duracao: "1 hora",
           preco_hora: "4",
-          estado: "Por classificar"          
+          estado: "Por classificar",     
         }
-      */],
+      ],
       fields: [
           { key: 'categoria', label: 'Categoria', sortable: true },
           { key: 'subcategoria', label: 'Subcategoria', sortable: true},
@@ -215,7 +215,8 @@ import backend from '../../store/consts'
           { key: 'hora_inicio', label: 'Hora Início', sortable: true},
           { key: 'duracao', label: 'Duração', sortable: true},
           { key: 'preco_hora', label: 'Preço/hora', sortable: true},
-          { key: 'estado', label: 'Estado' }
+          { key: 'estado', label: 'Estado' },
+          {key: 'acoes', label:''}
       ],
       currentPage: 1,
       perPage: 5,
@@ -227,6 +228,13 @@ import backend from '../../store/consts'
       }
   }},
   methods: {
+    handleOK(){
+      console.log(this.rating)
+      console.log(this.comentarios)
+
+      //Enviar para a BD a avaliação
+
+    },
     classificar(item, index, button) {
       this.classificarModal.title = `Classificação de Serviço`;
       this.classificarModal.categoria = item.categoria;
@@ -237,7 +245,7 @@ import backend from '../../store/consts'
       this.classificarModal.hora_inicio = item.hora_inicio;
       this.classificarModal.duracao = item.duracao;
       this.classificarModal.preco_hora = item.preco_hora;
-      this.classificarModal.cliente = item.cliente;      
+      this.classificarModal.prestador = item.prestador;      
       this.$root.$emit('bv::show::modal', this.classificarModal.id, button);
     },
     resetClassificarModal() {
@@ -273,9 +281,7 @@ import backend from '../../store/consts'
       let headers = {
         Authorization: 'Bearer ' + token
       }
-      console.log("Antes de enviar pedido")
-      //console.log("------ " + headers.Authorization)
-      this.$axios({url: backend.URL + '/services/completed-services', headers: headers, method: 'GET' }).
+      this.$axios({url: this.$backend + '/services/completed-services', headers: headers, method: 'GET' }).
       then(resp => {
           this.items = this.cleanData(resp.data);
         }
