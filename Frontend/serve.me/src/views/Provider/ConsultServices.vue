@@ -287,10 +287,6 @@ export default {
 
             //Send Request to backend
             this.ProposeService(idServico,precohora,horainicio);
-
-
-
-
         },
         proposta(categoria, subcategoria, idservico, descricao, concelho, data,
                  hora_inicio, hora_fim, duracao, preco_hora, cliente,

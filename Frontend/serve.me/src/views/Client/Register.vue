@@ -11,6 +11,7 @@
                 type="text"
                 v-model="nome"
                 placeholder="Primeiro e Último Nome"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -19,6 +20,7 @@
                 type="email"
                 v-model="email"
                 placeholder="E-mail"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -27,6 +29,7 @@
                 type="password"
                 v-model="password"
                 placeholder="Password"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -35,7 +38,8 @@
                 type="number"
                 v-model="nif"
                 placeholder="N.º de Contribuinte"
-                maxlength="9" 
+                maxlength="9"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -44,7 +48,8 @@
                 type="tel"
                 v-model="telemovel"
                 placeholder="N.º de Telemóvel"
-                maxlength="9" 
+                maxlength="9"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -53,18 +58,19 @@
                 type="text"
                 v-model="morada"
                 placeholder="Morada"
+                required
               />
             </fieldset>
             <div>
                 <b-dropdown id="dropdown-distritos" :text="dropdown_item_distritos" block variant="light" menu-class="w-100" size="lg">
                     <b-dropdown-item id="registclient" v-for="distrito in distritos" :key="distrito"
-                                     @click="dropdown_item_distritos = distrito"
+                                     @click="dropdown_item_distritos = distrito" required
                     >{{ distrito }}</b-dropdown-item>
                 </b-dropdown>
             </div>
             <div class="space-top-3 space-bottom-3">
                 <b-dropdown id="dropdown-concelhos" :text="dropdown_item_concelhos" block variant="light" size="lg">
-                    <b-dropdown-item id="registclient" v-for="concelho in concelhos" :key="concelho"
+                    <b-dropdown-item id="registclient" v-for="concelho in concelhos" :key="concelho" required
                                      @click="dropdown_item_concelhos = concelho"
                     >{{ concelho }}</b-dropdown-item>
                 </b-dropdown>
@@ -75,6 +81,7 @@
                 type="text"
                 v-model="freguesia"
                 placeholder="Freguesia"
+                required
               />
             </fieldset>
             <div class="space-top-5 text-right">
@@ -157,7 +164,7 @@ export default {
            this.password== '' || this.morada == '' || this.freguesia== '' || 
            this.dropdown_item_distritos== 'Distrito' || this.dropdown_item_concelhos== 'Concelho'){
              this.$alert("Por favor preencha todos os campos", "Erro", "error");
-           } 
+      } 
       else{
 
       if(this.checkTel(this.telemovel) && this.checkNIF(this.nif)){
