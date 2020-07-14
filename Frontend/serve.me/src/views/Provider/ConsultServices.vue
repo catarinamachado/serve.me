@@ -1,14 +1,14 @@
 <template>
   <div class="consult-services space-top-5 space-bottom-10 space-left-right-5">
       <div class="container">
-          <h4 class="space-bottom-2">Serviços</h4>
+          <h4 class="space-bottom-2">Pedidos</h4>
             <b-row align-h="end">
                 <b-col cols="7">
                     <b-form inline>
                         <label>Ordenar por:</label>
                         <b-dropdown id="dropdown-ordenar" :text="dropdown_item_ordenar" variant="btn btn-green" class="m-md-2">
+                            <b-dropdown-item @click="dropdown_item_ordenar = 'Classe'">Classe</b-dropdown-item>
                             <b-dropdown-item @click="dropdown_item_ordenar = 'Categoria'">Categoria</b-dropdown-item>
-                            <b-dropdown-item @click="dropdown_item_ordenar = 'Subcategoria'">Subcategoria</b-dropdown-item>
                             <b-dropdown-item @click="dropdown_item_ordenar = 'Concelho'">Concelho</b-dropdown-item>
                             <b-dropdown-item @click="dropdown_item_ordenar = 'Data'">Data</b-dropdown-item>
                             <b-dropdown-item @click="dropdown_item_ordenar = 'Preço/hora'">Preço/hora</b-dropdown-item>
@@ -40,21 +40,29 @@
                         img-top
                     >
                         <b-card-body>
-                            <b-card-title>{{service.categoria}}</b-card-title>
-                            <b-card-sub-title class="mb-2">{{service.subcategoria}}</b-card-sub-title>
+                            <b-card-title>{{service.classe}}</b-card-title>
+                            <b-card-sub-title class="mb-2">{{service.categoria}}</b-card-sub-title>
                             <b-card-text class="text-left space-top-3">
                                 <p><strong>Descrição: </strong>{{service.descricao}}</p>
                                 <p><strong>Concelho: </strong>{{service.concelho}}</p>
                                 <p><strong>Data: </strong>{{service.data}}</p>
-                                <p><strong>Hora início: </strong>{{service.hora_inicio}}</p>
-                                <p><strong>Hora fim: </strong>{{service.hora_fim}}</p>
+                                <p><strong>Hora início: </strong>{{service.horaInicioDisp}}</p>
+                                <p><strong>Hora fim: </strong>{{service.horaFimDisp}}</p>
                                 <p><strong>Duração: </strong>{{service.duracao}}</p>
-                                <p><strong>Preço/hora (€): </strong>{{service.preco_hora}}</p>
-                                <p><strong>Cliente: </strong><a href="/#/client-profile" class="card-link">{{service.cliente}}</a></p>
+                                <p><strong>Preço/hora (€): </strong>{{service.preco}}</p>
+                                <p><strong>Cliente: </strong><b-link @click="seeProfile(service.cliente_email)">{{service.cliente_nome}}</b-link>
+
+                                <!-- FIXME
+                                <a id="nome-href" 
+                                @click="seeProfile(service.cliente_email)" class="card-link">
+                                {{service.cliente_nome}}</a>
+                                -->
+                                </p>
                             </b-card-text>
                         </b-card-body>
                         <b-card-footer>
                             <button @click="proposta(service.categoria, service.subcategoria, 
+                                            service.id,
                                             service.descricao, service.concelho, service.data, service.hora_inicio,
                                             service.hora_fim, service.duracao, service.preco_hora, service.cliente,
                                             row.item, row.index, $event.target)" class="btn btn-yellow-2">
@@ -66,24 +74,24 @@
 
                 <!-- Info modal -->
                 <b-modal :id="propostaModal.id" :title="propostaModal.title" 
-                         size="lg" @hide="resetPropostaModal">
+                         size="lg" @ok="handleOK" @hide="resetPropostaModal">
 
                     <form ref="form" @submit.stop.prevent="handleSubmit">
+                        <b-form-group
+                        label="Classe"
+                        >
+                        <b-form-input
+                            :disabled='true'
+                            :placeholder="propostaModal.classe"
+                        ></b-form-input>
+                        </b-form-group>
+
                         <b-form-group
                         label="Categoria"
                         >
                         <b-form-input
                             :disabled='true'
                             :placeholder="propostaModal.categoria"
-                        ></b-form-input>
-                        </b-form-group>
-
-                        <b-form-group
-                        label="Subcategoria"
-                        >
-                        <b-form-input
-                            :disabled='true'
-                            :placeholder="propostaModal.subcategoria"
                         ></b-form-input>
                         </b-form-group>
 
@@ -119,7 +127,7 @@
                         >
                         <b-form-input
                             :disabled='true'
-                            :placeholder="propostaModal.hora_inicio"
+                            :placeholder="propostaModal.horaInicioDisp"
                         ></b-form-input>
                         </b-form-group>
 
@@ -128,7 +136,7 @@
                         >
                         <b-form-input
                             :disabled='true'
-                            :placeholder="propostaModal.hora_fim"
+                            :placeholder="propostaModal.horaFimDisp"
                         ></b-form-input>
                         </b-form-group>
 
@@ -146,7 +154,7 @@
                         >
                         <b-form-input
                             :disabled='true'
-                            :placeholder="propostaModal.preco_hora"
+                            :placeholder="propostaModal.preco"
                         ></b-form-input>
                         </b-form-group>
 
@@ -155,7 +163,7 @@
                         >
                         <b-form-input
                             :disabled='true'
-                            :placeholder="propostaModal.cliente"
+                            :placeholder="propostaModal.cliente_nome"
                         ></b-form-input>
                         </b-form-group>
 
@@ -215,34 +223,23 @@ export default {
   name: "consult-services",
   created() {
     window.scrollTo(0, 0);
+    this.publish_service();
   },
-    data: function () {
+  data: function () {
     return {
-      dropdown_item_ordenar: 'Categoria',
-      dropdown_item_filtrar: 'Categoria',
-      filter: '',
-      services: [
-          {id:1, img: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG', 
-            categoria:'Jardinagem e Bricolage', subcategoria:'Vedação para Jardim', 
-            descricao:'B', concelho:'Braga', data:'1998/08/15', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '4', cliente: 'António Costa'},
-          {id:2, img: 'https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg',
-            categoria:'Jardinagem e Bricolage', subcategoria:'Decoração de Jardins', 
-            descricao:'D', concelho:'Braga', data:'1998/04/01', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '3', cliente: 'António Costa'},
-          {id:3, img: 'https://flores.culturamix.com/blog/wp-content/gallery/A-Manuten%C3%A7%C3%A3o-do-Canteiro-1/A-Manuten%C3%A7%C3%A3o-do-Canteiro-3.jpg',
-            categoria:'Jardinagem e Bricolage', subcategoria:'Manutenção de Canteiros', 
-            descricao:'A', concelho:'Braga', data:'1998/03/03', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '5', cliente: 'António Costa'},
-          {id:4, img: 'https://ambienteconsciente.files.wordpress.com/2010/10/poda1.jpg', 
-            categoria:'Jardinagem e Bricolage', subcategoria:'Corte de Árvores', 
-            descricao:'C', concelho:'Braga', data:'1998/12/22', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '2', cliente: 'António Costa'},
-          {id:5, img: 'https://decortips.com/pt/wp-content/uploads/2018/06/ervas-daninhas-remover-768x511.jpg',
-            categoria:'Jardinagem e Bricolage', subcategoria:'Remoção de Ervas Daninhas', 
-            descricao:'F', concelho:'Braga', data:'2022/07/02', hora_inicio:'09h00',
-            hora_fim:'12h00', duracao: '1h', preco_hora: '1', cliente: 'António Costa'}
-      ],
+        dropdown_item_ordenar: 'Classe',
+        dropdown_item_filtrar: 'Classe',
+        url_vedacao_jardim: 'https://www.tosccawebstore.com/imgs/produtos/CIMG0766.JPG',
+        url_decoracao_jardim: 'https://ceramicaburguina.com.br/wp-content/uploads/2016/04/Jardim-pequeno-002.jpg',
+        url_manutencao_canteiros: 'https://flores.culturamix.com/blog/wp-content/gallery/A-Manuten%C3%A7%C3%A3o-do-Canteiro-1/A-Manuten%C3%A7%C3%A3o-do-Canteiro-3.jpg',
+        url_corte_arvores: 'https://ambienteconsciente.files.wordpress.com/2010/10/poda1.jpg',
+        url_remocao_ervas: 'https://decortips.com/pt/wp-content/uploads/2018/06/ervas-daninhas-remover-768x511.jpg',
+        url_preparacao_solo: 'https://i.ytimg.com/vi/Gqg5xHO6LKw/maxresdefault.jpg',
+        url_limpeza_jardim: 'https://www.fluentu.com/blog/french/wp-content/uploads/sites/3/2014/10/10-cool-colorful-french-autumn-vocab-words2.jpg',
+        url_plantacao_arvores: 'https://greensavers.sapo.pt/wp-content/uploads/2020/01/plantar_arvore.jpg',
+        url_outros: 'https://blog.quintadellarte.com.br/wp-content/uploads/2019/08/303894-aprenda-como-ter-um-jardim-de-luxo-em-casa.jpg',
+        filter: '',
+        services: [],
         propostaModal: {
             id: 'proposta-modal',
             title: ''
@@ -253,22 +250,22 @@ export default {
     formattedServices() {
         const services = this.services.slice()
             return services.sort((a, b) => {
-                if (this.dropdown_item_ordenar === 'Categoria') {
+                if (this.dropdown_item_ordenar === 'Classe') {
+                    return a.classe < b.classe ? -1 : a.classe > b.classe ? 1 : 0
+                } else if (this.dropdown_item_ordenar === 'Categoria') {
                     return a.categoria < b.categoria ? -1 : a.categoria > b.categoria ? 1 : 0
-                } else if (this.dropdown_item_ordenar === 'Subcategoria') {
-                    return a.subcategoria < b.subcategoria ? -1 : a.subcategoria > b.subcategoria ? 1 : 0
                 } else if (this.dropdown_item_ordenar === 'Concelho') {
                     return a.concelho < b.concelho ? -1 : a.concelho > b.concelho ? 1 : 0
                 } else if (this.dropdown_item_ordenar === 'Data') {
                     return new Date(b.data) - new Date(a.data);
                 } else if (this.dropdown_item_ordenar === 'Preço/hora') {
-                return a.preco_hora < b.preco_hora ? -1 : a.preco_hora > b.preco_hora ? 1 : 0
+                return a.preco < b.preco ? -1 : a.preco > b.preco ? 1 : 0
                 }
             }).filter(item => {
-                return (item.categoria.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
-                       (item.subcategoria.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
+                return (item.classe.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
+                       (item.categoria.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
                        (item.concelho.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
-                       (item.preco_hora.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
+                       (item.preco.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
                        (item.data.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) 
             }).reduce((c, n, i) => {
                     if (i % 3 === 0) c.push([]);
@@ -277,26 +274,145 @@ export default {
             }, []);
     }
   },
-    methods: {
-        proposta(categoria, subcategoria, descricao, concelho, data,
-                 hora_inicio, hora_fim, duracao, preco_hora, cliente,
-                 item, index, button) {
-            this.propostaModal.title = `Proposta de agendamento de serviço`;
-            this.propostaModal.categoria = categoria;
-            this.propostaModal.subcategoria = subcategoria;
-            this.propostaModal.descricao = descricao;
-            this.propostaModal.concelho = concelho;
-            this.propostaModal.data = data;
-            this.propostaModal.hora_inicio = hora_inicio;
-            this.propostaModal.hora_fim = hora_fim;
-            this.propostaModal.duracao = duracao;
-            this.propostaModal.preco_hora = preco_hora;
-            this.propostaModal.cliente = cliente;
-            this.$root.$emit('bv::show::modal', this.propostaModal.id, button)
-        },
-        resetPropostaModal() {
-            this.propostaModal.title = ''
+  methods: {
+    handleOK(){
+      //Get values of proposal
+      var precohora = this.precohora
+      var horainicio = this.horainicio
+      var idServico = this.propostaModal.id
+
+      //Send Request to backend
+      this.ProposeService(idServico,precohora,horainicio);
+    },
+    proposta(categoria, subcategoria, idservico, descricao, concelho, data,
+             hora_inicio, hora_fim, duracao, preco_hora, cliente,
+             item, index, button) {
+        this.propostaModal.title = `Proposta de agendamento de serviço`;
+        this.propostaModal.categoria = categoria;
+        this.propostaModal.subcategoria = subcategoria;
+        this.propostaModal.descricao = descricao;
+        this.propostaModal.concelho = concelho;
+        this.propostaModal.data = data;
+        this.propostaModal.hora_inicio = hora_inicio;
+        this.propostaModal.hora_fim = hora_fim;
+        this.propostaModal.duracao = duracao;
+        this.propostaModal.preco_hora = preco_hora;
+        this.propostaModal.cliente = cliente;
+        this.$root.$emit('bv::show::modal', this.propostaModal.id, button)
+    },
+    resetPropostaModal() {
+        this.propostaModal.title = ''
+        this.propostaModal.preco_hora=''
+        this.propostaModal.hora_inicio=''
+    },
+    ProposeService: function(idServico,precohora,horainicio){
+        let token = localStorage.getItem('user-token')
+        let headers = {
+            Authorization: 'Bearer ' + token
         }
+        var data = this.propostaModal.data;
+        var date_time = data + "-" + horainicio;
+        let body = {
+                id_pedido: idServico,
+                preco: precohora,
+                dataInicio: date_time
+        }
+        this.$axios({url: this.$backend + '/services/propose-request', headers: headers, data:body, method: 'POST' }).
+            then(resp => {
+                if(resp.data == 'SUCCESS') {
+                    this.$alert("Proposta enviada com sucesso!", "Sucesso", "success")
+                }
+                /*
+                else {
+                    this.$alert("Não foi possível alterar a password.", "Erro", "error")
+                }
+                */
+                
+            }).catch(err => {
+                console.log(err)
+                this.$alert("Não foi possível efetuar a sua proposta. AKA hora de inicio não válida", "Erro", "error")
+            })
+    },
+    seeProfile(email){
+        sessionStorage.setItem('email', email);
+
+        this.$router.push({
+           name: 'client-profile'
+         });
+    },
+    getMonth(month){
+      if ( month == 'JANUARY') return '01';
+      if ( month == 'FEBRUARY') return '02';
+      if ( month == 'MARCH') return '03';
+      if ( month == 'APRIL') return '04';
+      if ( month == 'MAY') return '05';
+      if ( month == 'JUNE') return '06';
+      if ( month == 'JULY') return '07';
+      if ( month == 'AUGUST') return '08';
+      if ( month == 'SEPTEMBER') return '09';
+      if ( month == 'OCTOBER') return '10';
+      if ( month == 'NOVEMBER') return '11';
+      if ( month == 'DECEMBER') return '12';
+    },
+    cleanData(list){
+      list.forEach( r => {
+        //Data -  Cleaning
+        var str_data = r.data;
+        var splitted = str_data.split('/')
+        var num_month = this.getMonth(splitted[1]);
+        r.data = splitted[2] + '/' + num_month + '/' + splitted[0] 
+        
+        //Hora Inicio - Cleaning
+        var str_hora = r.horaInicioDisp;
+        splitted = str_hora.split(' ')
+        var hora = splitted[1].split(':')
+        if (hora[1] == '0') hora[1] = '00'
+        r.horaInicioDisp = hora[0] + 'h' + hora[1];
+
+        //Hora Fim - Cleaning
+        str_hora = r.horaFimDisp;
+        splitted = str_hora.split(' ')
+        hora = splitted[1].split(':')
+        if (hora[1] == '0') hora[1] = '00'
+        r.horaFimDisp = hora[0] + 'h' + hora[1];
+
+        //Descrição
+        if(r.descricao == ''){
+            r.descricao = '-'
+        }
+
+        //URL das fotos
+        if(r.categoria == 'Vedação para Jardim'){
+            r.img = this.url_vedacao_jardim
+        } else if(r.categoria == 'Decoração de Jardins'){
+            r.img = this.url_decoracao_jardim
+        } else if(r.categoria == 'Manutenção de Canteiros'){
+            r.img = this.url_manutencao_canteiros
+        } else if(r.categoria == 'Corte de Árvores'){
+            r.img = this.url_corte_arvores
+        } else if(r.categoria == 'Remoção de Ervas Daninhas'){
+            r.img = this.url_remocao_ervas
+        } else if(r.categoria == 'Preparação do Solo para Jardinagem'){
+            r.img = this.url_preparacao_solo
+        } else if(r.categoria == 'Limpeza de Jardim'){
+            r.img = this.url_limpeza_jardim
+        } else if(r.categoria == 'Plantação de Árvores'){
+            r.img = this.url_plantacao_arvores
+        } else {
+            r.img = this.url_outros
+        }
+      });
+
+      return list;
+    },
+    publish_service() {
+      this.$axios({url: this.$backend + '/services/', method: 'GET',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {
+            this.services = this.cleanData(resp.data);
+      })
+    }
   }
 };
 </script>

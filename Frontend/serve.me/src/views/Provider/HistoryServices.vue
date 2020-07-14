@@ -28,41 +28,43 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
-        <template v-slot:cell(preco_hora)="row">
-            {{row.item.preco_hora}} €
-        </template>
+      <template v-slot:cell(proposta.precoProposto)="row">
+        {{row.item.proposta.precoProposto}} €
+      </template>
       
         <template v-slot:cell(cliente)="row">
             <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
         </template>            
         <template v-slot:cell(estado)="row">
-        <b-button v-if="row.item.estado === 'Por classificar'" size="sm" @click="classificar(row.item, row.index, $event.target)" class="btn btn-green mr-1">
-            Por classificar
-        </b-button>
-        <b-form-group v-if="row.item.estado === 'Realizado' || row.item.estado === 'Cancelado'">
+        <b-form-group>
             {{row.item.estado}}
             </b-form-group>
+        </template>
+      <template v-slot:cell(acoes)="row">
+        <b-button id="amarelo" v-b-modal.classificar-modal size="sm" v-if="row.item.estado == 'Realizado'" @click="classificar(row.item, row.index, $event.target)" class="btn btn-blue">
+            <i class="fas fa-star"></i>
+        </b-button>
         </template>
     </b-table>
 
     <!-- Info modal -->
-    <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @hide="resetClassificarModal">
+    <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @ok="handleOK" @hide="resetClassificarModal">
         <form ref="form" @submit.stop.prevent="handleSubmit">
+            <b-form-group
+            label="Classe"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.classe"
+            ></b-form-input>
+            </b-form-group>
+                        
             <b-form-group
             label="Categoria"
             >
             <b-form-input
                 :disabled='true'
                 :placeholder="classificarModal.categoria"
-            ></b-form-input>
-            </b-form-group>
-                        
-            <b-form-group
-            label="Subcategoria"
-            >
-            <b-form-input
-                :disabled='true'
-                :placeholder="classificarModal.subcategoria"
             ></b-form-input>
             </b-form-group>
 
@@ -98,7 +100,7 @@
             >
             <b-form-input
                 :disabled='true'
-                :placeholder="classificarModal.duracao"
+                :placeholder="classificarModal.duracao + 'h'"
             ></b-form-input>
             </b-form-group>
 
@@ -107,7 +109,7 @@
             >
             <b-form-input
                 :disabled='true'
-                :placeholder="classificarModal.preco_hora"
+                :placeholder="classificarModal.preco_hora + '€'"
             ></b-form-input>
             </b-form-group>
 
@@ -121,23 +123,20 @@
             </b-form-group>
 
             <b-form-group
-            :state="classificacao"
-            label="Classificação"
-            label-for="classificacao-input"
-            invalid-feedback="Classificação é obrigatória"
+              label="Classificação"
+              label-for="classificacao-input"
+              invalid-feedback="Classificação é obrigatória"
             >
-            <b-form-rating v-model="rating" variant="warning"></b-form-rating>
+            <b-form-rating v-model="classificarModal.rating" variant="warning"></b-form-rating>
             </b-form-group>
 
             <b-form-group
-            :state="comentarios"
-            label="Comentários"
-            label-for="comentarios-input"
+              label="Comentários"
+              label-for="comentarios-input"
             >
             <b-form-input
                 id="comentarios-input"
-                v-model="comentarios"
-                :state="comentarios"
+                v-model="classificarModal.comentarios"
             ></b-form-input>
             </b-form-group>
         </form>
@@ -155,6 +154,11 @@
   background-color: var(--my-darker-green) !important;
   border-color: var(--my-darker-green) !important;
 }
+
+#amarelo {
+  background-color: var(--my-yellow) !important;
+  border-color: var(--my-yellow) !important;
+}
 </style>
 
 <script>
@@ -162,54 +166,22 @@
     name: 'history-services-provider',
     created() {
       window.scrollTo(0, 0);
-    },
+      this.CompletedServices();
+    },    
     data: function() {
       return {
-        rating: null,
-        items: [{
-          categoria: "Teste1",
-          subcategoria: "Teste2",
-          descricao: "Descrição",
-          cliente: "Primeiro Último",
-          data: "13/03/1233",
-          hora_inicio: "14h00",
-          duracao: "1 hora",
-          preco_hora: "4",
-          estado: "Realizado"
-        },
-        {
-          categoria: "Teste3",
-          subcategoria: "Teste4",
-          descricao: "Descrição",
-          cliente: "Primeiro Último",
-          data: "13/03/1233",
-          hora_inicio: "14h00",
-          duracao: "1 hora",
-          preco_hora: "4",
-          estado: "Cancelado"
-        },
-        {
-          categoria: "Teste1",
-          subcategoria: "Teste2",
-          descricao: "Descrição",
-          cliente: "Primeiro Último",
-          data: "14/03/1233",
-          hora_inicio: "14h00",
-          duracao: "1 hora",
-          preco_hora: "4",
-          estado: "Por classificar"          
-        }
-      ],
-      fields: [
-          { key: 'categoria', label: 'Categoria', sortable: true },
-          { key: 'subcategoria', label: 'Subcategoria', sortable: true},
-          { key: 'descricao', label: 'Descrição', sortable: true},
-          { key: 'cliente', label: 'Cliente', sortable: true},
+        items: [],
+        fields: [
+          { key: 'pedido.classe', label: 'Classe', sortable: true },
+          { key: 'pedido.categoria', label: 'Categoria', sortable: true},
+          { key: 'pedido.descricao', label: 'Descrição', sortable: true},
+          { key: 'cliente_nome', label: 'Cliente', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
-          { key: 'hora_inicio', label: 'Hora Início', sortable: true},
-          { key: 'duracao', label: 'Duração', sortable: true},
-          { key: 'preco_hora', label: 'Preço/hora', sortable: true},
-          { key: 'estado', label: 'Estado' }
+          { key: 'horaInicioDisp', label: 'Hora Início', sortable: true},
+          { key: 'horaFimDisp', label: 'Duração', sortable: true},
+          { key: 'proposta.precoProposto', label: 'Preço/hora', sortable: true},
+          { key: 'estado', label: 'Estado' },
+          { key: 'acoes', label:''}
       ],
       currentPage: 1,
       perPage: 5,
@@ -221,22 +193,100 @@
       }
   }},
   methods: {
+    handleOK(){
+      var modal = this.classificarModal;
+      let data =  {
+        classificacao: modal.rating ,
+        opiniao: modal.comentarios ,
+        email_cliente: modal.cliente_email,
+        idServico: modal.id_servico
+      }
+
+      this.$axios({url: this.$backend + '/rating/cliente', data: data, method: 'POST',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {   
+          console.log(resp.status)
+          this.$alert("Serviço classificado com sucesso", "Sucesso", "success")  
+          var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
+          this.items = newArray;        
+        }).catch(err =>{
+          console.log(err.data);
+            this.$alert("Não foi possível classificar serviço.", "Erro", "error")
+        });
+    },
     classificar(item, index, button) {
       this.classificarModal.title = `Classificação de Serviço`;
-      this.classificarModal.categoria = item.categoria;
-      this.classificarModal.subcategoria = item.subcategoria;
-      this.classificarModal.descricao = item.descricao;
+      this.classificarModal.classe = item.pedido.classe;
+      this.classificarModal.categoria = item.pedido.categoria;
+      this.classificarModal.descricao = item.pedido.descricao;
       this.classificarModal.concelho = item.concelho;
       this.classificarModal.data = item.data;
-      this.classificarModal.hora_inicio = item.hora_inicio;
-      this.classificarModal.duracao = item.duracao;
-      this.classificarModal.preco_hora = item.preco_hora;
-      this.classificarModal.cliente = item.cliente;      
+      this.classificarModal.hora_inicio = item.horaInicioDisp;
+      this.classificarModal.duracao = item.pedido.duracao;
+      this.classificarModal.preco_hora = item.proposta.precoProposto;
+      this.classificarModal.cliente = item.cliente_nome;
+      this.classificarModal.cliente_email = item.cliente_email;
+      this.classificarModal.id_servico = item.id; 
       this.$root.$emit('bv::show::modal', this.classificarModal.id, button);
     },
     resetClassificarModal() {
       this.classificarModal.title = ''
       this.classificarModal.content = ''
+    },
+    getMonth(month){
+          if ( month == 'JANUARY') return '01';
+          if ( month == 'FEBRUARY') return '02';
+          if ( month == 'MARCH') return '03';
+          if ( month == 'APRIL') return '04';
+          if ( month == 'MAY') return '05';
+          if ( month == 'JUNE') return '06';
+          if ( month == 'JULY') return '07';
+          if ( month == 'AUGUST') return '08';
+          if ( month == 'SEPTEMBER') return '09';
+          if ( month == 'OCTOBER') return '10';
+          if ( month == 'NOVEMBER') return '11';
+    },    
+    cleanData(list){
+      list.forEach( r => {
+        //Data -  Cleaning
+        var str_data = r.pedido.data;
+        var splitted = str_data.split('/')
+        var num_month = this.getMonth(splitted[1]);
+        r.data = splitted[2] + '/' + num_month + '/' + splitted[0] 
+        
+        //Hora Inicio - Cleaning
+        var str_hora = r.pedido.horaInicioDisp;
+        splitted = str_hora.split(' ')
+        var hora = splitted[1].split(':')
+        if (hora[1] == '0') hora[1] = '00'
+        r.horaInicioDisp = hora[0] + 'h' + hora[1];
+        //Hora Fim - Cleaning
+        str_hora = r.pedido.horaFimDisp;
+        splitted = str_hora.split(' ')
+        hora = splitted[1].split(':')
+        if (hora[1] == '0') hora[1] = '00'
+        r.horaFimDisp = hora[0] + 'h' + hora[1];
+
+        //Estado
+        if(r.estado == "Realizado[Por Avaliar]"){
+          r.estado = "Realizado"
+        }
+      });
+      return list;
+    },
+    CompletedServices: function(){
+      let token = localStorage.getItem('user-token')
+      let headers = {
+        Authorization: 'Bearer ' + token
+      }
+      //console.log("------ " + headers.Authorization)
+      this.$axios({url: this.$backend + '/services/completed-services', headers: headers, method: 'GET' }).
+      then(resp => {
+          console.log("O status é " + resp.data);
+          this.items = this.cleanData(resp.data);
+        }
+        );
     }
   }
 }
