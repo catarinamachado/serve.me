@@ -50,10 +50,10 @@
         </b-table>
 
         <!-- Info modal -->
-        <b-modal :id="rejeitarModal.id" :title="rejeitarModal.title"
-            @hide="resetRejeitarModal"
+        <b-modal :id="resetCancelarModal.id" :title="cancelarModal.title"
+            @hide="resetCancelarModal"
             @ok="handleReject" >
-            <pre>{{ rejeitarModal.content }}</pre>
+            <pre>{{ resetCancelarModal.content }}</pre>
           </b-modal>
           <b-modal :id="finalizarModal.id" :title="finalizarModal.title"
             @hide="resetFinalizarModal"
@@ -213,11 +213,11 @@ export default {
       })
     },
     seeProfile(email){
-        sessionStorage.setItem('email', email);
-
-        this.$router.push({
-           name: 'client-profile'
-         });
+      sessionStorage.setItem('email', email);
+      
+      this.$router.push({
+         name: 'client-profile'
+       });
     }
   },
   components: {
