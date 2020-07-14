@@ -61,9 +61,10 @@
                             </b-card-text>
                         </b-card-body>
                         <b-card-footer>
-                            <button @click="proposta(service.classe, service.categoria, 
-                                            service.descricao, service.concelho, service.data, service.horaInicioDisp,
-                                            service.horaFimDisp, service.duracao, service.preco, service.cliente_nome,
+                            <button @click="proposta(service.categoria, service.subcategoria, 
+                                            service.id,
+                                            service.descricao, service.concelho, service.data, service.hora_inicio,
+                                            service.hora_fim, service.duracao, service.preco_hora, service.cliente,
                                             row.item, row.index, $event.target)" class="btn btn-yellow-2">
                                 Efetuar proposta
                             </button>
@@ -73,7 +74,7 @@
 
                 <!-- Info modal -->
                 <b-modal :id="propostaModal.id" :title="propostaModal.title" 
-                         size="lg" @hide="resetPropostaModal">
+                         size="lg" @ok="handleOK" @hide="resetPropostaModal">
 
                     <form ref="form" @submit.stop.prevent="handleSubmit">
                         <b-form-group
@@ -274,22 +275,63 @@ export default {
     }
   },
   methods: {
-    proposta(classe, categoria, descricao, concelho, data,
-             horaInicioDisp, horaFimDisp, duracao, preco, cliente_nome,
-             item, index, button) {
-        this.propostaModal.title = `Proposta de agendamento de serviço`;
-        this.propostaModal.classe = classe;
-        this.propostaModal.categoria = categoria;
-        this.propostaModal.descricao = descricao;
-        this.propostaModal.concelho = concelho;
-        this.propostaModal.data = data;
-        this.propostaModal.horaInicioDisp = horaInicioDisp;
-        this.propostaModal.horaFimDisp = horaFimDisp;
-        this.propostaModal.duracao = duracao;
-        this.propostaModal.preco = preco;
-        this.propostaModal.cliente_nome = cliente_nome;
-        this.$root.$emit('bv::show::modal', this.propostaModal.id, button)
+    handleOK(){
+      //Get values of proposal
+      var precohora = this.precohora
+      var horainicio = this.horainicio
+      var idServico = this.propostaModal.id
+
+      //Send Request to backend
+      this.ProposeService(idServico,precohora,horainicio);
     },
+        proposta(categoria, subcategoria, idservico, descricao, concelho, data,
+                 hora_inicio, hora_fim, duracao, preco_hora, cliente,
+                 item, index, button) {
+            this.propostaModal.title = `Proposta de agendamento de serviço`;
+            this.propostaModal.categoria = categoria;
+            this.propostaModal.subcategoria = subcategoria;
+            this.propostaModal.descricao = descricao;
+            this.propostaModal.concelho = concelho;
+            this.propostaModal.data = data;
+            this.propostaModal.hora_inicio = hora_inicio;
+            this.propostaModal.hora_fim = hora_fim;
+            this.propostaModal.duracao = duracao;
+            this.propostaModal.preco_hora = preco_hora;
+            this.propostaModal.cliente = cliente;
+            this.$root.$emit('bv::show::modal', this.propostaModal.id, button)
+        },
+        resetPropostaModal() {
+            this.propostaModal.title = ''
+            this.propostaModal.preco_hora=''
+            this.propostaModal.hora_inicio=''
+        },
+        ProposeService: function(idServico,precohora,horainicio){
+            let token = localStorage.getItem('user-token')
+            let headers = {
+                Authorization: 'Bearer ' + token
+            }
+            var data = this.propostaModal.data;
+            var date_time = data + "-" + horainicio;
+            let body = {
+                    id_pedido: idServico,
+                    preco: precohora,
+                    dataInicio: date_time
+            }
+            this.$axios({url: this.$backend + '/services/propose-request', headers: headers, data:body, method: 'POST' }).
+                then(resp => { 
+                    if(resp.data == 'SUCCESS') {
+                        this.$alert("Proposta enviada com sucesso!", "Sucesso", "success")
+                    }
+                    /*
+                    else {
+                        this.$alert("Não foi possível alterar a password.", "Erro", "error")
+                    }
+                    */
+                    
+                }).catch(err => {
+                    console.log(err)
+                    this.$alert("Não foi possível efetuar a sua proposta. AKA hora de inicio não válida", "Erro", "error")
+                })
     resetPropostaModal() {
         this.propostaModal.title = ''
     },
