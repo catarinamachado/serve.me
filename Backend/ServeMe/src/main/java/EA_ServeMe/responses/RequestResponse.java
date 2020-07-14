@@ -16,6 +16,42 @@ public class RequestResponse {
     private String classe;
     private String descricao;
     private String estado;
+    private String morada;
+    private String distrito;
+    private String concelho;
+    private String freguesia;
+
+    public String getMorada() {
+        return morada;
+    }
+
+    public void setMorada(String morada) {
+        this.morada = morada;
+    }
+
+    public String getDistrito() {
+        return distrito;
+    }
+
+    public void setDistrito(String distrito) {
+        this.distrito = distrito;
+    }
+
+    public String getConcelho() {
+        return concelho;
+    }
+
+    public void setConcelho(String concelho) {
+        this.concelho = concelho;
+    }
+
+    public String getFreguesia() {
+        return freguesia;
+    }
+
+    public void setFreguesia(String freguesia) {
+        this.freguesia = freguesia;
+    }
 
     public int getID() {
         return ID;
@@ -118,6 +154,10 @@ public class RequestResponse {
         this.duracao = p.getDuracao();
         this.descricao = p.getDescricao();
         this.estado = estadoAsStr(p.getEstado());
+        this.morada = p.getCliente().getMorada();
+        this.distrito = p.getCliente().getDistrito();
+        this.concelho = p.getCliente().getConcelho();
+        this.freguesia = p.getCliente().getFreguesia();
         return this;
     }
 

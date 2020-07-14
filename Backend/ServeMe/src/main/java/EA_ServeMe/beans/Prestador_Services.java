@@ -51,8 +51,8 @@ public class Prestador_Services {
     }
 
     @Bean
-    public static List<Servico> getServicesDone(String email) {
-        List<Servico> r = new ArrayList<>();
+    public static List<ServiceResponse> getServicesDone(String email) {
+        List<ServiceResponse> r = new ArrayList<>();
         int id_prestador = Prestador_Perfil.getPrestadorbyEmail(email).getID();
         int estado = ServicoState.CLIENTDONE.v();
         String query = "PrestadorID = " + id_prestador + " AND " + "Estado >= " + estado;
@@ -63,11 +63,36 @@ public class Prestador_Services {
                 Log.w(TAG,"There's no Completed Services for this Provider");
                 return r;
             }
+            for (Servico tmp :
+                    servicos) {
+                ServiceResponse sr = new ServiceResponse().asResponse(tmp);
+                r.add(sr);
+            }
             Log.i(TAG,"Completed Services Loaded Succesfully");
             return r;
         } catch (PersistentException e) {
             Log.e(TAG,"BD error");
             return r;
+        }
+    }
+
+    @Bean
+    public static List<Servico> getServicesDoneForStats(String email) {
+        int id_prestador = Prestador_Perfil.getPrestadorbyEmail(email).getID();
+        int estado = ServicoState.CLIENTDONE.v();
+        String query = "PrestadorID = " + id_prestador + " AND " + "Estado >= " + estado;
+        List<Servico> servicos = new ArrayList<>();
+        try {
+            servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"PrestadorID"));
+            if (servicos.size() == 0){
+                Log.w(TAG,"There's no Completed Services for this Provider");
+                return new ArrayList<>();
+            }
+            Log.i(TAG,"Completed Services Loaded Succesfully");
+            return servicos;
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+            return new ArrayList<>();
         }
     }
   

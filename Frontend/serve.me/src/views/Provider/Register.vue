@@ -111,11 +111,37 @@ export default {
     window.scrollTo(0, 0);
   },
   methods: {
+      checkTel(tel){
+         if(tel.length > 9){
+            this.$alert("O número de telemóvel tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         } else if(tel.length < 9){
+            this.$alert("O número de telemóvel tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         }
+            return(true)
+     },
+     checkNIF(nif){
+         if(nif.length > 9){
+            this.$alert("O seu NIF tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         } else if(nif.length < 9){
+            this.$alert("O seu NIF tem que ter 9 dígitos.", "Erro", "error")
+            return(false)
+         }
+        return(true)
+     },
     register() {
+      var CryptoJS = require("crypto-js");// Encrypt
+      var encryptedBase64Key = 'c2VydmVtZW5jcmlwdGtleQ==';
+      var parsedBase64Key = CryptoJS.enc.Base64.parse(encryptedBase64Key);
+      var encrypted_pw = CryptoJS.AES.encrypt(this.password, parsedBase64Key,{
+          mode: CryptoJS.mode.ECB,
+          padding: CryptoJS.pad.Pkcs7}).toString();
       let user = {
         nome: this.nome,
         email: this.email,
-        password: this.password,
+        password: encrypted_pw,
         nif: this.nif,
         telemovel: this.telemovel,
         morada: this.morada,
@@ -124,13 +150,22 @@ export default {
         distrito: this.dropdown_item_distritos
       }
 
+      if(this.nome== '' || this.email == '' || this.nif== '' || 
+           this.password== '' || this.morada == '' || this.freguesia== '' || 
+           this.dropdown_item_distritos== 'Distrito' || this.dropdown_item_concelhos== 'Concelho'){
+             this.$alert("Por favor preencha todos os campos", "Erro", "error");
+           } 
+      else{
+
+      if(this.checkTel(this.telemovel) && this.checkNIF(this.nif)){
+
       this.$axios({url: this.$backend + '/register/prestador', data: user, method: 'POST' })
       .then(resp => {
         var status = resp.data.status;
         if(status == 1) {
           let user_logged = {
             email: this.email,
-            password: this.password
+            password: encrypted_pw
           }
           this.$store.dispatch(PROVIDER_AUTH_REQUEST, user_logged)
             .then( resp => {
@@ -147,9 +182,14 @@ export default {
               this.loginError = true;
             })
         }
-      })
+      }).catch(err => {
+            console.log(err)
+            this.$alert(err.response.data, "Erro", "error")
+      });
     }
-  },  
+    }
+    },
+  },
   data: function () {
     return {
         nome: '',

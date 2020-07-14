@@ -47,7 +47,7 @@ public class RegisterController {
         if(ok == 1 ) {
             String email = c.getEmail();
             String email_auth = 'C' + email;
-            //String password_auth = Cliente_Perfil.decodePassword(password); // PROD: ADD THIS
+            String password_auth = Cliente_Perfil.decodePassword(password); // PROD: ADD THIS
             String token =  "";
             AuthResponse ar = Cliente_Perfil.loginTokenCliente(email,token);
             ar.setStatus(1);
@@ -64,8 +64,9 @@ public class RegisterController {
                 er.addMsg(s);
                 msg+= s + " ";
             }
+            String listString = String.join(", ", res);
             Log.e(TAG,"Error: " + msg);
-            return ResponseEntity.badRequest().body(er);
+            return ResponseEntity.badRequest().body(listString);
         }
 
     }
@@ -90,7 +91,7 @@ public class RegisterController {
         if(ok == 1 ) {
             String email = p.getEmail();
             String email_auth = 'P' + email;
-            //String password_auth = Prestador_Perfil.decodePassword(password); // PROD: ADD THIS
+            String password_auth = Prestador_Perfil.decodePassword(password); // PROD: ADD THIS
             String token =  "";
             AuthResponse ar = Prestador_Perfil.loginTokenPrestador(email,token);
             ar.setStatus(1);

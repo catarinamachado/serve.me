@@ -1,9 +1,6 @@
 package EA_ServeMe.beans;
 
-import EA_ServeMe.responses.AuthResponse;
-import EA_ServeMe.responses.ClienteProfResponse;
-import EA_ServeMe.responses.ErrorResponse;
-import EA_ServeMe.responses.MyProfileResponse;
+import EA_ServeMe.responses.*;
 import EA_ServeMe.util.*;
 import org.json.JSONObject;
 import org.orm.PersistentException;
@@ -20,6 +17,7 @@ import java.awt.geom.Point2D;
 import java.lang.reflect.Array;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,11 +88,11 @@ public class Prestador_Perfil {
         }
 
         if (bd_e.length != 0)
-             error.add("Email");
+             error.add("Email já está em uso");
         if (bd_n.length != 0)
-            error.add("Nif");
+            error.add("Nif já está em uso");
         if (bd_t.length != 0)
-            error.add("Telemovel");
+            error.add("Telemovel já está em uso");
 
         if (error.size() > 1) return error;
 
@@ -105,7 +103,7 @@ public class Prestador_Perfil {
         //Decode from frontend and Encode to DB
 
         String prestador_password = p.getPassword();
-        //prestador_password = decodePassword(prestador_password);  //PROD: ADD THIS -- Função que faz decode da password vinda do frontend
+        prestador_password = Prestador_Perfil.decodePassword(prestador_password);  //PROD: ADD THIS -- Função que faz decode da password vinda do frontend
         String new_Password = new BCryptPasswordEncoder(11).encode( prestador_password);
         p.setPassword(new_Password);
         /* PROD : ADD THIS */
@@ -298,7 +296,7 @@ public class Prestador_Perfil {
     }
 
     @Bean
-    public static ResponseEntity checkClienteProfile(String email_cli){
+    public static ClienteProfResponse checkClienteProfile(String email_cli){
         String q = "Email = '" + email_cli + "'";
         try {
             Cliente[] cli = ClienteDAO.listClienteByQuery(q, "Email");
@@ -306,7 +304,7 @@ public class Prestador_Perfil {
                 ErrorResponse er = new ErrorResponse();
                 er.setLocalError("Cliente not found");
                 Log.e(TAG,"Cliente profile not found");
-                return ResponseEntity.badRequest().body(er);
+                return null;
             } else {
                 Cliente c = cli[0];
                 int id = c.getID();
@@ -322,16 +320,20 @@ public class Prestador_Perfil {
                 //er.setLocalError("Cant acess this profile from external ways);
                 //return ResponseEntity.badrequest().body(er);
                 // }
-                Avaliacao_Cliente[] avaliacao_clientess = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
-                List<Avaliacao_Cliente> avaliacao_clientes = Arrays.asList(avaliacao_clientess);
-                ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacao_clientes);
+                Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
+                List<AvaliacaoResponse> avaliacoes = new ArrayList<>();
+                for(Avaliacao_Cliente a : avaliacao_clientes){
+                    AvaliacaoResponse ar = new AvaliacaoResponse(a.getPrestador().getNome(),a.getClassificacao(),a.getOpiniao());
+                    avaliacoes.add(ar);
+                }
+                ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacoes);
                 Log.i(TAG,"Cliente profile sent with success");
-                return ResponseEntity.ok().body(cli_prof);
+                return cli_prof;
             }
         } catch (PersistentException e) {
             e.printStackTrace();
         }
-        return (ResponseEntity) ResponseEntity.notFound();
+        return null;
     }
 
 
@@ -452,11 +454,13 @@ public class Prestador_Perfil {
         int total_servicos_anual = 0;
         double total_earned = 0;
         for(Servico sr: done_services){
-            if(sr.getProposta().getHoraInicio().getYear() == current_year){
+            LocalDateTime hora = DateUtils.asLocalDateTime(sr.getProposta().getHoraInicio());
+            if(hora.getYear() == current_year){
                 este_ano.add(sr);
                 total_servicos_anual++;
-                if(sr.getProposta().getVencedora() > 0)
-                    total_earned += sr.getPedido().getDuracao() * sr.getProposta().getPrecoProposto();
+                if(sr.getProposta().getVencedora() > 0){
+                    total_earned += sr.getPedido().getDuracao() * sr.getProposta().getPrecoProposto(); }
+
             }
         }
         msr.setServicos_anual(total_servicos_anual);
@@ -479,8 +483,9 @@ public class Prestador_Perfil {
 
         //Build lists
         for(Servico s: este_ano){
-            servicos_por_mes.get(s.getPedido().getData().getMonth()-1).incY(1);
-            ganhos_por_mes.get(s.getPedido().getData().getMonth()-1).incY(s.getPedido().getDuracao() * s.getProposta().getPrecoProposto());
+            int mes = DateUtils.asLocalDateTime(s.getPedido().getData()).getMonthValue();
+            servicos_por_mes.get(mes-1).incY(1);
+            ganhos_por_mes.get(mes-1).incY(s.getPedido().getDuracao() * s.getProposta().getPrecoProposto());
             if(!servicos_por_subcat.contains(s.getPedido().getCategoria().getNome()))
                 servicos_por_subcat.add(new Dot(s.getPedido().getCategoria().getNome(),1));
             else{

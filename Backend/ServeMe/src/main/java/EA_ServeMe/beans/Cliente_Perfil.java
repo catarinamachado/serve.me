@@ -1,9 +1,6 @@
 package EA_ServeMe.beans;
 
-import EA_ServeMe.responses.AuthResponse;
-import EA_ServeMe.responses.ErrorResponse;
-import EA_ServeMe.responses.MyProfileResponse;
-import EA_ServeMe.responses.PrestadorProfResponse;
+import EA_ServeMe.responses.*;
 import EA_ServeMe.util.*;
 import org.json.JSONObject;
 import org.orm.PersistentException;
@@ -87,11 +84,11 @@ public class Cliente_Perfil {
             return error;
         }
         if (bd_e.length != 0)
-            error.add("Email");
+            error.add("Email já está em uso");
         if (bd_n.length != 0)
-            error.add("Nif");
+            error.add("Nif já está em uso");
         if (bd_t.length != 0)
-            error.add("Telemovel");
+            error.add("Número Telemovel já está em uso");
 
         if (error.size() > 1) return error;
 
@@ -102,7 +99,7 @@ public class Cliente_Perfil {
 
 
         String client_password = c.getPassword();
-        //client_password = decodePassword(client_password); // PROD : ADD THIS Decode encrypted password from frontend
+        client_password = Cliente_Perfil.decodePassword(client_password); // PROD : ADD THIS Decode encrypted password from frontend
 
         String new_Password = new BCryptPasswordEncoder(11).encode(client_password);
         c.setPassword(new_Password);
@@ -299,7 +296,7 @@ public class Cliente_Perfil {
 
 
     @Bean
-    public static ResponseEntity checkPrestadorProfile(String email_pres){
+    public static PrestadorProfResponse checkPrestadorProfile(String email_pres){
         String q = "Email = '" + email_pres + "'";
         try {
             Prestador[] pres = PrestadorDAO.listPrestadorByQuery(q, "Email");
@@ -308,7 +305,7 @@ public class Cliente_Perfil {
                 er.setLocalError("PrestadorProfile");
                 er.addMsg("NotFound");
                 Log.e(TAG,"Prestador profile not found");
-                return ResponseEntity.badRequest().body(er);
+                return null;
             } else {
                 Prestador c = pres[0];
                 int id = c.getID();
@@ -325,15 +322,19 @@ public class Cliente_Perfil {
                 //return ResponseEntity.badrequest().body(er);
                 // }
                 Avaliacao_Prestador[] avaliacao_prestadorss = Avaliacao_PrestadorDAO.listAvaliacao_PrestadorByQuery(query, "ID");
-                List<Avaliacao_Prestador> avaliacao_prestadors = Arrays.asList(avaliacao_prestadorss);
-                PrestadorProfResponse cli_prof = new PrestadorProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacao_prestadors);
+                List<AvaliacaoResponse> avaliacoes = new ArrayList<>();
+                for(Avaliacao_Prestador a: avaliacao_prestadorss){
+                    AvaliacaoResponse ar = new AvaliacaoResponse(a.getCliente().getNome(),a.getClassificacao(),a.getOpiniao());
+                    avaliacoes.add(ar);
+                }
+                PrestadorProfResponse pres_prof = new PrestadorProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacoes);
                 Log.i(TAG,"Prestador profile sent with success");
-                return ResponseEntity.ok().body(cli_prof);
+                return pres_prof;
             }
         } catch (PersistentException e) {
             e.printStackTrace();
         }
-        return (ResponseEntity) ResponseEntity.notFound();
+        return null;
     }
 
 

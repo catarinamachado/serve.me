@@ -55,19 +55,19 @@ public class Cliente_Services {
                 switch (tipo) {
                     case 1:
                         Log.e(TAG,"DataFim not Valid" + " - Request not Added");
-                        resp.add("DataFim");
+                        resp.add("O horário indicado  é inválido.");
                         break;
                     case 2:
                         Log.e(TAG,"duracao is lower than needed" + " - Request not Added");
-                        resp.add("Duracao");
+                        resp.add("A duração do pedido não é válida.");
                         break;
                     case 3:
-                        resp.add("JSON");
+                        resp.add("Pedido mal formulado!");
                         Log.e(TAG,"Missing Fields on JSON" + " - Request not Added");
                         break;
                     case 4:
                         Log.e(TAG,"Categoria does not Exist" + " - Request not Added");
-                        resp.add("Categoria");
+                        resp.add("Categoria não encontrada.");
                         break;
                 }
             }
