@@ -284,56 +284,54 @@ export default {
       //Send Request to backend
       this.ProposeService(idServico,precohora,horainicio);
     },
-        proposta(categoria, subcategoria, idservico, descricao, concelho, data,
-                 hora_inicio, hora_fim, duracao, preco_hora, cliente,
-                 item, index, button) {
-            this.propostaModal.title = `Proposta de agendamento de serviço`;
-            this.propostaModal.categoria = categoria;
-            this.propostaModal.subcategoria = subcategoria;
-            this.propostaModal.descricao = descricao;
-            this.propostaModal.concelho = concelho;
-            this.propostaModal.data = data;
-            this.propostaModal.hora_inicio = hora_inicio;
-            this.propostaModal.hora_fim = hora_fim;
-            this.propostaModal.duracao = duracao;
-            this.propostaModal.preco_hora = preco_hora;
-            this.propostaModal.cliente = cliente;
-            this.$root.$emit('bv::show::modal', this.propostaModal.id, button)
-        },
-        resetPropostaModal() {
-            this.propostaModal.title = ''
-            this.propostaModal.preco_hora=''
-            this.propostaModal.hora_inicio=''
-        },
-        ProposeService: function(idServico,precohora,horainicio){
-            let token = localStorage.getItem('user-token')
-            let headers = {
-                Authorization: 'Bearer ' + token
-            }
-            var data = this.propostaModal.data;
-            var date_time = data + "-" + horainicio;
-            let body = {
-                    id_pedido: idServico,
-                    preco: precohora,
-                    dataInicio: date_time
-            }
-            this.$axios({url: this.$backend + '/services/propose-request', headers: headers, data:body, method: 'POST' }).
-                then(resp => { 
-                    if(resp.data == 'SUCCESS') {
-                        this.$alert("Proposta enviada com sucesso!", "Sucesso", "success")
-                    }
-                    /*
-                    else {
-                        this.$alert("Não foi possível alterar a password.", "Erro", "error")
-                    }
-                    */
-                    
-                }).catch(err => {
-                    console.log(err)
-                    this.$alert("Não foi possível efetuar a sua proposta. AKA hora de inicio não válida", "Erro", "error")
-                })
+    proposta(categoria, subcategoria, idservico, descricao, concelho, data,
+             hora_inicio, hora_fim, duracao, preco_hora, cliente,
+             item, index, button) {
+        this.propostaModal.title = `Proposta de agendamento de serviço`;
+        this.propostaModal.categoria = categoria;
+        this.propostaModal.subcategoria = subcategoria;
+        this.propostaModal.descricao = descricao;
+        this.propostaModal.concelho = concelho;
+        this.propostaModal.data = data;
+        this.propostaModal.hora_inicio = hora_inicio;
+        this.propostaModal.hora_fim = hora_fim;
+        this.propostaModal.duracao = duracao;
+        this.propostaModal.preco_hora = preco_hora;
+        this.propostaModal.cliente = cliente;
+        this.$root.$emit('bv::show::modal', this.propostaModal.id, button)
+    },
     resetPropostaModal() {
         this.propostaModal.title = ''
+        this.propostaModal.preco_hora=''
+        this.propostaModal.hora_inicio=''
+    },
+    ProposeService: function(idServico,precohora,horainicio){
+        let token = localStorage.getItem('user-token')
+        let headers = {
+            Authorization: 'Bearer ' + token
+        }
+        var data = this.propostaModal.data;
+        var date_time = data + "-" + horainicio;
+        let body = {
+                id_pedido: idServico,
+                preco: precohora,
+                dataInicio: date_time
+        }
+        this.$axios({url: this.$backend + '/services/propose-request', headers: headers, data:body, method: 'POST' }).
+            then(resp => {
+                if(resp.data == 'SUCCESS') {
+                    this.$alert("Proposta enviada com sucesso!", "Sucesso", "success")
+                }
+                /*
+                else {
+                    this.$alert("Não foi possível alterar a password.", "Erro", "error")
+                }
+                */
+                
+            }).catch(err => {
+                console.log(err)
+                this.$alert("Não foi possível efetuar a sua proposta. AKA hora de inicio não válida", "Erro", "error")
+            })
     },
     seeProfile(email){
         sessionStorage.setItem('email', email);
