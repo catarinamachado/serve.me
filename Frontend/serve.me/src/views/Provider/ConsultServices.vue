@@ -310,16 +310,20 @@ export default {
         },
         resetPropostaModal() {
             this.propostaModal.title = ''
+            this.propostaModal.preco_hora=''
+            this.propostaModal.hora_inicio=''
         },
         ProposeService: function(idServico,precohora,horainicio){
             let token = localStorage.getItem('user-token')
             let headers = {
                 Authorization: 'Bearer ' + token
             }
+            var data = this.propostaModal.data;
+            var date_time = data + "-" + horainicio;
             let body = {
                     id_pedido: idServico,
                     preco: precohora,
-                    dataInicio: horainicio
+                    dataInicio: date_time
             }
             this.$axios({url: this.$backend + '/services/propose-request', headers: headers, data:body, method: 'POST' }).
                 then(resp => { 
