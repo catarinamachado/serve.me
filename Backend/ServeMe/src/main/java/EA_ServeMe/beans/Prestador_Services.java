@@ -446,6 +446,9 @@ public class Prestador_Services {
             Log.e(TAG,"BD error");
         }
 
+        if(ibrs.size() == 0)
+            Log.w(TAG,"No Notifications to show");
+
         return ibrs;
     }
 }

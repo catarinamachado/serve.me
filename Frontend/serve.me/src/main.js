@@ -14,6 +14,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/js/all.js'
 
+//import StarRating from 'vue-star-rating'
+
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
@@ -22,6 +24,7 @@ Vue.use(VueSimpleAlert)
 Vue.config.productionTip = false
 
 Vue.component('vue-headful', vueHeadful);
+//Vue.component('star-rating', StarRating);
 
 Vue.prototype.$backend = backend.URL
 Vue.prototype.$axios = axios

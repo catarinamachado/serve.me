@@ -29,7 +29,8 @@
     </div>
 
     <!-- Main table element -->
-    <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
+    <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter"
+    :sort-by.sync="sortBy" :sort-desc.sync="sortDesc">
        <template v-slot:cell(nome)="row">
         <b-link href="/#/provider-profile">{{row.item.nome}}</b-link>
       </template>
@@ -52,7 +53,7 @@
         <b-button size="sm" v-if="row.item.tipo == 'Aviso de cancelamento'" class="btn btn-blue" @click="seen(row.item,row.index)">
           OK
         </b-button>
-        <b-button size="sm" v-if="row.item.tipo == 'Por Avaliar'" @click="avaliar(row.item, row.index, $event.target)" class="btn btn-blue">
+        <b-button v-b-modal.avaliar-modal size="sm" v-if="row.item.tipo == 'Por classificar'" @click="classificar(row.item, row.index, $event.target)" class="btn btn-blue">
           <b-icon icon="star-fill" aria-hidden="true"></b-icon>
         </b-button>        
       </template>
@@ -70,6 +71,163 @@
       <pre>{{ aceitarModal.content }}</pre>
     </b-modal>
 
+    <!--
+    <b-modal
+      id="avaliar-modal"
+      ref="modal"
+      title="Avaliar Prestador"
+      @ok="handleOk"
+      @hidden="resetavalModal"
+    >
+      <form ref="form" @submit.stop.prevent="handleSubmit">
+
+        <b-form-group label="Classificação:" label-for="class-input">
+          <star-rating :increment="0.5" :show-rating="false" @rating-selected="setCurrentSelectedRating"></star-rating>
+        </b-form-group>
+      
+        <b-form-group label="Comentários:" label-for="comm-input">
+        <b-input label="comm" placeholder="" v-model='avalModal.comments'></b-input>        
+        </b-form-group>
+
+        <b> Serviço: </b>
+        
+        <b-form-group label="Classe:" label-for="classe-input">
+        <b-input label="classe" :placeholder="avalModal.item.classe" readonly></b-input>
+        </b-form-group>
+        
+        <b-form-group label="Categoria:" label-for="categoria-input">
+        <b-input label="categoria" :placeholder="avalModal.item.categoria" readonly></b-input>
+        </b-form-group>
+
+        <b-form-group label="Descrição:" label-for="descricao-input">
+        <b-input label="descricao" :placeholder="avalModal.item.descricao" readonly></b-input>
+        </b-form-group>
+        
+        <b-form-group label="Nome Prestador:" label-for="name-input">
+        <b-input label="name" :placeholder="avalModal.item.nome" readonly></b-input>
+        </b-form-group>
+        
+         
+        <b-form-group label="Local" label-for="local-input">
+        <b-input label="local" :placeholder="avalModal.item.classe" readonly></b-input>
+        </b-form-group>
+        
+
+
+        <b-form-group label="Data:" label-for="data-input">
+        <b-input label="data" :placeholder="avalModal.item.data" readonly></b-input>
+        </b-form-group>
+      
+        <b-form-group label="Hora Inicio:" label-for="hora-input">
+        <b-input label="hora" :placeholder="avalModal.item.hora" readonly></b-input>
+        </b-form-group>
+      
+        <b-form-group label="Duração:" label-for="dur-input">
+        <b-input label="dur" :placeholder="avalModal.item.duracao" readonly></b-input>
+        </b-form-group>
+      
+        <b-form-group label="Preço/Hora:" label-for="preco-input">
+        <b-input label="preco" :placeholder="avalModal.item.preco" readonly></b-input>
+        </b-form-group>
+      
+      </form>
+    </b-modal>
+    -->
+    <!-- Info modal -->
+    <b-modal size="lg" :id="classificarModal.id" :title="classificarModal.title" @ok="handleAvaliar" @hide="resetClassificarModal">
+        <form ref="form" @submit.stop.prevent="handleSubmit">
+            <b-form-group
+            label="Classe"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.classe"
+            ></b-form-input>
+            </b-form-group>
+                        
+            <b-form-group
+            label="Categoria"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.categoria"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Descrição"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.descricao"
+            ></b-form-input>
+            </b-form-group>
+                    
+            <b-form-group
+            label="Data"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.data"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Hora Início"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.hora"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Duração"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.duracao"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Preço/hora"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.preco"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Prestador"
+            >
+            <b-form-input
+                :disabled='true'
+                :placeholder="classificarModal.prestador"
+            ></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+            label="Classificação"
+            label-for="classificacao-input"
+            invalid-feedback="Classificação é obrigatória"
+            >
+            <b-form-rating v-model="classificarModal.rating" variant="warning"></b-form-rating>
+            </b-form-group>
+
+            <b-form-group
+            label="Comentários"
+            label-for="comentarios-input"
+            >
+            <b-form-input
+                id="comentarios-input"
+                v-model="classificarModal.comentarios"
+            ></b-form-input>
+            </b-form-group>
+        </form>
+    </b-modal>
+
     <div class="justify-content-center row my-1" v-if="this.items.length > 0">
       <b-pagination size="md" :total-rows="this.items.length" :per-page="perPage" v-model="currentPage" class="customPagination"/>
     </div>
@@ -84,7 +242,7 @@
     name: 'inbox-client',
     created() {
       window.scrollTo(0, 0);
-      //this.inbox()
+      this.inbox()
     },
     data: function() {
       return {
@@ -97,7 +255,7 @@
           hora: "14h00",
           duracao: "1 hora",
           preco: "4",
-          tipo: "Proposta de Serviço"
+          tipo: "Aviso de cancelamento"
         },
         {
           categoria: "Teste3",
@@ -108,40 +266,7 @@
           hora: "14h00",
           duracao: "2 hora",
           preco: "6",
-          tipo: "Por Avaliar"
-        },
-        {
-          categoria: "Teste1",
-          subcategoria: "Teste2",
-          descricao: "Descrição",
-          prestador: "Primeiro Último",
-          data: "14/03/1233",
-          hora_inicio: "14h00",
-          duracao: "1 hora",
-          preco_hora_proposto: "4",
-          informacao: "Proposta de Serviço"
-        },
-        {
-          categoria: "Teste1",
-          subcategoria: "Teste2",
-          descricao: "Descrição",
-          prestador: "Primeiro Último",
-          data: "12/03/1233",
-          hora_inicio: "14h00",
-          duracao: "1 hora",
-          preco_hora_proposto: "4",
-          informacao: "Proposta de Serviço"
-        },
-        {
-          categoria: "Teste1",
-          subcategoria: "Teste2",
-          descricao: "Descrição",
-          prestador: "Primeiro Último",
-          data: "13/03/1233",
-          hora_inicio: "14h00",
-          duracao: "1 hora",
-          preco_hora_proposto: "4",
-          informacao: "Proposta de Serviço"
+          tipo: "Por classificar"
         }
       ],
       fields: [
@@ -160,15 +285,30 @@
       perPage: 5,
       pageOptions: [5, 10, 15],
       filter: null,
+      sortBy: 'data',
+      sortDesc: true,
       rejeitarModal: {
         id: 'rejeitar-modal',
         title: '',
-        content: ''
+        content: '',
+        id_proposta: '',
+        idx:''
       },
       aceitarModal: {
         id: 'aceitar-modal',
         title: '',
-        content: ''
+        content: '',
+        id_proposta: '',
+        idx:''
+      },
+      avalModal:{
+        item: '',
+        classificacao: 0,
+        comments: ''
+      },
+      classificarModal: {
+        id: 'classificar-modal',
+        title: ''
       }      
   }},
   methods:{
@@ -203,7 +343,7 @@
     tipo2str(tipo){
       if(tipo == -1) return "Aviso de cancelamento"
       if(tipo ==  1) return "Proposta de Serviço"
-      if(tipo ==  2) return "Por Avaliar"
+      if(tipo ==  2) return "Por classificar"
 
     },
     getMonth(month){
@@ -221,41 +361,74 @@
       if ( month == 'DECEMBER') return '12';
     },
     handleReject(){
-      console.log('rejected');
-      //TODO: Rejeitar serviço
+      let data = {
+        id_proposta: this.rejeitarModal.id_proposta
+      }
+      this.$axios({url: this.$backend + '/services/reject-propose', data: data ,method: 'POST',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {   
+            console.log(resp.data)
+            this.$alert("Proposta rejeitada.", "Sucesso", "success")
+            var newArray = this.items.slice(0, this.rejeitarModal.idx).concat(this.items.slice(this.rejeitarModal.idx + 1, this.items.length));
+            this.items = newArray;          
+        }).catch(err =>{
+          console.log(err.data);
+            this.$alert("Não foi possível rejeitar proposta.", "Erro", "error")
 
+        });
     }
     ,
     rejeitar(item, index, button) {
       this.rejeitarModal.title = `Rejeitar serviço`
       this.rejeitarModal.content = "Deseja rejeitar este serviço?"
+      this.rejeitarModal.id_proposta = item.id
+      this.rejeitarModal.idx = index
       this.$root.$emit('bv::show::modal', this.rejeitarModal.id, button)
     },
     resetRejeitarModal() {
       this.rejeitarModal.title = ''
       this.rejeitarModal.content = ''
+      this.rejeitarModal.id_proposta = ''
+      this.rejeitarModal.idx = ''
     },
     aceitar(item, index, button) {
       this.aceitarModal.title = `Aceitar serviço`
       this.aceitarModal.content = "Deseja aceitar este serviço?"
+      this.aceitarModal.id_proposta = item.id
+      this.aceitarModal.idx = index
       this.$root.$emit('bv::show::modal', this.aceitarModal.id, button)
     },
     resetAceitarModal() {
       this.aceitarModal.title = ''
       this.aceitarModal.content = ''
+      this.aceitarModal.id_proposta = ''
+      this.aceitarModal.idx = ''
     },
     handleAccept(){
-      //TODO: aceitar serviço
-      console.log('accepted');
+      let data = {
+        id_proposta: this.aceitarModal.id_proposta
+      }
+
+      this.$axios({url: this.$backend + '/services/accept-propose-', data: data ,method: 'POST',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {   
+            console.log(resp.data)
+            this.$alert("Proposta Aceite.", "Sucesso", "success")
+            var newArray = this.items.slice(0, this.aceitarModal.idx).concat(this.items.slice(this.aceitarModal.idx + 1, this.items.length));
+            this.items = newArray;          
+        }).catch(err =>{
+          console.log(err.data);
+            this.$alert("Não foi possível aceitar proposta.", "Erro", "error")
+
+        });
     },
     avaliar(item, index, button) {
       console.log(item,index,button);
-      console.log('Avaliar');
+      this.avalModal.item = item;
+      
     },
-    handleAvaliar(){
-
-    }
-    ,
     inbox(){
       this.$axios({url: this.$backend + '/inbox/', method: 'GET',
         headers: {
@@ -282,7 +455,81 @@
             var newArray = this.items.slice(0, index).concat(this.items.slice(index + 1, this.items.length));
             this.items = newArray;        
         });
+    },
+    handleAvaliar(){
+      var modal = this.classificarModal;
+      let data =  {
+        classificacao: modal.rating ,
+        opiniao: modal.comentarios ,
+        email_prestador:  modal.email_prestador,
+        idServico: modal.id_servico
+      }
+       this.$axios({url: this.$backend + '/rating/prestadorx', data: data ,method: 'POST',
+        headers: {
+        'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {   
+            console.log(resp.status)
+            this.$alert("Serviço classificado com sucesso", "Sucesso", "success")  
+            var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
+            this.items = newArray;        
+        }).catch(err =>{
+          console.log(err.data);
+            this.$alert("Não foi possível classificar serviço.", "Erro", "error")
+
+        }); 
+    },
+    classificar(item, index, button) {
+      this.classificarModal.title = 'Classificação de Serviço';
+      this.classificarModal.classe = item.classe;
+      this.classificarModal.categoria = item.categoria;
+      this.classificarModal.descricao = item.descricao;
+      this.classificarModal.concelho = item.concelho;
+      this.classificarModal.data = item.data;
+      this.classificarModal.hora = item.hora;
+      this.classificarModal.duracao = item.duracao;
+      this.classificarModal.preco = item.preco;
+      this.classificarModal.prestador = item.nome;
+      this.classificarModal.email_prestador = item.email;
+      this.classificarModal.id_servico = item.id;
+      this.classificarModal.idx = index;
+      this.$root.$emit('bv::show::modal', this.classificarModal.id, button);
+    },
+    resetClassificarModal() {
+      this.classificarModal.title = ''
+      this.classificarModal.content = ''
+    },
+
+
+
+    setCurrentSelectedRating: function(rating) {
+      var cur = "You have Selected: " + rating + " stars";
+      console.log(cur);
+      this.avalModal.classificacao = rating;
     }
-  }
+    ,resetavalModal() {
+      this.avalModal.item = '';
+      this.avalModal.classificacao = '';
+      this.avalModal.comments = '';    
+    },
+    handlerOk() {
+      // Prevent modal from closing
+  /*     if(this.avalModal.classificacao == ''){
+        this.$alert("Por favor, adicione uma Classificação.", "Error", "error");
+        return
+      }
+
+      // Trigger submit handler
+      console.log(this.avalModal); */
+
+      console.log('aqui')
+      //this.handleSubmit()
+    },
+    handleSubmit() {
+      // Hide the modal manually
+      this.$nextTick(() => {
+        this.$bvModal.hide('avaliar-modal')
+      })
+    }
+  },
 }
 </script>

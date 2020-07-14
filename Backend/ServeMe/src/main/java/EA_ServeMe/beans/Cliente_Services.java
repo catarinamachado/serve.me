@@ -82,8 +82,6 @@ public class Cliente_Services {
         double preco = 0.0;
         Date dataInicio = new Date();
         Date dataFim = new Date();
-        LocalDateTime ldt = DateUtils.asLocalDateTime(dataFim).plusHours(10);
-        dataFim = DateUtils.asDate(ldt);
         double dur = 0.0;
         String desc = "";
         Categoria cat = null;
@@ -93,12 +91,12 @@ public class Cliente_Services {
 
             preco = Double.valueOf(obj.getString("preco"));
 
-            //String s_dataInicio = obj.getString("dataInicio");
-            //dataInicio = DateUtils.toDate(s_dataInicio);
+            String s_dataInicio = obj.getString("dataInicio");
+            dataInicio = DateUtils.toDate(s_dataInicio);
 
 
-            //String s_dataFim = obj.getString("dataFim");
-            //dataFim = DateUtils.toDate(s_dataFim);
+            String s_dataFim = obj.getString("dataFim");
+            dataFim = DateUtils.toDate(s_dataFim);
 
             dur = Double.valueOf(obj.getDouble("duracao"));
 
@@ -152,11 +150,18 @@ public class Cliente_Services {
     public static List<RequestResponse> getRequests(String email) {
         List<RequestResponse> res = new ArrayList<>();
         Date now = new Date();
+        LocalDateTime ldtnow = LocalDateTime.now();
         int ID = Cliente_Perfil.getClientebyEmail(email).getID();
         String query = "ClienteID = " + ID;
         List<Pedido> pedidos = new ArrayList<>();
         try {
             pedidos = Arrays.asList(PedidoDAO.listPedidoByQuery(query,"HoraInicioDisp"));
+            for(Pedido p : pedidos){
+                if(DateUtils.asLocalDateTime(p.getHoraFimDisp()).isBefore(LocalDateTime.now()) && p.getEstado() < PedidoState.SERVICE.v()){
+                    p.setEstado(PedidoState.CANCELLED.v());
+                    PedidoDAO.save(p);
+                }
+            }
         } catch (PersistentException e) {
             e.printStackTrace();
         }
@@ -700,6 +705,7 @@ public class Cliente_Services {
 
         } catch (PersistentException e) {
             error.add("BD");
+            Log.e(TAG,"BD error");
         }
         return error;
     }

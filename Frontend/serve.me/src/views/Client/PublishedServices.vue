@@ -28,7 +28,8 @@
     </div>
 
     <!-- Main table element -->
-    <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" v-cloak>
+    <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc" v-cloak>
       <template v-slot:cell(preco)="row">
         <p v-if="row.item.id != editRow"> {{row.item.preco}}€ </p>
         <b-form-input v-if="row.item.id == editRow" v-model="row.item.preco"/>
@@ -123,7 +124,7 @@
     },
     data: function() {
       return {
-        items: []/*{
+        items: [{
           categoria: "Teste1",
           subcategoria: "Teste2",
           descricao: "Descrição 10",
@@ -156,7 +157,7 @@
           preco_hora: "8",
           estado: "Expirado"
         }
-      ]*/,
+      ],
       fields: [
           { key: 'classe', label: 'Classe', sortable: true },
           { key: 'categoria', label: 'Categoria', sortable: true},
@@ -173,6 +174,8 @@
       perPage: 5,
       pageOptions: [5, 10, 15],
       filter: null,
+      sortBy: 'data',
+      sortDesc: true,
       editRow: 0,
       cancelarModal: {
         id: 'cancelar-modal',
@@ -205,7 +208,7 @@
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
         }}).then(resp => {    
             console.log(resp.status)
-            alert('Pedido Cancelado Com Sucesso!')            
+            this.$alert("Pedido Cancelado Com Sucesso.", "Sucesso", "Success")          
         });
         this.PublishedRequests()
       },
@@ -265,12 +268,22 @@
     },
     sendEdit(item) {
       this.editRow = 0
+      var str_data = item.data;
+      var splitted = str_data.split('/')
+      var splitted_horaI = item.horaInicioDisp.split('h')
+      var splitted_horaF = item.horaFimDisp.split('h')
+      var datainicio = splitted[2] + '/' + splitted[1] + '/'+ splitted[0] + ' ' + splitted_horaI[0] + ':' + splitted_horaI[1]
+      var datafim = splitted[2] + '/' + splitted[1] + '/'+ splitted[0] + ' ' + splitted_horaF[0] + ':' + splitted_horaF[1]
+      
       let req = {
         id: item.id,
         preco: item.preco,
         categoria: item.categoria,
         duracao: item.duracao,
-        descricao: item.descricao
+        descricao: item.descricao,
+        dataInicio: datainicio,
+        dataFim: datafim
+
       }
       console.log(req)
       this.$axios({url: this.$backend + '/services/edit-request', data: req, method: 'POST',
@@ -278,7 +291,11 @@
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
         }}).then(resp => {    
             console.log(resp.status)
-            alert('Pedido Editado Com Sucesso!')            
+            this.$alert("Pedido editado com Sucesso.", "Sucesso", "success")          
+
+        }).catch(err =>{
+          console.log(err.data)
+          this.$alert("Erro na edição do Pedido.", "Erro", "error") 
         });
     }
   },
