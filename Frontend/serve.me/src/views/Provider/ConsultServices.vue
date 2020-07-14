@@ -55,6 +55,7 @@
                         </b-card-body>
                         <b-card-footer>
                             <button @click="proposta(service.categoria, service.subcategoria, 
+                                            service.id,
                                             service.descricao, service.concelho, service.data, service.hora_inicio,
                                             service.hora_fim, service.duracao, service.preco_hora, service.cliente,
                                             row.item, row.index, $event.target)" class="btn btn-yellow-2">
@@ -278,10 +279,20 @@ export default {
     }
   },
     methods: {
-        handleOk(){
+        handleOK(){
             //Get values of proposal
+            var precohora = this.precohora
+            var horainicio = this.horainicio
+            var idServico = this.propostaModal.id
+
+            //Send Request to backend
+            this.ProposeService(idServico,precohora,horainicio);
+
+
+
+
         },
-        proposta(categoria, subcategoria, descricao, concelho, data,
+        proposta(categoria, subcategoria, idservico, descricao, concelho, data,
                  hora_inicio, hora_fim, duracao, preco_hora, cliente,
                  item, index, button) {
             this.propostaModal.title = `Proposta de agendamento de serviço`;
@@ -299,6 +310,31 @@ export default {
         },
         resetPropostaModal() {
             this.propostaModal.title = ''
+        },
+        ProposeService: function(idServico,precohora,horainicio){
+            let token = localStorage.getItem('user-token')
+            let headers = {
+                Authorization: 'Bearer ' + token
+            }
+            let body = {
+                    id_pedido: idServico,
+                    preco: precohora,
+                    dataInicio: horainicio
+            }
+            this.$axios({url: this.$backend + '/services/propose-request', headers: headers, data:body, method: 'POST' }).
+                then(resp => { 
+                    if(resp.data == 'SUCCESS') {
+                        this.$alert("Proposta enviada com sucesso!", "Sucesso", "success")
+                    }
+                    /*
+                    else {
+                        this.$alert("Não foi possível alterar a password.", "Erro", "error")
+                    }
+                    */
+                }).catch(err => {
+                    console.log(err)
+                    this.$alert("Não foi possível efetuar a sua proposta.", "Erro", "error")
+                })
         }
   }
 };
