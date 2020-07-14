@@ -335,9 +335,10 @@ export default {
                         this.$alert("Não foi possível alterar a password.", "Erro", "error")
                     }
                     */
+                    
                 }).catch(err => {
                     console.log(err)
-                    this.$alert("Não foi possível efetuar a sua proposta.", "Erro", "error")
+                    this.$alert("Não foi possível efetuar a sua proposta. AKA hora de inicio não válida", "Erro", "error")
                 })
         }
   }
