@@ -68,7 +68,7 @@
             <div v-for="avaliacao in avaliacoes" :key="avaliacao">
                 <div class="border">
                     <p>
-                        <label>{{avaliacao.nome}}</label>
+                        <label>{{avaliacao.avaliador}}</label>
                         (<b-form-rating
                         id="rating-readonly"
                         :value="avaliacao.classificacao"
@@ -114,7 +114,7 @@ export default {
         classificacao: '',
         nr_servicos_realizados: '',
         nr_servicos_cancelados: '',
-        avaliacoes: ''
+        avaliacoes: {}
     }
   },
   methods: {
@@ -144,7 +144,7 @@ export default {
             this.classificacao = resp.data.classificacao
             this.nr_servicos_realizados = resp.data.numServicosCancelados
             this.nr_servicos_cancelados = resp.data.numServicosRealizados
-            this.comentarios = resp.data.avaliacoes
+            this.avaliacoes = resp.data.avaliacoes
             console.log(resp.data)
         })
     }

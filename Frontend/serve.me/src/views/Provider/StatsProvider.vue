@@ -84,39 +84,114 @@
           headers: {
           'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
           }}).then(resp => {
-            return resp.data.servicos_por_subcat.eixo_y
+            const serv_cat = resp.data.servicos_por_subcat.values()
+            var nrs = []
+
+            for (const value of serv_cat) {
+              nrs.push(value.eixo_y)
+            }
+
+            return nrs
         })
       },
       ganho_mes(){
-        this.$axios({url: this.$backend + '/status/my-status', method: 'GET',
+        this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
           headers: {
           'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
           }}).then(resp => {
-            return resp.data.ganhos_por_mes.eixo_x
+            const gan_mes = resp.data.ganhos_por_mes.values()
+            var nrs = []
+
+            for (const value of gan_mes) {
+              nrs.push(value.eixo_y)
+            }
+
+            return nrs
         })
       },
       servicos_mes(){
-        this.$axios({url: this.$backend + '/status/my-status', method: 'GET',
+        this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
           headers: {
           'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
           }}).then(resp => {
-            return resp.data.servicos_por_mes.eixo_x
+            const serv_mes = resp.data.servicos_por_mes.values()
+            var nrs = []
+
+            for (const value of serv_mes) {
+              nrs.push(value.eixo_y)
+            }
+
+            return nrs
         })
-      },          
-      stats(){
-        this.$axios({url: this.$backend + '/status/my-status', method: 'GET',
+      },
+      meses(){
+        this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
           headers: {
           'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
           }}).then(resp => {
+            const ganhos_mes = resp.data.ganhos_por_mes.values()
+            var meses = []
+
+            for (const value of ganhos_mes) {
+              meses.push(value.eixo_x)
+            }
+
+            return meses
+        })
+      },
+      categorias(){
+        this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
+          headers: {
+          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+          }}).then(resp => {
+            const servicos_cat = resp.data.servicos_por_subcat.values()
+            var categ = []
+
+            for (const value of servicos_cat) {
+              categ.push(value.eixo_x)
+            }
+
+            return categ
+        })
+      },            
+      stats(){
+        this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
+          headers: {
+          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+          }}).then(resp => {
+            console.log(resp.data)
             //Ano atual
             this.ano = resp.data.ano
             
+            //Labels
             this.ganho_anual = resp.data.ganho_anual
             this.nr_servicos = resp.data.servicos_anual
 
-            this.pieChartData.labels = resp.data.servicos_por_subcat.eixo_x
-            this.barChartData.labels = resp.data.ganhos_por_mes.eixo_x
-            this.lineChartData.labels = resp.data.servicos_por_mes.eixo_x
+/*
+            //Meses
+            const ganhos_mes = resp.data.ganhos_por_mes.values()
+            var meses = []
+
+            for (const value of ganhos_mes) {
+              meses.push(value.eixo_x)
+            }
+
+            //Categorias
+            const servicos_cat = resp.data.servicos_por_subcat.values()
+            var categ = []
+
+            for (const value of servicos_cat) {
+              categ.push(value.eixo_x)
+            }
+
+            this.pieChartData.labels = ["jan", "fev", "marc"]
+            this.barChartData.labels = ["jan", "fev", "marc"]
+            this.lineChartData.labels = ["jan", "fev", "marc"]
+
+            console.log(meses)
+            var meses2 = ["jan", "fev", "marc"]
+            console.log(meses2)
+*/
         })
       }
     },
@@ -125,9 +200,8 @@
         ano: '',
         ganho_anual: '',
         nr_servicos: '',
-        nrs_servicos_categorias: [],
         pieChartData: {
-          labels: [],
+          labels: this.categorias(),
           datasets: [
             {
               data: this.servicos_categorias(),
@@ -176,7 +250,7 @@
           }
         },
         barChartData: {
-          labels: [],
+          labels: this.meses(),
           datasets: [
             {
               label: "Ganho (€)",
@@ -237,7 +311,7 @@
           }
         },
         lineChartData: {
-          labels: [],
+          labels: this.meses(),
           datasets: [
             {
               label: "N.º de serviços",
