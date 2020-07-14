@@ -52,7 +52,7 @@ public class ClienteProfResponse implements Serializable {
     public ClienteProfResponse(String nome, String email, long numTelemovel, String morada, String freguesia, String concelho, String distrito, double classificacao, int numServicosRealizados, int numServicosCancelados, List<AvaliacaoResponse> avaliacoes) {
         this.nome = nome;
         this.email = email;
-        this.nrTelm = nrTelm;
+        this.nrTelm = numTelemovel;
         this.morada = morada;
         this.freguesia = freguesia;
         this.concelho = concelho;

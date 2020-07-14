@@ -17,6 +17,7 @@ import java.awt.geom.Point2D;
 import java.lang.reflect.Array;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -320,7 +321,6 @@ public class Prestador_Perfil {
                 //return ResponseEntity.badrequest().body(er);
                 // }
                 Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
-                //TODO: Criar classe de Resposta Avaliação
                 List<AvaliacaoResponse> avaliacoes = new ArrayList<>();
                 for(Avaliacao_Cliente a : avaliacao_clientes){
                     AvaliacaoResponse ar = new AvaliacaoResponse(a.getPrestador().getNome(),a.getClassificacao(),a.getOpiniao());
@@ -454,11 +454,13 @@ public class Prestador_Perfil {
         int total_servicos_anual = 0;
         double total_earned = 0;
         for(Servico sr: done_services){
-            if(sr.getProposta().getHoraInicio().getYear() == current_year){
+            LocalDateTime hora = DateUtils.asLocalDateTime(sr.getProposta().getHoraInicio());
+            if(hora.getYear() == current_year){
                 este_ano.add(sr);
                 total_servicos_anual++;
-                if(sr.getProposta().getVencedora() > 0)
-                    total_earned += sr.getPedido().getDuracao() * sr.getProposta().getPrecoProposto();
+                if(sr.getProposta().getVencedora() > 0){
+                    total_earned += sr.getPedido().getDuracao() * sr.getProposta().getPrecoProposto(); }
+
             }
         }
         msr.setServicos_anual(total_servicos_anual);
@@ -481,8 +483,9 @@ public class Prestador_Perfil {
 
         //Build lists
         for(Servico s: este_ano){
-            servicos_por_mes.get(s.getPedido().getData().getMonth()-1).incY(1);
-            ganhos_por_mes.get(s.getPedido().getData().getMonth()-1).incY(s.getPedido().getDuracao() * s.getProposta().getPrecoProposto());
+            int mes = DateUtils.asLocalDateTime(s.getPedido().getData()).getMonthValue();
+            servicos_por_mes.get(mes-1).incY(1);
+            ganhos_por_mes.get(mes-1).incY(s.getPedido().getDuracao() * s.getProposta().getPrecoProposto());
             if(!servicos_por_subcat.contains(s.getPedido().getCategoria().getNome()))
                 servicos_por_subcat.add(new Dot(s.getPedido().getCategoria().getNome(),1));
             else{

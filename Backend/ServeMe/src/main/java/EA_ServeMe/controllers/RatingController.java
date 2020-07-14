@@ -49,7 +49,6 @@ public class RatingController {
                     er.setLocalError("RATING");
                     er.addMsg("CantRating");
                 }
-
                 else{
                     if(r == -1){
                         ErrorResponse er = new ErrorResponse();

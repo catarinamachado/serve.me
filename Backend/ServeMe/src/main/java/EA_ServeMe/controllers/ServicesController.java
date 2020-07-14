@@ -158,7 +158,7 @@ public class ServicesController {
 
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
-        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Prestador Access Only");
+        if(token.startsWith("P")) return ResponseEntity.badRequest().body("Cliente Access Only");
         String email = jwtUtil.extractEmail(token);
 
         List<String> r = Cliente_Services.acceptPropose(propose,email);

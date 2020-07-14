@@ -3,6 +3,7 @@ package EA_ServeMe.controllers;
 import EA_ServeMe.beans.Prestador_Perfil;
 import EA_ServeMe.beans.Prestador_Services;
 import EA_ServeMe.responses.ErrorResponse;
+import EA_ServeMe.responses.ServiceResponse;
 import EA_ServeMe.util.JwtUtil;
 import EA_ServeMe.util.Log;
 import EA_ServeMe.util.MyStatsResponse;
@@ -42,11 +43,15 @@ public class StatsController {
             return ResponseEntity.badRequest().body(er);
         }
 
-        List<Servico> done_services = Prestador_Services.getServicesDone(email);
-        if(done_services.size() == 0)
+        List<Servico> done_services = Prestador_Services.getServicesDoneForStats(email);
+        if(done_services.size() == 0){
+            Log.w(TAG,"NO services done for this provider");
             return ResponseEntity.noContent().build();
+
+        }
         else{
             MyStatsResponse msr = Prestador_Perfil.generateStats(done_services);
+            Log.i(TAG,"Stats Sent Successfuly");
             return ResponseEntity.ok(msr);
         }
 
