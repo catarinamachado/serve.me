@@ -102,10 +102,10 @@ public class ServiceResponse {
                     res = "Agendado";
                     break;
                 case 1:
-                    res = "Realizado[Por Avaliar]";
+                    res = "Realizado[Por AvaliarP]";
                     break;
                 case 2:
-                    res = "Realizado[Por Avaliar]";
+                    res = "Realizado[Por AvaliarC]";
                     break;
                 case 12:
                     res = "Finalizado";

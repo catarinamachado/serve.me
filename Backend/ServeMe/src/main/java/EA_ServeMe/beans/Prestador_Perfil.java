@@ -398,32 +398,22 @@ public class Prestador_Perfil {
         try {
             pres = PrestadorDAO.listPrestadorByQuery(q_2,"Email");
             p = pres[0];
-        } catch (PersistentException e) {
-            e.printStackTrace();
-        }
-        //Update Numero Servicos Realizados
-        p.setNumServicosRealizados(p.getNumServicosRealizados() + 1);
-        //Update Classificacao
-        double nova_classificação = (p.getClassificacao() * p.getNumServicosRealizados() + classificacao)/(p.getNumServicosRealizados() + 1);
-        p.setClassificacao(nova_classificação);
-        try {
-            PrestadorDAO.save(p);
-        } catch (PersistentException e) {
-            e.printStackTrace();
-        }
-        Avaliacao_Prestador aval = new Avaliacao_Prestador();
-        aval.setClassificacao(classificacao);
-        aval.setOpiniao(opiniao);
-        aval.setCliente(c);
-        try {
+            //Update Numero Servicos Realizados
+            p.setNumServicosRealizados(p.getNumServicosRealizados() + 1);
+
+            //Update Classificacao
+            double nova_classificação = (p.getClassificacao() * p.getNumServicosRealizados() + classificacao)/(p.getNumServicosRealizados() + 1);
+            p.setClassificacao(nova_classificação);
+            //PrestadorDAO.save(p);
+            Avaliacao_Prestador aval = new Avaliacao_Prestador();
+            aval.setClassificacao(classificacao);
+            aval.setOpiniao(opiniao);
+            aval.setCliente(c);
             p.avaliacoes.add(aval);
             PrestadorDAO.save(p);
             //Avaliacao_PrestadorDAO.save(aval);
-        } catch (PersistentException e) {
-            e.printStackTrace();
-        }
 
-        try {
+            //Finalizar o Servico
             Servico servico = ServicoDAO.getServicoByORMID(idServico);
             Pedido pedido = servico.getPedido();
             if(servico.getEstado() == ServicoState.CREATED.v()){
