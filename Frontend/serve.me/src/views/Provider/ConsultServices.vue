@@ -138,7 +138,7 @@
                         >
                         <b-form-input
                             :disabled='true'
-                            :placeholder="propostaModal.duracao + 'h'"
+                            :placeholder="propostaModal.duracao"
                         ></b-form-input>
                         </b-form-group>
 
@@ -312,7 +312,6 @@ export default {
                 if(resp.data == 'SUCCESS') {
                     this.$alert("Proposta enviada com sucesso!", "Sucesso", "success")
                 }
-
             }).catch(err => {
                 console.log(err)
                 this.$alert("Não foi possível efetuar a sua proposta.\n" + err.response.data, "Erro", "error")
@@ -371,7 +370,8 @@ export default {
         splitted = duracao.split('.')
         if(splitted.length > 1) {
             if (splitted[0] == '0') splitted[0] = '00'
-            r.duracao =  splitted[0] + 'h' + splitted[1] + '0';
+            if (splitted[1].length == 1) splitted[1] = splitted[1] + '0'
+            r.duracao =  splitted[0] + 'h' + splitted[1];
         } else {
             r.duracao += 'h'
         }
@@ -405,7 +405,6 @@ export default {
         headers: {
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
         }}).then(resp => {
-            
             this.services = this.cleanData(resp.data);
       })
     }

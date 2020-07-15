@@ -30,13 +30,13 @@
 
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" >
-        <template v-slot:cell(preco_hora)="row">
-            {{row.item.preco_hora}} €
+        <template v-slot:cell(preco)="row">
+            {{row.item.preco}}€
         </template>
 
-       <template v-slot:cell(cliente)="row">
-        <b-link href="/#/client-profile">{{row.item.nome}}</b-link>
-      </template>
+        <template v-slot:cell(cliente)="row">
+          <b-link @click="seeProfile(row.item.email)">{{row.item.nome}}</b-link>
+        </template>
 
       <template v-slot:cell(acoes)="row">
         <b-button v-if="row.item.tipo == 'Aviso de cancelamento' || row.item.tipo == 'Proposta aceite' || row.item.tipo == 'Proposta rejeitada'" 
@@ -45,7 +45,7 @@
           OK
         </b-button>
         <b-button v-if="row.item.tipo == 'Por classificar'" size="sm" class="btn btn-green"  @click="classificar(row.item, row.index, $event.target)">
-          <b-icon icon="star-fill" aria-hidden="true"></b-icon>
+          <i class="fas fa-star"></i>
         </b-button>        
       </template>
     </b-table>
@@ -162,51 +162,36 @@
     },
     data: function() {
       return {
-        items: [{
-          categoria: "Teste1",
-          subcategoria: "Teste2",
-          descricao: "Descrição",
-          cliente: "Primeiro Último",
-          data: "13/03/1233",
-          hora_inicio: "14h00",
-          duracao: "1 hora",
-          preco_hora: "4",
-          informacao: "Aviso de cancelamento"
-        },
-        {
-          categoria: "Teste3",
-          subcategoria: "Teste4",
-          descricao: "Descrição",
-          cliente: "Primeiro Último",
-          data: "13/03/1233",
-          hora_inicio: "14h00",
-          duracao: "1 hora",
-          preco_hora: "4",
-          tipo: "Por classificar"
+        items: [],
+        fields: [
+            { key: 'classe', label: 'Classe', sortable: true },
+            { key: 'categoria', label: 'Categoria', sortable: true},
+            { key: 'descricao', label: 'Descrição', sortable: true},
+            { key: 'cliente', label: 'Cliente', sortable: true},
+            { key: 'data', label: 'Data', sortable: true},
+            { key: 'hora', label: 'Hora Início', sortable: true},
+            { key: 'duracao', label: 'Duração', sortable: true},
+            { key: 'preco', label: 'Preço/hora proposto', sortable: true},
+            { key: 'tipo', label: 'Informação', sortable: true},
+            { key: 'acoes', label: '' }
+        ],
+        currentPage: 1,
+        perPage: 5,
+        pageOptions: [5, 10, 15],
+        filter: null,
+        classificarModal: {
+          id: 'classificar-modal',
+          title: ''
         }
-      ],
-      fields: [
-          { key: 'classe', label: 'Classe', sortable: true },
-          { key: 'categoria', label: 'Categoria', sortable: true},
-          { key: 'descricao', label: 'Descrição', sortable: true},
-          { key: 'cliente', label: 'Cliente', sortable: true},
-          { key: 'data', label: 'Data', sortable: true},
-          { key: 'hora', label: 'Hora Início', sortable: true},
-          { key: 'duracao', label: 'Duração', sortable: true},
-          { key: 'preco', label: 'Preço/hora proposto', sortable: true},
-          { key: 'tipo', label: 'Informação', sortable: true},
-          { key: 'acoes', label: '' }
-      ],
-      currentPage: 1,
-      perPage: 5,
-      pageOptions: [5, 10, 15],
-      filter: null,
-      classificarModal: {
-        id: 'classificar-modal',
-        title: ''
-      }
   }},
   methods: {
+    seeProfile(email){
+        sessionStorage.setItem('email', email);
+
+        this.$router.push({
+           name: 'client-profile'
+         });
+    },    
     cleandata(list){
       if(list.length > 0){
         list.forEach(not => {
@@ -227,20 +212,28 @@
           var tipo = not.tipo;
           not.tipo = this.tipo2str(tipo);
 
+          //Duração
+          var duracao = not.duracao + ''
+          splitted = duracao.split('.')
+          if(splitted.length > 1) {
+              if (splitted[0] == '0') splitted[0] = '00'
+              if (splitted[1].length == 1) splitted[1] = splitted[1] + '0'
+              not.duracao =  splitted[0] + 'h' + splitted[1] 
+          } else {
+              not.duracao += 'h'
+          }
         });
       return list
       }
       else{
         return []
       }
-      
     },
     tipo2str(tipo){
       if(tipo ==  -10) return "Proposta rejeitada"
       if(tipo == -1) return "Aviso de cancelamento"
       if(tipo ==  1) return "Proposta aceite"
       if(tipo ==  2) return "Por classificar"
-
     },
     getMonth(month){
       if ( month == 'JANUARY') return '01';
@@ -260,9 +253,9 @@
       this.$axios({url: this.$backend + '/inbox/', method: 'GET',
         headers: {
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
-        }}).then(resp => {   
+        }}).then(resp => {
+            console.log(resp.data);
             this.items = this.cleandata(resp.data);
-            console.log(resp.data);            
         });
     },
     str2int(str){
@@ -270,7 +263,6 @@
       if(str == 'Proposta de Serviço') return 0
       if(str == 'Proposta aceite') return 1
       if(str == 'Proposta rejeitada') return 1
-      
     },
     limpar(item, index, button) {
       this.$root.$emit('', button)
@@ -288,27 +280,28 @@
             var newArray = this.items.slice(0, index).concat(this.items.slice(index + 1, this.items.length));
             this.items = newArray;        
         });
-    },handleAvaliar(){
+    },
+    handleAvaliar(){
       var modal = this.classificarModal;
       let data =  {
         classificacao: modal.rating ,
         opiniao: modal.comentarios ,
         email_cliente:  modal.email_cliente,
-        idServico: modal.id_servico
+        idServico: modal.id_servico + ''
       }
-      console.log(data)
-       this.$axios({url: this.$backend + '/rating/clientex', data: data ,method: 'POST',
+
+      this.$axios({url: this.$backend + '/rating/cliente', data: data ,method: 'POST',
         headers: {
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
         }}).then(resp => {   
-            console.log(resp.status)
-            this.$alert("Serviço classificado com sucesso", "Sucesso", "success")  
-            var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
-            this.items = newArray;        
+          console.log(resp.status)
+          
+          this.$alert("Serviço classificado com sucesso!", "Sucesso", "success")  
+          var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
+          this.items = newArray;        
         }).catch(err =>{
           console.log(err.data);
-            this.$alert("Não foi possível classificar serviço.", "Erro", "error")
-
+          this.$alert("Não foi possível classificar serviço.", "Erro", "error")
         }); 
     },
     classificar(item, index, button) {

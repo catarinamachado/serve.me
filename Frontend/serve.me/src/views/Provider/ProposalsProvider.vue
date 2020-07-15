@@ -31,23 +31,9 @@
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" >
         <template v-slot:cell(precoProposto)="row">
-            {{row.item.precoProposto}} €
+            {{row.item.precoProposto}}€
         </template>
-       
-       <template v-slot:cell(cliente)="row">
-        <b-link href="/#/client-profile"> {{row.item.request.cliente_nome}} </b-link>
-      </template>
-
-      <!--
-
-      <template v-slot:cell(acoes)="row">
-        <b-button v-if="row.item.informacao != 'Pendente'" size="sm" @click="limpar(row.item, row.index, $event.target)" class="btn btn-green">
-          OK
-        </b-button>
-      </template>
-      -->
     </b-table>
-    
 
     <div class="justify-content-center row my-1">
       <b-pagination size="md" :total-rows="this.items.length" :per-page="perPage" v-model="currentPage" class="customPagination"/>
@@ -75,7 +61,7 @@ import backend from '../../store/consts'
             { key: 'request.classe', label: 'Classe', sortable: true },
             { key: 'request.categoria', label: 'Subcategoria', sortable: true},
             { key: 'request.descricao', label: 'Descrição', sortable: true},
-            { key: 'cliente', label: 'Cliente', sortable: true},
+            { key: 'request.cliente_nome', label: 'Cliente', sortable: true},
             { key: 'request.data', label: 'Data', sortable: true},
             { key: 'horaProposta', label: 'Hora Início', sortable: true},
             { key: 'request.duracao', label: 'Duração', sortable: true},
@@ -89,6 +75,15 @@ import backend from '../../store/consts'
         filter: null
   }},
   methods: {
+    seeProfile(email){
+        sessionStorage.setItem('email', email);
+
+        console.log(email)
+
+        this.$router.push({
+           name: 'client-profile'
+         });
+    },    
     getMonth(month){
           if ( month == 'JANUARY') return '01';
           if ( month == 'FEBRUARY') return '02';
@@ -120,6 +115,16 @@ import backend from '../../store/consts'
         if (hora[1] == '0') hora[1] = '00'
         r.horaProposta = hora[0] + 'h' + hora[1];
       
+        //Duração
+        var duracao = r.request.duracao + ''
+        splitted = duracao.split('.')
+        if(splitted.length > 1) {
+            if (splitted[0] == '0') splitted[0] = '00'
+            if (splitted[1].length == 1) splitted[1] = splitted[1] + '0'
+            r.request.duracao =  splitted[0] + 'h' + splitted[1]
+        } else {
+            r.request.duracao += 'h'
+        }      
       });
       return list;
     },

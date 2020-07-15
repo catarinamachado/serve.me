@@ -153,7 +153,7 @@ export default {
       if(this.nome== '' || this.email == '' || this.nif== '' || 
            this.password== '' || this.morada == '' || this.freguesia== '' || 
            this.dropdown_item_distritos== 'Distrito' || this.dropdown_item_concelhos== 'Concelho'){
-             this.$alert("Por favor preencha todos os campos", "Erro", "error");
+             this.$alert("Por favor preencha todos os campos.", "Erro", "error");
            } 
       else{
 

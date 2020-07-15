@@ -120,11 +120,11 @@ public class Prestador_Services {
                 switch (tipo) {
                     case 1:
                         Log.e(TAG,"DataInicio not Valid" + " - Propose not Added");
-                        error.add("Data de inicio indicada não é valida.");
+                        error.add("Data de início indicada não é valida.");
                         break;
                     case 2:
                         Log.e(TAG,"DataInicio off valid interval" + " - Propose not Added");
-                        error.add("Data inicio indicada está fora do intervalo.");
+                        error.add("Data início indicada está fora do intervalo.");
                         break;
                     case 3:
                         error.add("JSON");
