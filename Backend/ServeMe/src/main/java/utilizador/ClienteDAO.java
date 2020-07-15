@@ -370,6 +370,7 @@ public class ClienteDAO {
 			c.setFreguesia(freg);
 		try {
 			ClienteDAO.save(c);
+			ClienteDAO.refresh(c);
 			return 1;
 		} catch (PersistentException e) {
 			e.printStackTrace();
@@ -382,6 +383,7 @@ public class ClienteDAO {
 			c.setPassword(new_password);
 		try {
 			ClienteDAO.save(c);
+			ClienteDAO.refresh(c);
 			return 1;
 		} catch (PersistentException e) {
 			e.printStackTrace();

@@ -205,8 +205,8 @@ public class ProfileController {
                 return ResponseEntity.badRequest().body(er);
             } else {
                 if (token.startsWith("C")) {
-                    PrestadorProfResponse resp = Cliente_Perfil.checkPrestadorProfile(email_prest);
-                    if( resp != null)
+                    PrestadorProfResponse resp = Cliente_Perfil.checkPrestadorProfile(email_prest,email);
+                    if(resp != null)
                         return ResponseEntity.ok().body(resp);
                     else return ResponseEntity.badRequest().build();
                 } else {

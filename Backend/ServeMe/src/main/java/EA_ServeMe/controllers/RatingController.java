@@ -29,6 +29,7 @@ public class RatingController {
     @PostMapping("/cliente")
     public ResponseEntity rating_cliente(@RequestHeader String Authorization, @RequestBody String body) {
 
+
         /* extract Token and email (Verification is already done by filter)*/
         String token = Authorization.substring(7);
         String email = jwtUtil.extractEmail(token);
@@ -56,6 +57,7 @@ public class RatingController {
                         er.addMsg("AlreadyRating");
                     }
                     else{
+                        Log.i(TAG,"Client succseefully rated");
                         return ResponseEntity.ok().body("RATED");
                     }
                 }
@@ -64,6 +66,7 @@ public class RatingController {
                 ErrorResponse er = new ErrorResponse();
                 er.setLocalError("Rating");
                 er.addMsg("JSON");
+                Log.e(TAG,"JSON Error");
                 return ResponseEntity.badRequest().body(er);
             }
         }
@@ -73,6 +76,7 @@ public class RatingController {
     @CrossOrigin
     @PostMapping("/prestador")
     public ResponseEntity rating_prestador(@RequestHeader String Authorization, @RequestBody String body) {
+
 
         /* extract Token and email (Verification is already done by filter)*/
         String token = Authorization.substring(7);
@@ -102,6 +106,7 @@ public class RatingController {
                             er.addMsg("AlreadyRating");
                         }
                         else{
+                            Log.i(TAG,"Provider successfully rated");
                             return ResponseEntity.ok().body("RATED");
                         }
                     }

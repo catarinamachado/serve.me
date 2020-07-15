@@ -75,7 +75,6 @@ public class ServicesController {
             String listString = String.join(", ", res);
             return ResponseEntity.badRequest().body(listString);
         }
-
     }
 
     @CrossOrigin
@@ -90,6 +89,7 @@ public class ServicesController {
         List<String> res = Cliente_Services.editRequest(request,email);
         int ok = (res.size()>1) ? 0 : 1;
         if(ok == 1){
+            Log.i(TAG,"Request edited with success");
             return ResponseEntity.ok("SUCCESS");
         }
         else {

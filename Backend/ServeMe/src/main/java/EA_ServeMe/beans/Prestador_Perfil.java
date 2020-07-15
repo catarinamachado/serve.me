@@ -106,6 +106,7 @@ public class Prestador_Perfil {
         /* PROD : ADD THIS */
         try {
             PrestadorDAO.save(p);
+            PrestadorDAO.refresh(p);
             Log.i(TAG,"Prestador Saved Succesfully");
             return success;
         } catch (PersistentException e) {
@@ -306,26 +307,25 @@ public class Prestador_Perfil {
                 Cliente c = cli[0];
                 int id = c.getID();
                 String query = "ClienteID = ' " + id + "'";
-                // PROD: ADD THIS
-                // Servico[] serv = ServicoDAO.listServicoByQuery(query,"ID");
-                //if(serv.length > 0 ) {
-                //Bottom lines HERE
-                // }
-                //else{
-                //Log.e(TAG,"Cant acess this profile from external ways");
-                //ErrorResponse er = new ErrorResponse();
-                //er.setLocalError("Cant acess this profile from external ways);
-                //return ResponseEntity.badrequest().body(er);
-                // }
-                Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
-                List<AvaliacaoResponse> avaliacoes = new ArrayList<>();
-                for(Avaliacao_Cliente a : avaliacao_clientes){
-                    AvaliacaoResponse ar = new AvaliacaoResponse(a.getPrestador().getNome(),a.getClassificacao(),a.getOpiniao());
-                    avaliacoes.add(ar);
+                Pedido[] serv = PedidoDAO.listPedidoByQuery(query,"ID");
+                if(serv.length > 0 ) {
+                    Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
+                    List<AvaliacaoResponse> avaliacoes = new ArrayList<>();
+                    for(Avaliacao_Cliente a : avaliacao_clientes){
+                        AvaliacaoResponse ar = new AvaliacaoResponse(a.getPrestador().getNome(),a.getClassificacao(),a.getOpiniao());
+                        avaliacoes.add(ar);
+                    }
+                    ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacoes);
+                    Log.i(TAG,"Cliente profile sent with success");
+                    return cli_prof;
                 }
-                ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacoes);
-                Log.i(TAG,"Cliente profile sent with success");
-                return cli_prof;
+                else{
+                Log.e(TAG,"Cant acess this profile from external ways");
+                ErrorResponse er = new ErrorResponse();
+                er.setLocalError("Cant acess this profile from external ways");
+                return null;
+                }
+
             }
         } catch (PersistentException e) {
             e.printStackTrace();
@@ -378,7 +378,7 @@ public class Prestador_Perfil {
             Servico servico = ServicoDAO.getServicoByORMID(idServico);
             if(servico.getEstado() < ServicoState.CREATED.v())
                 return -2;
-            if(servico.getEstado() == ServicoState.PROVIDERDONE.v() || servico.getEstado() == ServicoState.EVALUATED.v())
+            if(servico.getEstado() == ServicoState.CLIENTDONE.v() || servico.getEstado() == ServicoState.EVALUATED.v())
                 return -1;
         } catch (PersistentException e) {
             e.printStackTrace();
@@ -401,31 +401,38 @@ public class Prestador_Perfil {
             //Update Numero Servicos Realizados
             p.setNumServicosRealizados(p.getNumServicosRealizados() + 1);
 
+
             //Update Classificacao
-            double nova_classificação = (p.getClassificacao() * p.getNumServicosRealizados() + classificacao)/(p.getNumServicosRealizados() + 1);
+            double nova_classificação = (p.getClassificacao() * p.getNumServicosRealizados() + classificacao)/(p.getNumServicosRealizados());
+            System.out.println("A NOVA CLASSIF " + nova_classificação + " e a anteior " + c.getClassificacao());
             p.setClassificacao(nova_classificação);
-            //PrestadorDAO.save(p);
             Avaliacao_Prestador aval = new Avaliacao_Prestador();
             aval.setClassificacao(classificacao);
             aval.setOpiniao(opiniao);
             aval.setCliente(c);
             p.avaliacoes.add(aval);
             PrestadorDAO.save(p);
+            PrestadorDAO.refresh(p);
             //Avaliacao_PrestadorDAO.save(aval);
 
             //Finalizar o Servico
             Servico servico = ServicoDAO.getServicoByORMID(idServico);
             Pedido pedido = servico.getPedido();
             if(servico.getEstado() == ServicoState.CREATED.v()){
-                servico.setEstado(ServicoState.PROVIDERDONE.v());
+                System.out.println("SERVICPO COM ESTADO 0");
+                servico.setEstado(ServicoState.CLIENTDONE.v());
                 ServicoDAO.save(servico);
+                ServicoDAO.refresh(servico);
             }
-            if(servico.getEstado() == ServicoState.CLIENTDONE.v()){
+            if(servico.getEstado() == ServicoState.PROVIDERDONE.v()){
+                System.out.println("SERVICPO COM ESTADO 1");
                 servico.setEstado(ServicoState.EVALUATED.v());
                 ServicoDAO.save(servico);
+                ServicoDAO.refresh(servico);
             }
             pedido.setEstado(PedidoState.DONE.v());
             PedidoDAO.save(pedido);
+            PedidoDAO.refresh(pedido);
         } catch (PersistentException e) {
             e.printStackTrace();
         }
