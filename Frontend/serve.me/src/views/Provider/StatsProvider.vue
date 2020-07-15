@@ -69,8 +69,8 @@
   export default {
     name: "stats-provider",
     created() {
-      window.scrollTo(0, 0);
-      this.stats();
+      window.scrollTo(0, 0)
+      this.stats()
     },    
     components: {
       mdbPieChart,
@@ -79,87 +79,11 @@
       mdbContainer
     },
     methods: {
-      servicos_categorias(){
-        this.$axios({url: this.$backend + '/status/my-status', method: 'GET',
-          headers: {
-          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
-          }}).then(resp => {
-            const serv_cat = resp.data.servicos_por_subcat.values()
-            var nrs = []
-
-            for (const value of serv_cat) {
-              nrs.push(value.eixo_y)
-            }
-
-            return nrs
-        })
-      },
-      ganho_mes(){
-        this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
-          headers: {
-          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
-          }}).then(resp => {
-            const gan_mes = resp.data.ganhos_por_mes.values()
-            var nrs = []
-
-            for (const value of gan_mes) {
-              nrs.push(value.eixo_y)
-            }
-
-            return nrs
-        })
-      },
-      servicos_mes(){
-        this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
-          headers: {
-          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
-          }}).then(resp => {
-            const serv_mes = resp.data.servicos_por_mes.values()
-            var nrs = []
-
-            for (const value of serv_mes) {
-              nrs.push(value.eixo_y)
-            }
-
-            return nrs
-        })
-      },
-      meses(){
-        this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
-          headers: {
-          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
-          }}).then(resp => {
-            const ganhos_mes = resp.data.ganhos_por_mes.values()
-            var meses = []
-
-            for (const value of ganhos_mes) {
-              meses.push(value.eixo_x)
-            }
-
-            return meses
-        })
-      },
-      categorias(){
-        this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
-          headers: {
-          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
-          }}).then(resp => {
-            const servicos_cat = resp.data.servicos_por_subcat.values()
-            var categ = []
-
-            for (const value of servicos_cat) {
-              categ.push(value.eixo_x)
-            }
-
-            return categ
-        })
-      },            
       stats(){
         this.$axios({url: this.$backend + '/stats/my-stats', method: 'GET',
           headers: {
           'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
           }}).then(resp => {
-            console.log(resp.data)
             //Ano atual
             this.ano = resp.data.ano
             
@@ -167,31 +91,123 @@
             this.ganho_anual = resp.data.ganho_anual
             this.nr_servicos = resp.data.servicos_anual
 
-/*
             //Meses
             const ganhos_mes = resp.data.ganhos_por_mes.values()
             var meses = []
-
             for (const value of ganhos_mes) {
               meses.push(value.eixo_x)
             }
 
             //Categorias
-            const servicos_cat = resp.data.servicos_por_subcat.values()
-            var categ = []
+            const servicos_categoria = resp.data.servicos_por_subcat.values()
+            var categorias = []
+            for (const value of servicos_categoria) {
+              categorias.push(value.eixo_x)
+            }            
 
-            for (const value of servicos_cat) {
-              categ.push(value.eixo_x)
+            //Serviços por categoria
+            const servs_categs = resp.data.servicos_por_subcat.values()
+            var nrs_servicos_categ = []
+            for (const value of servs_categs) {
+              nrs_servicos_categ.push(value.eixo_y)
             }
 
-            this.pieChartData.labels = ["jan", "fev", "marc"]
-            this.barChartData.labels = ["jan", "fev", "marc"]
-            this.lineChartData.labels = ["jan", "fev", "marc"]
+            this.pieChartData = {
+              labels: categorias,
+              datasets: [
+                {
+                  data: nrs_servicos_categ,
+                  backgroundColor: [
+                    "#fab1a0",
+                    "#00b894",
+                    "#ff7675",
+                    "#6c5ce7",
+                    "#ffeaa7",
+                    "#b2bec3",
+                    "#0984e3",
+                    "#00cec9",
+                    "#fd79a8"
+                  ],
+                  hoverBackgroundColor: [
+                    "#FBC4B8",
+                    "#40CAAF",
+                    "#FF9898",
+                    "#9185ED",
+                    "#FFEFBD",
+                    "#C5CED2",
+                    "#47A3EA",
+                    "#40DAD7",
+                    "#FE9BBE"                
+                  ]
+                }
+              ]
+            }            
 
-            console.log(meses)
-            var meses2 = ["jan", "fev", "marc"]
-            console.log(meses2)
-*/
+            //Ganhos por mês
+            const gan_mes = resp.data.ganhos_por_mes.values()
+            var nrs_ganhos = []
+            for (const value of gan_mes) {
+              nrs_ganhos.push(value.eixo_y)
+            }
+
+            this.barChartData = {
+              labels: meses,
+              datasets: [
+                {
+                  label: "Ganho (€)",
+                  data: nrs_ganhos,
+                  backgroundColor: [
+                    "rgba(255, 99, 132, 0.2)",
+                    "rgba(54, 162, 235, 0.2)",
+                    "rgba(255, 206, 86, 0.2)",
+                    "rgba(75, 192, 192, 0.2)",
+                    "rgba(153, 102, 255, 0.2)",
+                    "rgba(255, 159, 64, 0.2)",
+                    "rgba(255, 99, 132, 0.2)",
+                    "rgba(54, 162, 235, 0.2)",
+                    "rgba(255, 206, 86, 0.2)",
+                    "rgba(75, 192, 192, 0.2)",
+                    "rgba(153, 102, 255, 0.2)",
+                    "rgba(255, 159, 64, 0.2)"                
+                  ],
+                  borderColor: [
+                    "rgba(255,99,132,1)",
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                    "rgba(153, 102, 255, 1)",
+                    "rgba(255, 159, 64, 1)",
+                    "rgba(255,99,132,1)",
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                    "rgba(153, 102, 255, 1)",
+                    "rgba(255, 159, 64, 1)"                
+                  ],
+                  borderWidth: 1
+                }
+              ]
+            }
+
+            //Serviços por mês
+            const serv_mes = resp.data.servicos_por_mes.values()
+            var nrs_serv_mes = []
+            for (const value of serv_mes) {
+              nrs_serv_mes.push(value.eixo_y)
+            }
+
+            this.lineChartData = {
+              labels: meses,
+              datasets: [
+                {
+                  label: "N.º de serviços",
+                  backgroundColor: "rgba(255, 206, 86, 0.2)",
+                  borderColor: "rgba(255, 206, 86, 1)",
+                  borderWidth: 0.7,
+                  data: nrs_serv_mes
+                }
+              ]
+            }
         })
       }
     },
@@ -201,34 +217,8 @@
         ganho_anual: '',
         nr_servicos: '',
         pieChartData: {
-          labels: this.categorias(),
-          datasets: [
-            {
-              data: this.servicos_categorias(),
-              backgroundColor: [
-                "#fab1a0",
-                "#00b894",
-                "#ff7675",
-                "#6c5ce7",
-                "#ffeaa7",
-                "#b2bec3",
-                "#0984e3",
-                "#00cec9",
-                "#fd79a8"
-              ],
-              hoverBackgroundColor: [
-                "#FBC4B8",
-                "#40CAAF",
-                "#FF9898",
-                "#9185ED",
-                "#FFEFBD",
-                "#C5CED2",
-                "#47A3EA",
-                "#40DAD7",
-                "#FE9BBE"                
-              ]
-            }
-          ]
+          labels: [],
+          datasets: []
         },
         pieChartOptions: {
           responsive: false,
@@ -250,42 +240,8 @@
           }
         },
         barChartData: {
-          labels: this.meses(),
-          datasets: [
-            {
-              label: "Ganho (€)",
-              data: this.ganho_mes(),
-              backgroundColor: [
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(54, 162, 235, 0.2)",
-                "rgba(255, 206, 86, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(153, 102, 255, 0.2)",
-                "rgba(255, 159, 64, 0.2)",
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(54, 162, 235, 0.2)",
-                "rgba(255, 206, 86, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(153, 102, 255, 0.2)",
-                "rgba(255, 159, 64, 0.2)"                
-              ],
-              borderColor: [
-                "rgba(255,99,132,1)",
-                "rgba(54, 162, 235, 1)",
-                "rgba(255, 206, 86, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(153, 102, 255, 1)",
-                "rgba(255, 159, 64, 1)",
-                "rgba(255,99,132,1)",
-                "rgba(54, 162, 235, 1)",
-                "rgba(255, 206, 86, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(153, 102, 255, 1)",
-                "rgba(255, 159, 64, 1)"                
-              ],
-              borderWidth: 1
-            }
-          ]
+          labels: [],
+          datasets: []
         },
         barChartOptions: {
           responsive: false,
@@ -311,16 +267,8 @@
           }
         },
         lineChartData: {
-          labels: this.meses(),
-          datasets: [
-            {
-              label: "N.º de serviços",
-              backgroundColor: "rgba(255, 206, 86, 0.2)",
-              borderColor: "rgba(255, 206, 86, 1)",
-              borderWidth: 0.7,
-              data: this.servicos_mes()
-            }
-          ]
+          labels: [],
+          datasets: []
         },
         lineChartOptions: {
           responsive: false,

@@ -49,14 +49,8 @@
                                 <p><strong>Hora início: </strong>{{service.horaInicioDisp}}</p>
                                 <p><strong>Hora fim: </strong>{{service.horaFimDisp}}</p>
                                 <p><strong>Duração: </strong>{{service.duracao}}</p>
-                                <p><strong>Preço/hora (€): </strong>{{service.preco}}</p>
+                                <p><strong>Preço/hora: </strong>{{service.preco}}€</p>
                                 <p><strong>Cliente: </strong><b-link @click="seeProfile(service.cliente_email)">{{service.cliente_nome}}</b-link>
-
-                                <!-- FIXME
-                                <a id="nome-href" 
-                                @click="seeProfile(service.cliente_email)" class="card-link">
-                                {{service.cliente_nome}}</a>
-                                -->
                                 </p>
                             </b-card-text>
                         </b-card-body>
@@ -259,7 +253,7 @@ export default {
                 } else if (this.dropdown_item_ordenar === 'Data') {
                     return new Date(b.data) - new Date(a.data);
                 } else if (this.dropdown_item_ordenar === 'Preço/hora') {
-                return a.preco < b.preco ? -1 : a.preco > b.preco ? 1 : 0
+                    return a.preco < b.preco ? -1 : a.preco > b.preco ? 1 : 0
                 }
             }).filter(item => {
                 return (item.classe.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) ||
@@ -367,18 +361,28 @@ export default {
         splitted = str_hora.split(' ')
         var hora = splitted[1].split(':')
         if (hora[1] == '0') hora[1] = '00'
-        r.horaInicioDisp = hora[0] + 'h' + hora[1];
+        r.horaInicioDisp = hora[0] + 'h' + hora[1]
 
         //Hora Fim - Cleaning
         str_hora = r.horaFimDisp;
         splitted = str_hora.split(' ')
         hora = splitted[1].split(':')
         if (hora[1] == '0') hora[1] = '00'
-        r.horaFimDisp = hora[0] + 'h' + hora[1];
+        r.horaFimDisp = hora[0] + 'h' + hora[1]
 
         //Descrição
         if(r.descricao == ''){
             r.descricao = '-'
+        }
+
+        //Duração
+        var duracao = r.duracao + ''
+        splitted = duracao.split('.')
+        if(splitted.length > 1) {
+            if (splitted[0] == '0') splitted[0] = '00'
+            r.duracao =  splitted[0] + 'h' + splitted[1] + '0';
+        } else {
+            r.duracao += 'h'
         }
 
         //URL das fotos
