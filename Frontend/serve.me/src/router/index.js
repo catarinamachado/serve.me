@@ -135,6 +135,10 @@ export default new Router({
       name: "edit-password-provider",
       path: "/edit-password-provider",
       component: () => import("@/views/Provider/EditPassword")
-    }
+    },
+    {
+      path: "*",
+      component: () => import("@/views/NotFound")
+      }    
   ]
 });

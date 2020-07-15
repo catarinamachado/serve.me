@@ -260,6 +260,7 @@
         var hora = splitted[1].split(':')
         if (hora[1] == '0') hora[1] = '00'
         r.horaInicioDisp = hora[0] + 'h' + hora[1];
+        
         //Hora Fim - Cleaning
         str_hora = r.pedido.horaFimDisp;
         splitted = str_hora.split(' ')
