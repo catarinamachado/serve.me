@@ -30,21 +30,17 @@
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
       <template v-slot:cell(proposta.precoProposto)="row">
-        {{row.item.proposta.precoProposto}} €
+        {{row.item.proposta.precoProposto}}€
       </template>
 
-       <template v-slot:cell(prestador)="row">
-        <b-link href="/#/provider-profile">{{row.item.prestador}}</b-link>
+      <template v-slot:cell(estado)="row">
+      <b-form-group>
+          {{row.item.estado}}
+          </b-form-group>
       </template>
-
-        <template v-slot:cell(estado)="row">
-        <b-form-group>
-            {{row.item.estado}}
-            </b-form-group>
-        </template>
 
       <template v-slot:cell(acoes)="row">
-        <b-button v-b-modal.classificar-modal size="sm" v-if="row.item.estado == 'Realizado'" @click="classificar(row.item, row.index, $event.target)" class="btn btn-blue">
+        <b-button v-b-modal.classificar-modal size="sm" v-if="row.item.estado === 'Realizado '" @click="classificar(row.item, row.index, $event.target)" class="btn btn-blue">
             <i class="fas fa-star"></i>
         </b-button>
         </template>
@@ -177,7 +173,7 @@
           { key: 'prestador_nome', label: 'Prestador', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
           { key: 'horaInicioDisp', label: 'Hora Início', sortable: true},
-          { key: 'horaFimDisp', label: 'Duração', sortable: true},
+          { key: 'pedido.duracao', label: 'Duração', sortable: true},
           { key: 'proposta.precoProposto', label: 'Preço/hora', sortable: true},
           { key: 'estado', label: 'Estado' },
           { key: 'acoes', label:''}
@@ -191,14 +187,14 @@
           title: ''
         }
   }},
-  methods: {
+  methods: { 
     handleOK(){
       var modal = this.classificarModal;
       let data =  {
         classificacao: modal.rating ,
         opiniao: modal.comentarios ,
         email_prestador: modal.prestador_email,
-        idServico: modal.id_servico
+        idServico: modal.id_servico + ''
       }
 
       this.$axios({url: this.$backend + '/rating/prestador', data: data, method: 'POST',
@@ -206,7 +202,7 @@
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
         }}).then(resp => {   
           console.log(resp.status)
-          this.$alert("Serviço classificado com sucesso", "Sucesso", "success")  
+          this.$alert("Serviço classificado com sucesso!", "Sucesso", "success")  
           var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
           this.items = newArray;        
         }).catch(err =>{
@@ -269,9 +265,23 @@
         r.horaFimDisp = hora[0] + 'h' + hora[1];
 
         //Estado
-        if(r.estado == "Realizado[Por Avaliar]"){
+        if(r.estado == "Realizado[Por AvaliarC]"){
+          r.estado = "Realizado "
+        }
+        if(r.estado == "Realizado[Por AvaliarP]"){
           r.estado = "Realizado"
         }
+
+        //Duração
+        var duracao = r.pedido.duracao + ''
+        splitted = duracao.split('.')
+        if(splitted.length > 1) {
+            if (splitted[0] == '0') splitted[0] = '00'
+            if (splitted[1].length == 1) splitted[1] = splitted[1] + '0'
+            r.pedido.duracao =  splitted[0] + 'h' + splitted[1];
+        } else {
+            r.pedido.duracao += 'h'
+        }        
       });
       return list;
     },

@@ -588,7 +588,7 @@ export default {
     }
   },
   mounted(){
-      this.checkProfile();
+      this.checkProfile()
   }
 };
 </script>

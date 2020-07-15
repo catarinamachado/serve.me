@@ -142,8 +142,8 @@ export default {
             this.concelho = resp.data.concelho
             this.distrito = resp.data.distrito
             this.classificacao = resp.data.classificacao
-            this.nr_servicos_realizados = resp.data.numServicosCancelados
-            this.nr_servicos_cancelados = resp.data.numServicosRealizados
+            this.nr_servicos_realizados = resp.data.numServicosRealizados
+            this.nr_servicos_cancelados = resp.data.numServicosCancelados
             this.avaliacoes = resp.data.avaliacoes
             console.log(resp.data)
         })
