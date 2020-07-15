@@ -248,32 +248,39 @@
           if ( month == 'NOVEMBER') return '11';
     },    
     cleanData(list){
-      list.forEach( r => {
-        //Data -  Cleaning
-        var str_data = r.pedido.data;
-        var splitted = str_data.split('/')
-        var num_month = this.getMonth(splitted[1]);
-        r.data = splitted[2] + '/' + num_month + '/' + splitted[0] 
+      if(list.length > 0 ){
+        list.forEach( r => {
+          //Data -  Cleaning
+          var str_data = r.pedido.data;
+          var splitted = str_data.split('/')
+          var num_month = this.getMonth(splitted[1]);
+          r.data = splitted[2] + '/' + num_month + '/' + splitted[0] 
         
-        //Hora Inicio - Cleaning
-        var str_hora = r.pedido.horaInicioDisp;
-        splitted = str_hora.split(' ')
-        var hora = splitted[1].split(':')
-        if (hora[1] == '0') hora[1] = '00'
-        r.horaInicioDisp = hora[0] + 'h' + hora[1];
-        //Hora Fim - Cleaning
-        str_hora = r.pedido.horaFimDisp;
-        splitted = str_hora.split(' ')
-        hora = splitted[1].split(':')
-        if (hora[1] == '0') hora[1] = '00'
-        r.horaFimDisp = hora[0] + 'h' + hora[1];
+          //Hora Inicio - Cleaning
+          var str_hora = r.pedido.horaInicioDisp;
+          splitted = str_hora.split(' ')
+          var hora = splitted[1].split(':')
+          if (hora[1] == '0') hora[1] = '00'
+          r.horaInicioDisp = hora[0] + 'h' + hora[1];
+          //Hora Fim - Cleaning
+          str_hora = r.pedido.horaFimDisp;
+          splitted = str_hora.split(' ')
+          hora = splitted[1].split(':')
+          if (hora[1] == '0') hora[1] = '00'
+          r.horaFimDisp = hora[0] + 'h' + hora[1];
 
-        //Estado
-        if(r.estado == "Realizado[Por Avaliar]"){
-          r.estado = "Realizado"
-        }
-      });
+          //Estado
+          if(r.estado == "Realizado[Por AvaliarC]"){
+            r.estado = "Realizado "
+          }
+          if(r.estado == "Realizado[Por AvaliarP]"){
+            r.estado = "Realizado"
+          }
+        });
       return list;
+      }
+      return [];
+
     },
     CompletedServices: function(){
       let token = localStorage.getItem('user-token')
@@ -283,7 +290,7 @@
       //console.log("------ " + headers.Authorization)
       this.$axios({url: this.$backend + '/services/completed-services', headers: headers, method: 'GET' }).
       then(resp => {
-          console.log("O status é " + resp.data);
+          console.log(resp.data);
           this.items = this.cleanData(resp.data);
         }
         );
