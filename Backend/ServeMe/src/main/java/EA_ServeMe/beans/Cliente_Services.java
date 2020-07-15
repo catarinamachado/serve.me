@@ -545,7 +545,7 @@ public class Cliente_Services {
 
         /*Search for new proposes*/
         try {
-            String query1 = "ClienteID = " + clienteID + " AND " +  "Estado == " + PedidoState.RESPONDED.v();
+            String query1 = "ClienteID = " + clienteID + " AND " +  "Estado = " + PedidoState.RESPONDED.v();
             List<Pedido> pedidos = Arrays.asList(PedidoDAO.listPedidoByQuery(query1,"ID"));
             for (Pedido tmp :
                     pedidos) {
