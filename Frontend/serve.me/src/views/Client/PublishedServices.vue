@@ -42,10 +42,13 @@
       
       <template v-slot:cell(acoes)="row">
         <div v-show="row.item.id != editRow">
-          <b-button v-if="row.item.estado !== 'Servico' && row.item.estado !== 'Cancelado'" size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1">
+          <b-button v-if="row.item.estado !== 'Agendado' && row.item.estado !== 'Cancelado' && row.item.estado !== 'Expirado'" 
+          size="sm" @click="cancelar(row.item, row.index, $event.target)" class="btn btn-red mr-1"
+          >
             <i class="fas fa-trash-alt"></i>
           </b-button>        
-          <b-button v-if="row.item.estado !== 'Servico' && row.item.estado !== 'Cancelado'" size="sm" class="btn btn-blue"
+          <b-button v-if="row.item.estado !== 'Agendado' && row.item.estado !== 'Cancelado' && row.item.estado !== 'Expirado'"
+           size="sm" class="btn btn-blue"
           @click="edit(row.item)" 
           >
             <i class="fas fa-pencil-alt"></i>

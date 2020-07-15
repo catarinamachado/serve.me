@@ -157,8 +157,8 @@ public class Cliente_Services {
         try {
             pedidos = Arrays.asList(PedidoDAO.listPedidoByQuery(query,"HoraInicioDisp"));
             for(Pedido p : pedidos){
-                if(DateUtils.asLocalDateTime(p.getHoraFimDisp()).isBefore(LocalDateTime.now()) && p.getEstado() < PedidoState.SERVICE.v()){
-                    p.setEstado(PedidoState.CANCELLED.v());
+                if(DateUtils.asLocalDateTime(p.getHoraFimDisp()).isBefore(LocalDateTime.now()) && p.getEstado() < PedidoState.SERVICE.v() && p.getEstado() != PedidoState.CANCELLED.v()){
+                    p.setEstado(PedidoState.EXPIRED.v());
                     PedidoDAO.save(p);
                 }
             }

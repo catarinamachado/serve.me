@@ -35,11 +35,13 @@
         </template>
 
        <template v-slot:cell(cliente)="row">
-        <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
+        <b-link href="/#/client-profile">{{row.item.nome}}</b-link>
       </template>
 
       <template v-slot:cell(acoes)="row">
-        <b-button v-if="row.item.tipo == 'Aviso de cancelamento'" size="sm" @click="seen(row.item, row.index)" class="btn btn-green">
+        <b-button v-if="row.item.tipo == 'Aviso de cancelamento' || row.item.tipo == 'Proposta aceite' || row.item.tipo == 'Proposta rejeitada'" 
+        size="sm" @click="seen(row.item, row.index)" class="btn btn-green"
+        >
           OK
         </b-button>
         <b-button v-if="row.item.tipo == 'Por classificar'" size="sm" class="btn btn-green"  @click="classificar(row.item, row.index, $event.target)">
@@ -187,7 +189,7 @@
           { key: 'classe', label: 'Classe', sortable: true },
           { key: 'categoria', label: 'Categoria', sortable: true},
           { key: 'descricao', label: 'Descrição', sortable: true},
-          { key: 'nome', label: 'Cliente', sortable: true},
+          { key: 'cliente', label: 'Cliente', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
           { key: 'hora', label: 'Hora Início', sortable: true},
           { key: 'duracao', label: 'Duração', sortable: true},
@@ -234,8 +236,9 @@
       
     },
     tipo2str(tipo){
+      if(tipo ==  -10) return "Proposta rejeitada"
       if(tipo == -1) return "Aviso de cancelamento"
-      if(tipo ==  1) return "Proposta de Serviço"
+      if(tipo ==  1) return "Proposta aceite"
       if(tipo ==  2) return "Por classificar"
 
     },
@@ -265,6 +268,9 @@
     str2int(str){
       if(str == 'Aviso de cancelamento') return -1
       if(str == 'Proposta de Serviço') return 0
+      if(str == 'Proposta aceite') return 1
+      if(str == 'Proposta rejeitada') return 1
+      
     },
     limpar(item, index, button) {
       this.$root.$emit('', button)

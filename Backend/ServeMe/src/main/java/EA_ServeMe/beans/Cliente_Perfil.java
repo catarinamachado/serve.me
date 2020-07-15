@@ -9,9 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import servico.Servico;
-import servico.ServicoDAO;
-import servico.ServicoState;
+import servico.*;
 import utilizador.*;
 
 
@@ -430,6 +428,7 @@ public class Cliente_Perfil {
 
         try {
             Servico servico = ServicoDAO.getServicoByORMID(idServico);
+            Pedido pedido = servico.getPedido();
             if(servico.getEstado() == ServicoState.CREATED.v()){
                 servico.setEstado(ServicoState.CLIENTDONE.v());
                 ServicoDAO.save(servico);
@@ -438,6 +437,8 @@ public class Cliente_Perfil {
                 servico.setEstado(ServicoState.EVALUATED.v());
                 ServicoDAO.save(servico);
             }
+            pedido.setEstado(PedidoState.DONE.v());
+            PedidoDAO.save(pedido);
         } catch (PersistentException e) {
             e.printStackTrace();
         }

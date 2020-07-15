@@ -2,7 +2,7 @@
   <div class="history-services space-top-5 space-bottom-10 space-left-right-5">
     <h4 class="space-bottom-2">Histórico de Serviços</h4>
     <div class="justify-content-center my-1 row">
-      <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
+      <b-form-fieldset horizontal label="Linhas por página" class="col-6" label-size="6">
          <b-form-select
             v-model="perPage"
             id="perPageSelect"
@@ -11,7 +11,7 @@
           ></b-form-select>
       </b-form-fieldset>
 
-      <b-form-fieldset horizontal label="Filtro" class="col-6" :label-size="2">
+      <b-form-fieldset horizontal label="Filtro" class="col-6" label-size="2">
           <b-input-group size="sm">
             <b-form-input
               v-model="filter"
@@ -33,7 +33,7 @@
       </template>
       
         <template v-slot:cell(cliente)="row">
-            <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
+            <b-link href="/#/client-profile">{{row.item.cliente_nome}}</b-link>
         </template>            
         <template v-slot:cell(estado)="row">
         <b-form-group>
@@ -175,7 +175,7 @@
           { key: 'pedido.classe', label: 'Classe', sortable: true },
           { key: 'pedido.categoria', label: 'Categoria', sortable: true},
           { key: 'pedido.descricao', label: 'Descrição', sortable: true},
-          { key: 'cliente_nome', label: 'Cliente', sortable: true},
+          { key: 'cliente', label: 'Cliente', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
           { key: 'horaInicioDisp', label: 'Hora Início', sortable: true},
           { key: 'horaFimDisp', label: 'Duração', sortable: true},

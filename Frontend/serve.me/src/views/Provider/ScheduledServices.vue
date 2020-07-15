@@ -4,7 +4,7 @@
     <vue-cal style="height: 550px" :time-from="8 * 60" :time-to="19 * 60" locale="pt-br" :events="events"/>
     <div class="space-top-5">
         <div class="justify-content-center my-1 row">
-        <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
+        <b-form-fieldset horizontal label="Linhas por página" class="col-6" label-size="6">
             <b-form-select
                 v-model="perPage"
                 id="perPageSelect"
@@ -13,7 +13,7 @@
             ></b-form-select>
         </b-form-fieldset>
 
-        <b-form-fieldset horizontal label="Filtro" class="col-6" :label-size="2">
+        <b-form-fieldset horizontal label="Filtro" class="col-6" label-size="2">
             <b-input-group size="sm">
                 <b-form-input
                 v-model="filter"

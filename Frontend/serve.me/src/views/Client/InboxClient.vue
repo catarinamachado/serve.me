@@ -410,7 +410,7 @@
         id_proposta: this.aceitarModal.id_proposta
       }
 
-      this.$axios({url: this.$backend + '/services/accept-propose-', data: data ,method: 'POST',
+      this.$axios({url: this.$backend + '/services/accept-propose', data: data ,method: 'POST',
         headers: {
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
         }}).then(resp => {   

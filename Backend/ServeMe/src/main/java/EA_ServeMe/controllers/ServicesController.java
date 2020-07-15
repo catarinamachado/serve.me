@@ -148,7 +148,8 @@ public class ServicesController {
             for (String e: res) {
                 er.addMsg(e);
             }
-            return ResponseEntity.badRequest().body(er);
+            String listString = String.join(", ", res);
+            return ResponseEntity.badRequest().body(listString);
         }
     }
 
@@ -173,7 +174,8 @@ public class ServicesController {
             for (String e: r) {
                 er.addMsg(e);
             }
-            return ResponseEntity.badRequest().body(er);
+            String listString = String.join(", ", r);
+            return ResponseEntity.badRequest().body(listString);
         }
     }
 
@@ -350,7 +352,8 @@ public class ServicesController {
             for (String e: res) {
                 er.addMsg(e);
             }
-            return ResponseEntity.badRequest().body(er);
+            String listString = String.join(", ", res);
+            return ResponseEntity.badRequest().body(listString);
         }
     }
 }

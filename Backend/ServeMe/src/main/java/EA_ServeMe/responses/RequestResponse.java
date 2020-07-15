@@ -167,14 +167,20 @@ public class RequestResponse {
             case -100:
                 res = "Cancelado";
                 break;
+            case -10:
+                res = "Expirado";
+                break;
             case -1:
-                res = "Em Espera";
+                res = "Pendente";
                 break;
             case 0:
-                res = "Em Análise";
+                res = "Por confirmar";
                 break;
             case 1:
-                res = "Serviço";
+                res = "Agendado";
+                break;
+            case 100:
+                res = "Realizado";
                 break;
 
         }

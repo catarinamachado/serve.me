@@ -120,11 +120,11 @@ public class Prestador_Services {
                 switch (tipo) {
                     case 1:
                         Log.e(TAG,"DataInicio not Valid" + " - Propose not Added");
-                        error.add("DataInicio");
+                        error.add("Data de inicio indicada não é valida.");
                         break;
                     case 2:
                         Log.e(TAG,"DataInicio off valid interval" + " - Propose not Added");
-                        error.add("DataInicio");
+                        error.add("Data inicio indicada está fora do intervalo.");
                         break;
                     case 3:
                         error.add("JSON");
@@ -132,11 +132,11 @@ public class Prestador_Services {
                         break;
                     case 4:
                         Log.e(TAG,"Pedido doesn't recieve offers" + " - Propose not Added");
-                        error.add("Pedido");
+                        error.add("Pedido indicado já não recebe ofertas.");
                         break;
                     case 5:
                         Log.e(TAG,"Pedido doesn't exist" + " - Propose not Added");
-                        error.add("Pedido");
+                        error.add("Pedido indicado não existe.");
                         break;
                 }
             }
@@ -181,7 +181,7 @@ public class Prestador_Services {
         else {
             if (inicio_proposto.isBefore(inicio_pedido) || inicio_proposto.isAfter(fim_pedido)) err += "2-";
         }
-        if (pedido.getEstado() > 0 || pedido.getEstado() > PedidoState.CANCELLED.v()) err += "4-";
+        if (pedido.getEstado() >= PedidoState.SERVICE.v()  || pedido.getEstado() < PedidoState.WAIT.v()) err += "4-";
 
         if(!err.equals("")){
             err = err.substring(0,err.length()-1);
@@ -470,6 +470,37 @@ public class Prestador_Services {
         } catch (PersistentException e) {
             Log.e(TAG,"BD error");
         }
+
+        /*Search for winner proposes*/
+        try {
+            String query2 = "PrestadorID = " + prestadorID + " AND " + "Vencedora = " + PropostaState.WINNER.v();
+            List<Proposta> propostas = Arrays.asList(PropostaDAO.listPropostaByQuery(query2,"ID"));
+            for (Proposta s :
+                    propostas) {
+                InboxResponse ibr = new InboxResponse(s.getID(),s.getPedido().getCliente().getNome(),s.getPedido().getCliente().getEmail(),s.getPedido().getDescricao(),s.getPedido().getCategoria().getClasse().getNome(),
+                        s.getPedido().getCategoria().getNome(),DateUtils.asString(s.getHoraInicio(),0),DateUtils.asString(s.getHoraInicio(),1),s.getPedido().getDuracao(),
+                        s.getPrecoProposto(),1);
+                ibrs.add(ibr);
+            }
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+        }
+
+        /*Search for rejected proposes*/
+        try {
+            String query2 = "PrestadorID = " + prestadorID + " AND " + "Vencedora = " + PropostaState.REJECTED.v();
+            List<Proposta> propostas = Arrays.asList(PropostaDAO.listPropostaByQuery(query2,"ID"));
+            for (Proposta s :
+                    propostas) {
+                InboxResponse ibr = new InboxResponse(s.getID(),s.getPedido().getCliente().getNome(),s.getPedido().getCliente().getEmail(),s.getPedido().getDescricao(),s.getPedido().getCategoria().getClasse().getNome(),
+                        s.getPedido().getCategoria().getNome(),DateUtils.asString(s.getHoraInicio(),0),DateUtils.asString(s.getHoraInicio(),1),s.getPedido().getDuracao(),
+                        s.getPrecoProposto(),-10);
+                ibrs.add(ibr);
+            }
+        } catch (PersistentException e) {
+            Log.e(TAG,"BD error");
+        }
+
 
         if(ibrs.size() == 0)
             Log.w(TAG,"No Notifications to show");
