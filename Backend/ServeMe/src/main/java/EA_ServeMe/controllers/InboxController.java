@@ -5,6 +5,7 @@ import EA_ServeMe.beans.Prestador_Services;
 import EA_ServeMe.responses.ErrorResponse;
 import EA_ServeMe.responses.InboxResponse;
 import EA_ServeMe.util.JwtUtil;
+import EA_ServeMe.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +17,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/inbox/")
+@RequestMapping("/api/inbox")
 public class InboxController {
 
     private static final String TAG = "[INBOX]";
@@ -42,9 +43,13 @@ public class InboxController {
                r = Prestador_Services.getInbox(email);
         }
 
-        if (r.size() == 0)
+        if (r.size() == 0){
+            Log.w(TAG,"No inbox messages");
             return ResponseEntity.noContent().build();
+        }
 
+
+        Log.i(TAG,"Inbox successfully sent");
         return ResponseEntity.ok(r);
     }
 

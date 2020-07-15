@@ -477,15 +477,19 @@ public class Prestador_Perfil {
         for (int i = 0; i < (shortMonths.length-1); i++) {
             String shortMonth = shortMonths[i];
             Dot d1 = new Dot(shortMonth,0);
+            Dot d2 = new Dot(shortMonth,0);
             ganhos_por_mes.add(d1);
-            servicos_por_mes.add(d1);
+            servicos_por_mes.add(d2);
         }
+
 
         //Build lists
         for(Servico s: este_ano){
             int mes = DateUtils.asLocalDateTime(s.getPedido().getData()).getMonthValue();
             servicos_por_mes.get(mes-1).incY(1);
             ganhos_por_mes.get(mes-1).incY(s.getPedido().getDuracao() * s.getProposta().getPrecoProposto());
+
+
             if(!servicos_por_subcat.contains(s.getPedido().getCategoria().getNome()))
                 servicos_por_subcat.add(new Dot(s.getPedido().getCategoria().getNome(),1));
             else{
@@ -494,7 +498,6 @@ public class Prestador_Perfil {
                         d.incY(1);
             }
         }
-
         //Set Lists generated
         msr.setGanhos_por_mes(ganhos_por_mes);
         msr.setServicos_por_mes(servicos_por_mes);

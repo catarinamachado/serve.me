@@ -234,7 +234,7 @@ public class ServicesController {
     }
 
     @CrossOrigin
-    @PostMapping("/scheduled-services")
+    @GetMapping("/scheduled-services")
     public ResponseEntity getScheduledServices(@RequestHeader String Authorization){
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
@@ -247,7 +247,7 @@ public class ServicesController {
                 r  = Cliente_Services.getScheduledServices(email);
                 break;
             case 'P':
-                r  = Prestador_Services.getMyServices(email);
+                r  = Prestador_Services.getScheduledServices(email);
                 break;
         }
 
