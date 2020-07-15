@@ -122,6 +122,7 @@ export default {
         if (sessionStorage.getItem("email")) {
             this.email = sessionStorage.getItem("email");
         }
+        console.log(this.email)
 
         let token = localStorage.getItem('user-token')
         let headers = {
@@ -129,10 +130,10 @@ export default {
         }
 
         let data = {
-            email_cli: this.email
+            email_pres: this.email
         }
 
-        this.$axios({url: this.$backend + '/profile/clienteprof', headers: headers, data: data, method: 'POST' })
+        this.$axios({url: this.$backend + '/profile/prestadorprof', headers: headers, data: data, method: 'POST' })
         .then(resp => {
             this.nome = resp.data.nome
             this.email = resp.data.email
