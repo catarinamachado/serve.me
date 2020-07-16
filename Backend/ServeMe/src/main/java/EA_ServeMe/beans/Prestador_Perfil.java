@@ -394,7 +394,6 @@ public class Prestador_Perfil {
             pedido.setEstado(PedidoState.DONE.v());
             PedidoDAO.save(pedido);
 
-
             Cliente c = Cliente_Perfil.getClientebyEmail(email_cli);
             Prestador p = Prestador_Perfil.getPrestadorbyEmail(email_pres);
 
@@ -416,6 +415,9 @@ public class Prestador_Perfil {
             //PrestadorDAO.refresh(p);
             //ServicoDAO.refresh(servico);
             //PedidoDAO.refresh(pedido);
+            PrestadorDAO.evict(p);
+            ServicoDAO.evict(servico);
+            PedidoDAO.evict(pedido);
 
         } catch (PersistentException e) {
             e.printStackTrace();

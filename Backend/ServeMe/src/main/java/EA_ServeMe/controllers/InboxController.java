@@ -6,11 +6,14 @@ import EA_ServeMe.responses.ErrorResponse;
 import EA_ServeMe.responses.InboxResponse;
 import EA_ServeMe.util.JwtUtil;
 import EA_ServeMe.util.Log;
+import org.orm.PersistentException;
+import org.orm.PersistentManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import utilizador.Prestador;
+import utilizador.ServemePersistentManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,10 @@ public class InboxController {
     @CrossOrigin
     @GetMapping("/")
     public ResponseEntity GetMyInbox(@RequestHeader String Authorization) {
+
+        clearSession();
+
+
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
         char type = token.charAt(0);
@@ -84,6 +91,15 @@ public class InboxController {
 
 
     }
+    private void clearSession(){
+        try {
+            PersistentManager pm = ServemePersistentManager.instance();
+            pm.getSession().clear();
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

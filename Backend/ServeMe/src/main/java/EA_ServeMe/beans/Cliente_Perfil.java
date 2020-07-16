@@ -395,12 +395,10 @@ public class Cliente_Perfil {
 
             Pedido pedido = servico.getPedido();
             if(servico.getEstado() == ServicoState.CREATED.v()){
-                System.out.println("SERVICPO COM ESTADO 0");
                 servico.setEstado(ServicoState.PROVIDERDONE.v());
                 ServicoDAO.save(servico);
             }
             if(servico.getEstado() == ServicoState.CLIENTDONE.v()){
-                System.out.println("SERVICPO COM ESTADO 2");
                 servico.setEstado(ServicoState.EVALUATED.v());
                 ServicoDAO.save(servico);
             }
@@ -429,6 +427,9 @@ public class Cliente_Perfil {
             //ClienteDAO.refresh(c);
             //PedidoDAO.refresh(pedido);
             //ServicoDAO.refresh(servico);
+            ClienteDAO.evict(c);
+            PedidoDAO.evict(pedido);
+            ServicoDAO.evict(servico);
 
 
         } catch (PersistentException e) {

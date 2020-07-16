@@ -203,8 +203,8 @@
         }}).then(resp => {   
           console.log(resp.status)
           this.$alert("Serviço classificado com sucesso!", "Sucesso", "success")  
-          var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
-          this.items = newArray;        
+          //var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
+          this.items = this.CompletedServices;        
         }).catch(err =>{
           console.log(err.data);
             this.$alert("Não foi possível classificar serviço.", "Erro", "error")
@@ -269,10 +269,11 @@
         if(r.estado === "Realizado[Por AvaliarC]"){
           r.estado = "Realizado "
         }
-        if(r.estado === "Realizado[Por AvaliarP]"){
-          r.estado = "Realizado"
+        else{
+          if(r.estado === "Realizado[Por AvaliarP]"){
+            r.estado = "Realizado"
+          }
         }
-
         //Duração
         var duracao = r.pedido.duracao + ''
         splitted = duracao.split('.')

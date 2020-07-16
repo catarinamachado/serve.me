@@ -54,7 +54,7 @@ public class RatingController {
                     if(r == -1){
                         ErrorResponse er = new ErrorResponse();
                         er.setLocalError("RATING");
-                        er.addMsg("AlreadyRating");
+                        er.addMsg("AlreadyRated");
                     }
                     else{
                         Log.i(TAG,"Client succseefully rated");

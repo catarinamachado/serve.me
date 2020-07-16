@@ -4,10 +4,14 @@ import EA_ServeMe.beans.Cliente_Services;
 import EA_ServeMe.beans.Prestador_Services;
 import EA_ServeMe.responses.*;
 import EA_ServeMe.util.*;
+import org.hibernate.Session;
+import org.orm.PersistentException;
+import org.orm.PersistentManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+import utilizador.ServemePersistentManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class ServicesController {
     @CrossOrigin
     @GetMapping("/my-requests") // Para Clientes
     public ResponseEntity getMyRequests(@RequestHeader String Authorization){
+        clearSession();
 
         /* extract Token and email (Verification is already done by filter)*/
         String token = Authorization.substring(7);
@@ -198,6 +203,10 @@ public class ServicesController {
     @CrossOrigin
     @GetMapping("/proposes-done") // Prestadores
     public ResponseEntity getProposesDone(@RequestHeader String Authorization){
+
+        clearSession();
+
+
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
         if(token.startsWith("C")) return ResponseEntity.badRequest().body("Prestador Access Only");
@@ -214,6 +223,10 @@ public class ServicesController {
     @CrossOrigin
     @GetMapping("/my-services")
     public ResponseEntity getMyServices(@RequestHeader String Authorization){
+
+        clearSession();
+
+
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
         char type = token.charAt(0);
@@ -238,6 +251,10 @@ public class ServicesController {
     @CrossOrigin
     @GetMapping("/scheduled-services")
     public ResponseEntity getScheduledServices(@RequestHeader String Authorization){
+
+        clearSession();
+
+
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
         char type = token.charAt(0);
@@ -263,6 +280,9 @@ public class ServicesController {
     @GetMapping("/completed-services")
     public ResponseEntity getCompletedServices(@RequestHeader String Authorization){
 
+        clearSession();
+
+
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
         char type = token.charAt(0);
@@ -287,6 +307,10 @@ public class ServicesController {
     @CrossOrigin
     @PostMapping("/next-services")
     public ResponseEntity getNextServices(@RequestHeader String Authorization){
+
+        clearSession();
+
+
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
         char type = token.charAt(0);
@@ -354,6 +378,15 @@ public class ServicesController {
             }
             String listString = String.join(", ", res);
             return ResponseEntity.badRequest().body(listString);
+        }
+    }
+
+    private void clearSession(){
+        try {
+            PersistentManager pm = ServemePersistentManager.instance();
+            pm.getSession().clear();
+        } catch (PersistentException e) {
+            e.printStackTrace();
         }
     }
 }

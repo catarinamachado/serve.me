@@ -110,9 +110,14 @@ public class Prestador_Services {
             Pedido p = proposta.getPedido();
             p.setEstado(PedidoState.RESPONDED.v());
             PedidoDAO.save(p);
-            //PedidoDAO.refresh(p);
             PropostaDAO.save(proposta);
+            //PedidoDAO.refresh(p);
             //PropostaDAO.refresh(proposta);
+
+            PedidoDAO.evict(p);
+            PropostaDAO.evict(proposta);
+
+
             Log.i(TAG,"Propose Added Succesfully");
             return success;
 

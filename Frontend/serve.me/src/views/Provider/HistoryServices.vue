@@ -206,8 +206,8 @@
         }}).then(resp => {   
           console.log(resp.status)
           this.$alert("Serviço classificado com sucesso!", "Sucesso", "success")  
-          var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
-          this.items = newArray;        
+          //var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
+          this.items = this.CompletedServices;        
         }).catch(err =>{
           console.log(err.data);
             this.$alert("Não foi possível classificar serviço.", "Erro", "error")
@@ -269,10 +269,10 @@
 
           //Estado
           if(r.estado === "Realizado[Por AvaliarC]"){
-            r.estado = "Realizado "
+            r.estado = "Realizado"
           }
           if(r.estado === "Realizado[Por AvaliarP]"){
-            r.estado = "Realizado"
+            r.estado = "Realizado "
           }
 
           //Duração
@@ -299,7 +299,6 @@
       this.$axios({url: this.$backend + '/services/completed-services', headers: headers, method: 'GET' }).
       then(resp => {
           console.log(resp.data);
-          console.log("Antes");
           this.items = this.cleanData(resp.data);
         }
         );
