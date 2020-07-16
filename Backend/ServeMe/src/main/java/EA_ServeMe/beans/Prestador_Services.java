@@ -110,9 +110,9 @@ public class Prestador_Services {
             Pedido p = proposta.getPedido();
             p.setEstado(PedidoState.RESPONDED.v());
             PedidoDAO.save(p);
-            PedidoDAO.refresh(p);
+            //PedidoDAO.refresh(p);
             PropostaDAO.save(proposta);
-            PropostaDAO.refresh(proposta);
+            //PropostaDAO.refresh(proposta);
             Log.i(TAG,"Propose Added Succesfully");
             return success;
 
@@ -294,6 +294,7 @@ public class Prestador_Services {
             }
             for (Servico tmp :
                     servicos) {
+                Log.d(TAG,"Estado Serviço"+ tmp.getID() + " : " + tmp.getEstado());
                 ServiceResponse sr = new ServiceResponse().asResponse(tmp);
                 r.add(sr);
             }
@@ -357,7 +358,7 @@ public class Prestador_Services {
             Servico servico = ServicoDAO.getServicoByORMID(servico_ID);
             servico.setEstado(ServicoState.PROVIDERCANCELLED.v());
             ServicoDAO.save(servico);
-            ServicoDAO.refresh(servico);
+            //ServicoDAO.refresh(servico);
         } catch (PersistentException e) {
             error.add("servico");
             Log.e(TAG,"Error Cancelling the Service");
@@ -368,7 +369,7 @@ public class Prestador_Services {
             int num_cancelados = prestador.getNumServicosCancelados();
             prestador.setNumServicosCancelados(num_cancelados+1);
             PrestadorDAO.save(prestador);
-            PrestadorDAO.refresh(prestador);
+            //PrestadorDAO.refresh(prestador);
             Log.i(TAG,"Service Cancelled Succesfully");
             return success;
         } catch (PersistentException e) {
@@ -408,7 +409,7 @@ public class Prestador_Services {
                     Servico s = ServicoDAO.getServicoByORMID(id_evento);
                     s.setEstado(ServicoState.CANCELLEDSEEN.v());
                     ServicoDAO.save(s);
-                    ServicoDAO.refresh(s);
+                    //ServicoDAO.refresh(s);
                     Log.i(TAG,"Notification Seen");
                     return success;
                 } catch (PersistentException e) {
@@ -425,12 +426,12 @@ public class Prestador_Services {
                         case -1:
                             proposta.setVencedora(PropostaState.REJECTEDSEEN.v());
                             PropostaDAO.save(proposta);
-                            PropostaDAO.refresh(proposta);
+                            //PropostaDAO.refresh(proposta);
                             break;
                         case 1:
                             proposta.setVencedora(PropostaState.WINNERSEEN.v());
                             PropostaDAO.save(proposta);
-                            PropostaDAO.refresh(proposta);
+                            //PropostaDAO.refresh(proposta);
                             break;
                     }
 

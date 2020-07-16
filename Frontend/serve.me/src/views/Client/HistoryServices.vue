@@ -243,6 +243,7 @@
           if ( month == 'NOVEMBER') return '11';
     }, 
     cleanData(list){
+      if(list.length > 0 ){
       list.forEach( r => {
         //Data -  Cleaning
         var str_data = r.pedido.data;
@@ -265,10 +266,10 @@
         r.horaFimDisp = hora[0] + 'h' + hora[1];
 
         //Estado
-        if(r.estado == "Realizado[Por AvaliarC]"){
+        if(r.estado === "Realizado[Por AvaliarC]"){
           r.estado = "Realizado "
         }
-        if(r.estado == "Realizado[Por AvaliarP]"){
+        if(r.estado === "Realizado[Por AvaliarP]"){
           r.estado = "Realizado"
         }
 
@@ -284,6 +285,8 @@
         }        
       });
       return list;
+      }
+      return []
     },
     CompletedServices: function(){
       let token = localStorage.getItem('user-token')

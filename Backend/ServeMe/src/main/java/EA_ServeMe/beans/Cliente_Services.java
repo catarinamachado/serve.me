@@ -41,7 +41,7 @@ public class Cliente_Services {
             Pedido p = parsePedido(request, c);
             if(p!=null){
                 PedidoDAO.save(p);
-                PedidoDAO.refresh(p);
+                //PedidoDAO.refresh(p);
                 Log.i(TAG,"Request Added Succesfully");
                 return success;
             }
@@ -161,7 +161,7 @@ public class Cliente_Services {
                 if(DateUtils.asLocalDateTime(p.getHoraFimDisp()).isBefore(LocalDateTime.now()) && p.getEstado() < PedidoState.SERVICE.v() && p.getEstado() != PedidoState.CANCELLED.v()){
                     p.setEstado(PedidoState.EXPIRED.v());
                     PedidoDAO.save(p);
-                    PedidoDAO.refresh(p);
+                    //PedidoDAO.refresh(p);
                 }
             }
         } catch (PersistentException e) {
@@ -213,7 +213,7 @@ public class Cliente_Services {
                     op.setDescricao(p.getDescricao());
                      */
                     PedidoDAO.save(op);
-                    PedidoDAO.refresh(op);
+                    //PedidoDAO.refresh(op);
                     Log.i(TAG,"Request Edited Succesfully");
                     return success;
                 }
@@ -282,7 +282,7 @@ public class Cliente_Services {
             if(p.getEstado() <= 0  && p.getCliente().getEmail().equals(c.getEmail())){
                 p.setEstado(-100);
                 PedidoDAO.save(p);
-                PedidoDAO.refresh(p);
+                //PedidoDAO.refresh(p);
                 Log.i(TAG,"Request Cancelled Succesfully");
                 return success;
             }
@@ -345,15 +345,15 @@ public class Cliente_Services {
             Servico servico = buildServico(cliente,pedido,proposta);
 //            Guardar o Servico
             ServicoDAO.save(servico);
-            ServicoDAO.refresh(servico);
+            //ServicoDAO.refresh(servico);
 //            Update States
             pedido.setEstado(PedidoState.SERVICE.v());
             proposta.setVencedora(PropostaState.WINNER.v());
 //            Save new states
             PedidoDAO.save(pedido);
-            PedidoDAO.refresh(pedido);
+            //PedidoDAO.refresh(pedido);
             PropostaDAO.save(proposta);
-            PropostaDAO.refresh(proposta);
+            //PropostaDAO.refresh(proposta);
 
             Log.i(TAG,"Propose Accepted Succesfully - Service Scheduled");
             return success;
@@ -469,6 +469,7 @@ public class Cliente_Services {
             }
             for (Servico tmp :
                     servicos) {
+
                 ServiceResponse sr = new ServiceResponse().asResponse(tmp);
                 r.add(sr);
             }
@@ -536,7 +537,7 @@ public class Cliente_Services {
             }
             servico.setEstado(ServicoState.CLIENTCANCELLED.v());
             ServicoDAO.save(servico);
-            ServicoDAO.refresh(servico);
+            //ServicoDAO.refresh(servico);
         } catch (PersistentException e) {
             error.add("servico");
             Log.e(TAG,"Error Cancelling the Service");
@@ -547,7 +548,7 @@ public class Cliente_Services {
             int num_cancelados = cliente.getNumServicosCancelados();
             cliente.setNumServicosCancelados(num_cancelados+1);
             ClienteDAO.save(cliente);
-            ClienteDAO.refresh(cliente);
+            //ClienteDAO.refresh(cliente);
             Log.i(TAG,"Service Cancelled Succesfully");
             return success;
         } catch (PersistentException e) {
@@ -645,7 +646,7 @@ public class Cliente_Services {
                     Servico s = ServicoDAO.getServicoByORMID(id_evento);
                     s.setEstado(ServicoState.CANCELLEDSEEN.v());
                     ServicoDAO.save(s);
-                    ServicoDAO.refresh(s);
+                    //ServicoDAO.refresh(s);
                     Log.i(TAG,"Notification Seen");
                     return success;
                 } catch (PersistentException e) {
@@ -709,7 +710,7 @@ public class Cliente_Services {
             proposta.setVencedora(PropostaState.REJECTED.v());
 //            Save new states
             PropostaDAO.save(proposta);
-            PropostaDAO.refresh(proposta);
+            //PropostaDAO.refresh(proposta);
             Log.i(TAG,"Propose Rejected Succesfully");
             return success;
 

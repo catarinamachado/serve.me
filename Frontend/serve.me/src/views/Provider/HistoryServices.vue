@@ -268,10 +268,10 @@
           r.horaFimDisp = hora[0] + 'h' + hora[1];
 
           //Estado
-          if(r.estado == "Realizado[Por AvaliarC]"){
+          if(r.estado === "Realizado[Por AvaliarC]"){
             r.estado = "Realizado "
           }
-          if(r.estado == "Realizado[Por AvaliarP]"){
+          if(r.estado === "Realizado[Por AvaliarP]"){
             r.estado = "Realizado"
           }
 
@@ -299,6 +299,7 @@
       this.$axios({url: this.$backend + '/services/completed-services', headers: headers, method: 'GET' }).
       then(resp => {
           console.log(resp.data);
+          console.log("Antes");
           this.items = this.cleanData(resp.data);
         }
         );
