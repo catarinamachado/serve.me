@@ -55,9 +55,6 @@
                 </div>
                 <div class="row space-top-3">
                     <div class="col-6">
-                        <p class="text-left">
-                            <input class="btn btn-red" type="submit" value="Eliminar conta">
-                        </p>
                     </div>
                     <div class="col-6">
                         <p class="text-right">
