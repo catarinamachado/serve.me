@@ -253,8 +253,6 @@ public class ServicesController {
     public ResponseEntity getScheduledServices(@RequestHeader String Authorization){
 
         clearSession();
-
-
         /* extract Token and email (Verification is already done by filter) */
         String token = Authorization.substring(7);
         char type = token.charAt(0);

@@ -299,7 +299,6 @@ public class Prestador_Services {
             }
             for (Servico tmp :
                     servicos) {
-                Log.d(TAG,"Estado Serviço"+ tmp.getID() + " : " + tmp.getEstado());
                 ServiceResponse sr = new ServiceResponse().asResponse(tmp);
                 r.add(sr);
             }
