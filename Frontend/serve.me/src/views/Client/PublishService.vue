@@ -102,7 +102,7 @@ export default {
           document.getElementById('duracao').value = ''
           document.getElementById('preco').value = ''
 
-          this.$alert("Serviço publicado com sucesso!", "Sucesso", "success");
+          this.$alert("Pedido publicado com sucesso!", "Sucesso", "success");
         } else {
           this.$alert("O serviço não foi publicado.", "Erro", "error");
         }
