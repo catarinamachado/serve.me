@@ -1,7 +1,7 @@
 <template>
   <div class="publish-service content">
     <div class="container">
-      <div class="row space-top-10 space-bottom-6">
+      <div class="row space-top-10 space-bottom-3">
         <div class="col-md-6 offset-md-3 text-left">
           <h5 class="text-left space-bottom-5">Publicar pedido</h5>
             <form id="publish-service" @submit.prevent="publish_service">

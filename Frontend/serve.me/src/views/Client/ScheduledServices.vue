@@ -48,7 +48,7 @@
     </b-table>
 
     <!-- Info modal -->
-    <b-modal :id="cancelarModal.id" :title="cancelarModal.title" @hide="resetCancelarModal">
+    <b-modal :id="cancelarModal.id" :title="cancelarModal.title" @hide="resetCancelarModal" @ok="handleCancelar" >
       <pre>{{ cancelarModal.content }}</pre>
     </b-modal>
 
@@ -194,6 +194,7 @@
     cancelar(item, index, button) {
       this.cancelarModal.title = `Cancelamento do serviço`
       this.cancelarModal.content = "Deseja cancelar o agendamento deste serviço?"
+      this.selected_service = item.id
       this.$root.$emit('bv::show::modal', this.cancelarModal.id, button)
     },
     resetCancelarModal() {
@@ -220,7 +221,7 @@
       this.classificarModal.title = ''
       this.classificarModal.content = ''
     },
-      handleAvaliar(){
+    handleAvaliar(){
       var modal = this.classificarModal;
       let data =  {
         classificacao: modal.rating,
@@ -242,6 +243,20 @@
           console.log(err.response.data);
           this.$alert("Não foi possível classificar serviço.", "Erro", "error")
         }); 
+    },
+    handleCancelar(){
+      let pedido = {
+        id_servico: this.selected_service
+      }
+
+      this.$axios({url: this.$backend + '/services/cancel-service', data: pedido, method: 'POST',
+        headers: {
+          'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
+        }}).then(resp => {
+          console.log(resp.status)
+          this.$alert("Serviço cancelado com sucesso.", "Sucesso", "success")
+          this.scheduled_services();
+        })
     },
     getMonth(month){
       if ( month == 'JANUARY') return '01';
