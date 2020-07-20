@@ -462,8 +462,11 @@ public class Cliente_Services {
     public static List<ServiceResponse> getCompletedServices(String email) {
         List<ServiceResponse> r = new ArrayList<>();
         int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
-        int estado = ServicoState.CLIENTDONE.v();
-        String query = "ClienteID = " + id_cliente + " AND " + "Estado >= " + estado;
+        int estado = ServicoState.CREATED.v();
+        //int estado1 = ServicoState.CLIENTDONE.v();
+        //int estado2 = ServicoState.CLIENTCANCELLED.v();
+        //String query = "ClienteID = " + id_cliente + " AND " + "Estado >= " + estado1 + " OR " + "Estado <= " + estado2;
+        String query = "ClienteID = " + id_cliente + " AND " + "Estado != " + estado;
         try {
             List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
             if (servicos.size() == 0){
