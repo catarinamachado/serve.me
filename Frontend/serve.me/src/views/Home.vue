@@ -1,31 +1,26 @@
 <template>
     <div class="home">
-        <div id="carouselIndicators" class="carousel slide" data-ride="carousel">
-            <ol class="carousel-indicators">
-            <li data-target="#carouselIndicators" data-slide-to="0" class="active"></li>
-            <li data-target="#carouselIndicators" data-slide-to="1"></li>
-            <li data-target="#carouselIndicators" data-slide-to="2"></li>
-            </ol>
-            <div class="carousel-inner">
-            <div class="carousel-item carousel-item-max active">
-                <img class="d-block w-100" src="../assets/imgs/home/1.jpg" alt="serve.me">
-            </div>
-            <div class="carousel-item carousel-item-max">
-                <img class="d-block w-100" src="../assets/imgs/home/2.jpg" alt="serve.me">
-            </div>
-            <div class="carousel-item carousel-item-max">
-                <img class="d-block w-100" src="../assets/imgs/home/3.jpg" alt="serve.me">
-            </div>
-            </div>
-            <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselIndicators" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-            </a>
-        </div>
+        <b-carousel
+        id="carousel"
+        :interval="4000"
+        controls
+        indicators
+        img-width="1024"
+        img-height="480"
+        >
+            <b-carousel-slide
+                img-src="https://hoechstleister.net/wp-content/uploads/2018/03/Hof-und-Garten.jpg">
+            </b-carousel-slide>
+
+            <b-carousel-slide 
+                img-src="https://images.unsplash.com/photo-1524247108137-732e0f642303?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1651&q=80">
+            </b-carousel-slide>
+
+            <b-carousel-slide 
+                img-src="https://images.unsplash.com/photo-1586280268958-9483002d016a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80">
+            </b-carousel-slide>
+        </b-carousel>
+
         <div class="container">
             <div class="row">
                 <div class="col-12 space-top-6">
@@ -85,22 +80,10 @@
     </div>
 </template>
 
-<style scoped>
-.carousel-item-max {
-  height: 500px; /* carousel height */
-}
-
-.carousel-item-max img {
-  height: 500px; /* carousel height */
-  position: absolute;
-  object-fit: cover;
-  top: 0;
-  left: 0;
-}
-
-#carouselIndicators {
-  padding-top: 20px;
-}
+<style>
+  .carousel-item img {
+      height:90vh!important;
+  }
 </style>
 
 <script>
