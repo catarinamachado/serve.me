@@ -8,6 +8,8 @@ import EA_ServeMe.responses.ErrorResponse;
 import EA_ServeMe.responses.MyProfileResponse;
 import EA_ServeMe.responses.PrestadorProfResponse;
 import EA_ServeMe.util.*;
+import org.orm.PersistentException;
+import org.orm.PersistentManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,6 +37,7 @@ public class ProfileController {
     @GetMapping("/myprofile")
     public ResponseEntity profile(@RequestHeader String Authorization) {
 
+        clearSession();
         /* extract Token and email (Verification is already done by filter)*/
         String token = Authorization.substring(7);
         String email = jwtUtil.extractEmail(token);
@@ -205,8 +208,8 @@ public class ProfileController {
                 return ResponseEntity.badRequest().body(er);
             } else {
                 if (token.startsWith("C")) {
-                    PrestadorProfResponse resp = Cliente_Perfil.checkPrestadorProfile(email_prest);
-                    if( resp != null)
+                    PrestadorProfResponse resp = Cliente_Perfil.checkPrestadorProfile(email_prest,email);
+                    if(resp != null)
                         return ResponseEntity.ok().body(resp);
                     else return ResponseEntity.badRequest().build();
                 } else {
@@ -224,4 +227,12 @@ public class ProfileController {
         return ResponseEntity.badRequest().build();
     }
 
+    private void clearSession(){
+        try {
+            PersistentManager pm = ServemePersistentManager.instance();
+            pm.getSession().clear();
+        } catch (PersistentException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -164,14 +164,23 @@ public class RequestResponse {
     private String estadoAsStr(int estado) {
         String res = "";
         switch (estado) {
+            case -100:
+                res = "Cancelado";
+                break;
+            case -10:
+                res = "Expirado";
+                break;
             case -1:
-                res = "Em Espera";
+                res = "Pendente";
                 break;
             case 0:
-                res = "Em Analise";
+                res = "Por confirmar";
                 break;
             case 1:
-                res = "Servico";
+                res = "Agendado";
+                break;
+            case 100:
+                res = "Realizado";
                 break;
 
         }

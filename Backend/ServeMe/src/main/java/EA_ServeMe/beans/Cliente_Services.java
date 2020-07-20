@@ -41,6 +41,7 @@ public class Cliente_Services {
             Pedido p = parsePedido(request, c);
             if(p!=null){
                 PedidoDAO.save(p);
+                //PedidoDAO.refresh(p);
                 Log.i(TAG,"Request Added Succesfully");
                 return success;
             }
@@ -89,15 +90,16 @@ public class Cliente_Services {
             categoria = obj.getString("categoria");
             cat = str2cat(categoria);
 
-            preco = obj.getDouble("preco");
+            preco = Double.valueOf(obj.getString("preco"));
 
             String s_dataInicio = obj.getString("dataInicio");
             dataInicio = DateUtils.toDate(s_dataInicio);
 
+
             String s_dataFim = obj.getString("dataFim");
             dataFim = DateUtils.toDate(s_dataFim);
 
-            dur = obj.getDouble("duracao");
+            dur = Double.valueOf(obj.getDouble("duracao"));
 
             desc = obj.getString("descricao");
 
@@ -149,11 +151,19 @@ public class Cliente_Services {
     public static List<RequestResponse> getRequests(String email) {
         List<RequestResponse> res = new ArrayList<>();
         Date now = new Date();
+        LocalDateTime ldtnow = LocalDateTime.now();
         int ID = Cliente_Perfil.getClientebyEmail(email).getID();
         String query = "ClienteID = " + ID;
         List<Pedido> pedidos = new ArrayList<>();
         try {
             pedidos = Arrays.asList(PedidoDAO.listPedidoByQuery(query,"HoraInicioDisp"));
+            for(Pedido p : pedidos){
+                if(DateUtils.asLocalDateTime(p.getHoraFimDisp()).isBefore(LocalDateTime.now()) && p.getEstado() < PedidoState.SERVICE.v() && p.getEstado() != PedidoState.CANCELLED.v()){
+                    p.setEstado(PedidoState.EXPIRED.v());
+                    PedidoDAO.save(p);
+                    //PedidoDAO.refresh(p);
+                }
+            }
         } catch (PersistentException e) {
             e.printStackTrace();
         }
@@ -195,17 +205,19 @@ public class Cliente_Services {
                 Pedido op = PedidoDAO.getPedidoByORMID(id);
                 if(op.getEstado() <= 0 && op.getCliente().getEmail().equals(email)) {
                     op.setPrecoHora(p.getPrecoHora());
+                    op.setDuracao(p.getDuracao());
+                    /* PROD: ADD THIS - Need Frontend changes
                     op.setData(p.getData());
                     op.setHoraInicioDisp(p.getHoraInicioDisp());
                     op.setHoraFimDisp(p.getHoraFimDisp());
-                    op.setDuracao(p.getDuracao());
                     op.setDescricao(p.getDescricao());
+                     */
                     PedidoDAO.save(op);
+                    //PedidoDAO.refresh(op);
                     Log.i(TAG,"Request Edited Succesfully");
                     return success;
                 }
                 else{
-
                     if(op.getEstado() > 0) {
                         resp.add("Estado");
                         Log.e(TAG,"Impossible Edit Request - Invalid State");
@@ -268,8 +280,10 @@ public class Cliente_Services {
         try {
             Pedido p = PedidoDAO.getPedidoByORMID(id);
             if(p.getEstado() <= 0  && p.getCliente().getEmail().equals(c.getEmail())){
-                PedidoDAO.delete(p);
-                Log.i(TAG,"Request Deleted Succesfully");
+                p.setEstado(-100);
+                PedidoDAO.save(p);
+                //PedidoDAO.refresh(p);
+                Log.i(TAG,"Request Cancelled Succesfully");
                 return success;
             }
             else {
@@ -338,6 +352,12 @@ public class Cliente_Services {
             PedidoDAO.save(pedido);
             PropostaDAO.save(proposta);
 
+            //ServicoDAO.refresh(servico);
+            //PedidoDAO.refresh(pedido);
+            //PropostaDAO.refresh(proposta);
+            ServicoDAO.evict(servico);
+            PedidoDAO.evict(pedido);
+            PropostaDAO.evict(proposta);
             Log.i(TAG,"Propose Accepted Succesfully - Service Scheduled");
             return success;
 
@@ -442,8 +462,11 @@ public class Cliente_Services {
     public static List<ServiceResponse> getCompletedServices(String email) {
         List<ServiceResponse> r = new ArrayList<>();
         int id_cliente = Cliente_Perfil.getClientebyEmail(email).getID();
-        int estado = ServicoState.CLIENTDONE.v();
-        String query = "ClienteID = " + id_cliente + " AND " + "Estado >= " + estado;
+        int estado = ServicoState.CREATED.v();
+        //int estado1 = ServicoState.CLIENTDONE.v();
+        //int estado2 = ServicoState.CLIENTCANCELLED.v();
+        //String query = "ClienteID = " + id_cliente + " AND " + "Estado >= " + estado1 + " OR " + "Estado <= " + estado2;
+        String query = "ClienteID = " + id_cliente + " AND " + "Estado != " + estado;
         try {
             List<Servico> servicos = Arrays.asList(ServicoDAO.listServicoByQuery(query,"ClienteID"));
             if (servicos.size() == 0){
@@ -452,6 +475,7 @@ public class Cliente_Services {
             }
             for (Servico tmp :
                     servicos) {
+
                 ServiceResponse sr = new ServiceResponse().asResponse(tmp);
                 r.add(sr);
             }
@@ -519,6 +543,8 @@ public class Cliente_Services {
             }
             servico.setEstado(ServicoState.CLIENTCANCELLED.v());
             ServicoDAO.save(servico);
+            //ServicoDAO.refresh(servico);
+            ServicoDAO.evict(servico);
         } catch (PersistentException e) {
             error.add("servico");
             Log.e(TAG,"Error Cancelling the Service");
@@ -529,6 +555,7 @@ public class Cliente_Services {
             int num_cancelados = cliente.getNumServicosCancelados();
             cliente.setNumServicosCancelados(num_cancelados+1);
             ClienteDAO.save(cliente);
+            //ClienteDAO.refresh(cliente);
             Log.i(TAG,"Service Cancelled Succesfully");
             return success;
         } catch (PersistentException e) {
@@ -550,7 +577,7 @@ public class Cliente_Services {
             for (Pedido tmp :
                     pedidos) {
                 int pedidoID = tmp.getID();
-                String query2 = "PedidoID = " + pedidoID + "Vencedora = " + PropostaState.UNSEEN.v() ;
+                String query2 = "PedidoID = " + pedidoID + " AND " + "Vencedora = " + PropostaState.UNSEEN.v() ;
                 List<Proposta> propostas = Arrays.asList(PropostaDAO.listPropostaByQuery(query2,"ID"));
                 for (Proposta p:
                      propostas) {
@@ -593,7 +620,12 @@ public class Cliente_Services {
             Log.e(TAG,"BD error");
         }
 
-
+        if(ibrs.size() == 0) {
+            Log.w(TAG,"No Inbox to show");
+        }
+        if(ibrs.size() > 0) {
+            Log.i(TAG,"Inbox Loaded Succesfully");
+        }
         return ibrs;
     }
 
@@ -621,6 +653,8 @@ public class Cliente_Services {
                     Servico s = ServicoDAO.getServicoByORMID(id_evento);
                     s.setEstado(ServicoState.CANCELLEDSEEN.v());
                     ServicoDAO.save(s);
+                    //ServicoDAO.refresh(s);
+                    ServicoDAO.evict(s);
                     Log.i(TAG,"Notification Seen");
                     return success;
                 } catch (PersistentException e) {
@@ -684,11 +718,14 @@ public class Cliente_Services {
             proposta.setVencedora(PropostaState.REJECTED.v());
 //            Save new states
             PropostaDAO.save(proposta);
+            //PropostaDAO.refresh(proposta);
+            PropostaDAO.evict(proposta);
             Log.i(TAG,"Propose Rejected Succesfully");
             return success;
 
         } catch (PersistentException e) {
             error.add("BD");
+            Log.e(TAG,"BD error");
         }
         return error;
     }

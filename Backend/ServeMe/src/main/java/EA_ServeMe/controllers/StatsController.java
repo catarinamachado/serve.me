@@ -50,7 +50,9 @@ public class StatsController {
 
         }
         else{
+
             MyStatsResponse msr = Prestador_Perfil.generateStats(done_services);
+            System.out.println("JA REALIZOUOUU " + msr.getServicos_anual());
             Log.i(TAG,"Stats Sent Successfuly");
             return ResponseEntity.ok(msr);
         }

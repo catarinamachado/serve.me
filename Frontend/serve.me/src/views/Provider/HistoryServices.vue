@@ -2,7 +2,7 @@
   <div class="history-services space-top-5 space-bottom-10 space-left-right-5">
     <h4 class="space-bottom-2">Histórico de Serviços</h4>
     <div class="justify-content-center my-1 row">
-      <b-form-fieldset horizontal label="Linhas por página" class="col-6" :label-size="6">
+      <b-form-fieldset horizontal label="Linhas por página" class="col-6" label-size="6">
          <b-form-select
             v-model="perPage"
             id="perPageSelect"
@@ -11,7 +11,7 @@
           ></b-form-select>
       </b-form-fieldset>
 
-      <b-form-fieldset horizontal label="Filtro" class="col-6" :label-size="2">
+      <b-form-fieldset horizontal label="Filtro" class="col-6" label-size="2">
           <b-input-group size="sm">
             <b-form-input
               v-model="filter"
@@ -29,19 +29,17 @@
     <!-- Main table element -->
     <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
       <template v-slot:cell(proposta.precoProposto)="row">
-        {{row.item.proposta.precoProposto}} €
+        {{row.item.proposta.precoProposto}}€
       </template>
-      
-        <template v-slot:cell(cliente)="row">
-            <b-link href="/#/client-profile">{{row.item.cliente}}</b-link>
-        </template>            
-        <template v-slot:cell(estado)="row">
-        <b-form-group>
-            {{row.item.estado}}
-            </b-form-group>
-        </template>
+
+      <template v-slot:cell(estado)="row">
+      <b-form-group>
+          {{row.item.estado}}
+          </b-form-group>
+      </template>
+
       <template v-slot:cell(acoes)="row">
-        <b-button id="amarelo" v-b-modal.classificar-modal size="sm" v-if="row.item.estado == 'Realizado'" @click="classificar(row.item, row.index, $event.target)" class="btn btn-blue">
+        <b-button id="amarelo" v-b-modal.classificar-modal size="sm" v-if="row.item.estado === 'Realizado '" @click="classificar(row.item, row.index, $event.target)" class="btn btn-blue">
             <i class="fas fa-star"></i>
         </b-button>
         </template>
@@ -178,7 +176,7 @@
           { key: 'cliente_nome', label: 'Cliente', sortable: true},
           { key: 'data', label: 'Data', sortable: true},
           { key: 'horaInicioDisp', label: 'Hora Início', sortable: true},
-          { key: 'horaFimDisp', label: 'Duração', sortable: true},
+          { key: 'pedido.duracao', label: 'Duração', sortable: true},
           { key: 'proposta.precoProposto', label: 'Preço/hora', sortable: true},
           { key: 'estado', label: 'Estado' },
           { key: 'acoes', label:''}
@@ -199,7 +197,7 @@
         classificacao: modal.rating ,
         opiniao: modal.comentarios ,
         email_cliente: modal.cliente_email,
-        idServico: modal.id_servico
+        idServico: modal.id_servico + ''
       }
 
       this.$axios({url: this.$backend + '/rating/cliente', data: data, method: 'POST',
@@ -207,9 +205,9 @@
         'Authorization' : 'Bearer ' + localStorage.getItem('user-token')
         }}).then(resp => {   
           console.log(resp.status)
-          this.$alert("Serviço classificado com sucesso", "Sucesso", "success")  
-          var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
-          this.items = newArray;        
+          this.$alert("Serviço classificado com sucesso!", "Sucesso", "success")  
+          //var newArray = this.items.slice(0, modal.idx).concat(this.items.slice(modal.idx + 1, this.items.length));
+          this.items = this.CompletedServices;        
         }).catch(err =>{
           console.log(err.data);
             this.$alert("Não foi possível classificar serviço.", "Erro", "error")
@@ -248,42 +246,59 @@
           if ( month == 'NOVEMBER') return '11';
     },    
     cleanData(list){
-      list.forEach( r => {
-        //Data -  Cleaning
-        var str_data = r.pedido.data;
-        var splitted = str_data.split('/')
-        var num_month = this.getMonth(splitted[1]);
-        r.data = splitted[2] + '/' + num_month + '/' + splitted[0] 
+      if(list.length > 0 ){
+        list.forEach( r => {
+          //Data -  Cleaning
+          var str_data = r.pedido.data;
+          var splitted = str_data.split('/')
+          var num_month = this.getMonth(splitted[1]);
+          r.data = splitted[2] + '/' + num_month + '/' + splitted[0] 
         
-        //Hora Inicio - Cleaning
-        var str_hora = r.pedido.horaInicioDisp;
-        splitted = str_hora.split(' ')
-        var hora = splitted[1].split(':')
-        if (hora[1] == '0') hora[1] = '00'
-        r.horaInicioDisp = hora[0] + 'h' + hora[1];
-        //Hora Fim - Cleaning
-        str_hora = r.pedido.horaFimDisp;
-        splitted = str_hora.split(' ')
-        hora = splitted[1].split(':')
-        if (hora[1] == '0') hora[1] = '00'
-        r.horaFimDisp = hora[0] + 'h' + hora[1];
+          //Hora Inicio - Cleaning
+          var str_hora = r.pedido.horaInicioDisp;
+          splitted = str_hora.split(' ')
+          var hora = splitted[1].split(':')
+          if (hora[1] == '0') hora[1] = '00'
+          r.horaInicioDisp = hora[0] + 'h' + hora[1];
+          //Hora Fim - Cleaning
+          str_hora = r.pedido.horaFimDisp;
+          splitted = str_hora.split(' ')
+          hora = splitted[1].split(':')
+          if (hora[1] == '0') hora[1] = '00'
+          r.horaFimDisp = hora[0] + 'h' + hora[1];
 
-        //Estado
-        if(r.estado == "Realizado[Por Avaliar]"){
-          r.estado = "Realizado"
-        }
-      });
+          //Estado
+          if(r.estado === "Realizado[Por AvaliarC]"){
+            r.estado = "Realizado"
+          }
+          if(r.estado === "Realizado[Por AvaliarP]"){
+            r.estado = "Realizado "
+          }
+
+          //Duração
+          var duracao = r.pedido.duracao + ''
+          splitted = duracao.split('.')
+          if(splitted.length > 1) {
+              if (splitted[0] == '0') splitted[0] = '00'
+              if (splitted[1].length == 1) splitted[1] = splitted[1] + '0'
+              r.pedido.duracao =  splitted[0] + 'h' + splitted[1]
+          } else {
+              r.pedido.duracao += 'h'
+          }
+        });
       return list;
+      }
+      return [];
+
     },
     CompletedServices: function(){
       let token = localStorage.getItem('user-token')
       let headers = {
         Authorization: 'Bearer ' + token
       }
-      //console.log("------ " + headers.Authorization)
       this.$axios({url: this.$backend + '/services/completed-services', headers: headers, method: 'GET' }).
       then(resp => {
-          console.log("O status é " + resp.data);
+          console.log(resp.data);
           this.items = this.cleanData(resp.data);
         }
         );

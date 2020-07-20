@@ -55,9 +55,7 @@
                 </div>
                 <div class="row space-top-5">
                     <div class="col-6">
-                        <p class="text-left">
-                            <input class="btn btn-red" type="submit" value="Eliminar conta">
-                        </p>
+
                     </div>
                     <div class="col-6">
                         <p class="text-right">
@@ -588,7 +586,7 @@ export default {
     }
   },
   mounted(){
-      this.checkProfile();
+      this.checkProfile()
   }
 };
 </script>

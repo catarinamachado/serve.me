@@ -370,6 +370,7 @@ public class PrestadorDAO {
 		p.setFreguesia(freg);
 		try {
 			PrestadorDAO.save(p);
+			PrestadorDAO.refresh(p);
 			return 1;
 		} catch (PersistentException e) {
 			e.printStackTrace();
@@ -382,6 +383,7 @@ public class PrestadorDAO {
 		p.setPassword(new_password);
 		try {
 			PrestadorDAO.save(p);
+			PrestadorDAO.refresh(p);
 			return 1;
 		} catch (PersistentException e) {
 			e.printStackTrace();

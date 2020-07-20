@@ -1,6 +1,7 @@
 package EA_ServeMe.responses;
 
 // Tipos:
+// -10 : rejeitada (Prestador)
 // -1 : Cancelamento
 // 1 : Proposta
 // 2 : Avaliação

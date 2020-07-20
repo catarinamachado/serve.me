@@ -63,7 +63,7 @@ public class LoginController {
         } catch (Exception ex) {
             Log.e(TAG,"Invalid Email/Password");
             ErrorResponse er = new ErrorResponse();
-            er.setLocalError("Login Cliente");
+            er.setLocalError("Login Prestador");
             return ResponseEntity.badRequest().body(er);
         }
 

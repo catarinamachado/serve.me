@@ -79,7 +79,7 @@ public class ServiceResponse {
         this.cliente_nome = s.getCliente().getNome();
         this.cliente_email = s.getCliente().getEmail();
         this.prestador_nome = s.getPrestador().getNome();
-        this.prestador_email = s.getCliente().getEmail();
+        this.prestador_email = s.getPrestador().getEmail();
         this.pedido = new RequestResponse().asResponse(s.getPedido());
         this.proposta = new ProposeProvider().asResponse(s.getProposta());
         this.estado = estadoAsStr(s.getEstado());
@@ -102,10 +102,10 @@ public class ServiceResponse {
                     res = "Agendado";
                     break;
                 case 1:
-                    res = "Realizado[Por Avaliar]";
+                    res = "Realizado[Por AvaliarP]";
                     break;
                 case 2:
-                    res = "Realizado[Por Avaliar]";
+                    res = "Realizado[Por AvaliarC]";
                     break;
                 case 12:
                     res = "Finalizado";

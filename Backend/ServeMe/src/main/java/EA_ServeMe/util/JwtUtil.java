@@ -17,6 +17,7 @@ public class JwtUtil {
     private String secret = "secret";
 
     public String extractEmail(String token) {
+
         return extractClaim(token, Claims::getSubject);
     }
 

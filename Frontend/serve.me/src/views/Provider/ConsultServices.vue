@@ -29,9 +29,9 @@
                 </b-col>                
             </b-row>
             <div class="row justify-content-center">
-              <b-card-group deck class="space-top-3" :key="row"
-                    v-for="row in formattedServices">
-                    <b-card v-for="service in row" :key="service"
+              <b-card-group deck class="space-top-3" 
+                    v-for="(row,idx) in formattedServices" :key="idx">
+                    <b-card v-for="(service, idx) in row" :key="idx"
                         no-body
                         style="max-width: 20rem;"
                         :img-src="service.img"
@@ -55,11 +55,7 @@
                             </b-card-text>
                         </b-card-body>
                         <b-card-footer>
-                            <button @click="proposta(service.categoria, service.subcategoria, 
-                                            service.id,
-                                            service.descricao, service.concelho, service.data, service.hora_inicio,
-                                            service.hora_fim, service.duracao, service.preco_hora, service.cliente,
-                                            row.item, row.index, $event.target)" class="btn btn-yellow-2">
+                            <button @click="proposta(service, row.index, $event.target)" class="btn btn-yellow-2">
                                 Efetuar proposta
                             </button>
                         </b-card-footer>
@@ -68,7 +64,10 @@
 
                 <!-- Info modal -->
                 <b-modal :id="propostaModal.id" :title="propostaModal.title" 
-                         size="lg" @ok="handleOK" @hide="resetPropostaModal">
+                    size="lg" 
+                    @ok="handleOK"
+                    @show="resetPropostaModal"   
+                    >
 
                     <form ref="form" @submit.stop.prevent="handleSubmit">
                         <b-form-group
@@ -121,7 +120,7 @@
                         >
                         <b-form-input
                             :disabled='true'
-                            :placeholder="propostaModal.horaInicioDisp"
+                            :placeholder="propostaModal.hora_inicio"
                         ></b-form-input>
                         </b-form-group>
 
@@ -130,7 +129,7 @@
                         >
                         <b-form-input
                             :disabled='true'
-                            :placeholder="propostaModal.horaFimDisp"
+                            :placeholder="propostaModal.hora_fim"
                         ></b-form-input>
                         </b-form-group>
 
@@ -148,7 +147,7 @@
                         >
                         <b-form-input
                             :disabled='true'
-                            :placeholder="propostaModal.preco"
+                            :placeholder="propostaModal.preco + '€'"
                         ></b-form-input>
                         </b-form-group>
 
@@ -157,35 +156,31 @@
                         >
                         <b-form-input
                             :disabled='true'
-                            :placeholder="propostaModal.cliente_nome"
+                            :placeholder="propostaModal.cliente" 
                         ></b-form-input>
                         </b-form-group>
 
                         <b-form-group
-                        :state="horainicio"
                         label="Hora início proposto"
                         label-for="horainicio-input"
                         invalid-feedback="Hora de início é obrigatória"
                         >
                         <b-form-input
                             id="horainicio-input"
-                            v-model="horainicio"
-                            :state="horainicio"
+                            v-model="propostaModal.horainicio"
                             type="time"
                             required
                         ></b-form-input>
                         </b-form-group>
 
                         <b-form-group
-                        :state="precohora"
                         label="Preço/hora proposto (€)"
                         label-for="precohora-input"
                         invalid-feedback="Preço/hora é obrigatório"
                         >
                         <b-form-input
                             id="precohora-input"
-                            v-model="precohora"
-                            :state="precohora"
+                            v-model="propostaModal.precohora"
                             type="number"
                             min="0"
                             required
@@ -271,60 +266,55 @@ export default {
   methods: {
     handleOK(){
       //Get values of proposal
-      var precohora = this.precohora
-      var horainicio = this.horainicio
-      var idServico = this.propostaModal.id
-
+      var precohora = this.propostaModal.precohora
+      var horainicio = this.propostaModal.horainicio
+      var id_proposta = this.propostaModal.id_pedido
       //Send Request to backend
-      this.ProposeService(idServico,precohora,horainicio);
+      this.ProposeService(id_proposta,precohora,horainicio);
     },
-    proposta(categoria, subcategoria, idservico, descricao, concelho, data,
-             hora_inicio, hora_fim, duracao, preco_hora, cliente,
-             item, index, button) {
+    proposta(item, index, button) {
         this.propostaModal.title = `Proposta de agendamento de serviço`;
-        this.propostaModal.categoria = categoria;
-        this.propostaModal.subcategoria = subcategoria;
-        this.propostaModal.descricao = descricao;
-        this.propostaModal.concelho = concelho;
-        this.propostaModal.data = data;
-        this.propostaModal.hora_inicio = hora_inicio;
-        this.propostaModal.hora_fim = hora_fim;
-        this.propostaModal.duracao = duracao;
-        this.propostaModal.preco_hora = preco_hora;
-        this.propostaModal.cliente = cliente;
+        this.propostaModal.classe = item.classe;
+        this.propostaModal.categoria = item.categoria;
+        this.propostaModal.descricao = item.descricao;
+        this.propostaModal.concelho = item.concelho;
+        this.propostaModal.data = item.data;
+        this.propostaModal.hora_inicio = item.horaInicioDisp;
+        this.propostaModal.hora_fim = item.horaFimDisp;
+        this.propostaModal.duracao = item.duracao;
+        this.propostaModal.preco = item.preco;
+        this.propostaModal.cliente = item.cliente_nome;
+        this.propostaModal.id_pedido = item.id
         this.$root.$emit('bv::show::modal', this.propostaModal.id, button)
     },
     resetPropostaModal() {
         this.propostaModal.title = ''
-        this.propostaModal.preco_hora=''
-        this.propostaModal.hora_inicio=''
+        this.propostaModal.precohora=''
+        this.propostaModal.horainicio=''
     },
-    ProposeService: function(idServico,precohora,horainicio){
+    ProposeService: function(id_pedido,precohora,horainicio){
         let token = localStorage.getItem('user-token')
         let headers = {
             Authorization: 'Bearer ' + token
         }
         var data = this.propostaModal.data;
-        var date_time = data + "-" + horainicio;
+        var splitted = data.split('/');
+        data = splitted[2] + '/' + splitted[1] + '/' + splitted[0];
+        var date_time = data + " " + horainicio;
         let body = {
-                id_pedido: idServico,
+                id_pedido: id_pedido,
                 preco: precohora,
                 dataInicio: date_time
         }
+        console.log(body);
         this.$axios({url: this.$backend + '/services/propose-request', headers: headers, data:body, method: 'POST' }).
             then(resp => {
                 if(resp.data == 'SUCCESS') {
                     this.$alert("Proposta enviada com sucesso!", "Sucesso", "success")
                 }
-                /*
-                else {
-                    this.$alert("Não foi possível alterar a password.", "Erro", "error")
-                }
-                */
-                
             }).catch(err => {
                 console.log(err)
-                this.$alert("Não foi possível efetuar a sua proposta. AKA hora de inicio não válida", "Erro", "error")
+                this.$alert("Não foi possível efetuar a sua proposta.\n" + err.response.data, "Erro", "error")
             })
     },
     seeProfile(email){
@@ -380,7 +370,8 @@ export default {
         splitted = duracao.split('.')
         if(splitted.length > 1) {
             if (splitted[0] == '0') splitted[0] = '00'
-            r.duracao =  splitted[0] + 'h' + splitted[1] + '0';
+            if (splitted[1].length == 1) splitted[1] = splitted[1] + '0'
+            r.duracao =  splitted[0] + 'h' + splitted[1];
         } else {
             r.duracao += 'h'
         }

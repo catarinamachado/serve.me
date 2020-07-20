@@ -7,10 +7,7 @@ import org.orm.PersistentException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import servico.Proposta;
-import servico.Servico;
-import servico.ServicoDAO;
-import servico.ServicoState;
+import servico.*;
 import utilizador.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -109,6 +106,7 @@ public class Prestador_Perfil {
         /* PROD : ADD THIS */
         try {
             PrestadorDAO.save(p);
+            //PrestadorDAO.refresh(p);
             Log.i(TAG,"Prestador Saved Succesfully");
             return success;
         } catch (PersistentException e) {
@@ -309,26 +307,25 @@ public class Prestador_Perfil {
                 Cliente c = cli[0];
                 int id = c.getID();
                 String query = "ClienteID = ' " + id + "'";
-                // PROD: ADD THIS
-                // Servico[] serv = ServicoDAO.listServicoByQuery(query,"ID");
-                //if(serv.length > 0 ) {
-                //Bottom lines HERE
-                // }
-                //else{
-                //Log.e(TAG,"Cant acess this profile from external ways");
-                //ErrorResponse er = new ErrorResponse();
-                //er.setLocalError("Cant acess this profile from external ways);
-                //return ResponseEntity.badrequest().body(er);
-                // }
-                Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
-                List<AvaliacaoResponse> avaliacoes = new ArrayList<>();
-                for(Avaliacao_Cliente a : avaliacao_clientes){
-                    AvaliacaoResponse ar = new AvaliacaoResponse(a.getPrestador().getNome(),a.getClassificacao(),a.getOpiniao());
-                    avaliacoes.add(ar);
+                Pedido[] serv = PedidoDAO.listPedidoByQuery(query,"ID");
+                if(serv.length > 0 ) {
+                    Avaliacao_Cliente[] avaliacao_clientes = Avaliacao_ClienteDAO.listAvaliacao_ClienteByQuery(query, "ID");
+                    List<AvaliacaoResponse> avaliacoes = new ArrayList<>();
+                    for(Avaliacao_Cliente a : avaliacao_clientes){
+                        AvaliacaoResponse ar = new AvaliacaoResponse(a.getPrestador().getNome(),a.getClassificacao(),a.getOpiniao());
+                        avaliacoes.add(ar);
+                    }
+                    ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacoes);
+                    Log.i(TAG,"Cliente profile sent with success");
+                    return cli_prof;
                 }
-                ClienteProfResponse cli_prof = new ClienteProfResponse(c.getNome(), c.getEmail(), c.getNumTelemovel(), c.getMorada(), c.getFreguesia(), c.getConcelho(), c.getDistrito(),c.getClassificacao(),c.getNumServicosRealizados(),c.getNumServicosCancelados(), avaliacoes);
-                Log.i(TAG,"Cliente profile sent with success");
-                return cli_prof;
+                else{
+                Log.e(TAG,"Cant acess this profile from external ways");
+                ErrorResponse er = new ErrorResponse();
+                er.setLocalError("Cant acess this profile from external ways");
+                return null;
+                }
+
             }
         } catch (PersistentException e) {
             e.printStackTrace();
@@ -381,61 +378,47 @@ public class Prestador_Perfil {
             Servico servico = ServicoDAO.getServicoByORMID(idServico);
             if(servico.getEstado() < ServicoState.CREATED.v())
                 return -2;
-            if(servico.getEstado() == ServicoState.PROVIDERDONE.v() || servico.getEstado() == ServicoState.EVALUATED.v())
+            if(servico.getEstado() == ServicoState.CLIENTDONE.v() || servico.getEstado() == ServicoState.EVALUATED.v())
                 return -1;
-        } catch (PersistentException e) {
-            e.printStackTrace();
-        }
 
-        String q = "Email = '" + email_cli + "'";
-        String q_2 = "Email = '" + email_pres + "'";
-        Cliente c = null;
-        try {
-            Cliente[] clis = ClienteDAO.listClienteByQuery(q,"Email");
-            c = clis[0];
-        } catch (PersistentException e) {
-            e.printStackTrace();
-        }
-        Prestador[] pres;
-        Prestador p = null;
-        try {
-            pres = PrestadorDAO.listPrestadorByQuery(q_2,"Email");
-            p = pres[0];
-        } catch (PersistentException e) {
-            e.printStackTrace();
-        }
-        //Update Numero Servicos Realizados
-        p.setNumServicosRealizados(p.getNumServicosRealizados() + 1);
-        //Update Classificacao
-        double nova_classificação = (p.getClassificacao() * p.getNumServicosRealizados() + classificacao)/(p.getNumServicosRealizados() + 1);
-        p.setClassificacao(nova_classificação);
-        try {
-            PrestadorDAO.save(p);
-        } catch (PersistentException e) {
-            e.printStackTrace();
-        }
-        Avaliacao_Prestador aval = new Avaliacao_Prestador();
-        aval.setClassificacao(classificacao);
-        aval.setOpiniao(opiniao);
-        aval.setCliente(c);
-        try {
-            p.avaliacoes.add(aval);
-            PrestadorDAO.save(p);
-            //Avaliacao_PrestadorDAO.save(aval);
-        } catch (PersistentException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Servico servico = ServicoDAO.getServicoByORMID(idServico);
+            Pedido pedido = servico.getPedido();
             if(servico.getEstado() == ServicoState.CREATED.v()){
-                servico.setEstado(ServicoState.PROVIDERDONE.v());
+                servico.setEstado(ServicoState.CLIENTDONE.v());
                 ServicoDAO.save(servico);
             }
-            if(servico.getEstado() == ServicoState.CLIENTDONE.v()){
+            if(servico.getEstado() == ServicoState.PROVIDERDONE.v()){
                 servico.setEstado(ServicoState.EVALUATED.v());
                 ServicoDAO.save(servico);
             }
+
+            pedido.setEstado(PedidoState.DONE.v());
+            PedidoDAO.save(pedido);
+
+            Cliente c = Cliente_Perfil.getClientebyEmail(email_cli);
+            Prestador p = Prestador_Perfil.getPrestadorbyEmail(email_pres);
+
+
+            int t = p.getNumServicosRealizados();
+
+            //Update Classificacao
+            double nova_classificação = (p.getClassificacao() * t + classificacao)/(t + 1 );
+            p.setClassificacao(nova_classificação);
+            p.setNumServicosRealizados(t+1);
+            Avaliacao_Prestador aval = new Avaliacao_Prestador();
+            aval.setClassificacao(classificacao);
+            aval.setOpiniao(opiniao);
+            aval.setCliente(c);
+            p.avaliacoes.add(aval);
+            PrestadorDAO.save(p);
+
+//            Refresh cache
+            //PrestadorDAO.refresh(p);
+            //ServicoDAO.refresh(servico);
+            //PedidoDAO.refresh(pedido);
+            PrestadorDAO.evict(p);
+            ServicoDAO.evict(servico);
+            PedidoDAO.evict(pedido);
+
         } catch (PersistentException e) {
             e.printStackTrace();
         }

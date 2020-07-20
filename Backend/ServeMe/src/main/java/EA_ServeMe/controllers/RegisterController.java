@@ -31,6 +31,7 @@ public class RegisterController {
     @PostMapping("/cliente")
     public ResponseEntity registerCliente (@RequestBody String info){
         Cliente c = new Cliente();
+        //Log.d(TAG,info);
         try {
             c = Cliente_Perfil.parseUtilizadorJSON(info);
         } catch (Exception e) {
@@ -42,7 +43,7 @@ public class RegisterController {
 
 
         int ok = (res.size()>1) ? 0 : 1;
-        String d1 = "-Email-> " + c.getEmail() + " -Pass-> " + c.getPassword(); Log.d(TAG,d1); // PROD: DELETE THIS
+        //String d1 = "-Email-> " + c.getEmail() + " -Pass-> " + c.getPassword(); Log.d(TAG,d1); // PROD: DELETE THIS
         // ok = 0; // DELETE THIS
         if(ok == 1 ) {
             String email = c.getEmail();
@@ -75,6 +76,8 @@ public class RegisterController {
     @PostMapping("/prestador")
     public ResponseEntity registerPrestador (@RequestBody String info){
         Prestador p = new Prestador();
+        //Log.d(TAG,info);
+
         try {
             p = Prestador_Perfil.parseUtilizadorJSON(info);
         } catch (Exception e) {
@@ -86,7 +89,7 @@ public class RegisterController {
         String password = p.getPassword();
         res= Prestador_Perfil.registerPrestador(p);
         int ok = (res.size() > 1) ? 0 : 1;
-        String d1 = "-Email-> " + p.getEmail() + "\n-Pass-> " + p.getPassword(); Log.d(TAG,d1);  //PROD: DELETE THIS
+        //String d1 = "-Email-> " + p.getEmail() + "\n-Pass-> " + p.getPassword(); Log.d(TAG,d1);  //PROD: DELETE THIS
         // ok = 0; //PROD: DELETE THIS
         if(ok == 1 ) {
             String email = p.getEmail();
